@@ -13,14 +13,12 @@ const AdminLoginPage: React.FC = () => {
   );
 
   const onIdChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event.currentTarget.value);
     setId(event.target.value);
   };
 
   const onPasswordChangeHandler = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    console.log(event.target.value);
     setPassword(event.target.value);
   };
 
@@ -44,13 +42,13 @@ const AdminLoginPage: React.FC = () => {
           sx={{ display: 'flex', flexDirection: 'column', width: 400, gap: 2 }}
         >
           <TextField
-            id="outlined-basic"
+            id="id-input"
             label="아이디"
             variant="outlined"
             onChange={onIdChangeHandler}
           />
           <TextField
-            id="outlined-basic"
+            id="password-input"
             label="패스워드"
             type="password"
             variant="outlined"
