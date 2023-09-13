@@ -46,7 +46,7 @@ const routes: RouteItem[] = [
     exact: true,
   },
   {
-    path: '/admin',
+    path: '/admin/*',
     element: <AdminPage />,
     exact: true,
   },

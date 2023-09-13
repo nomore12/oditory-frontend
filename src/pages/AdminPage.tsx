@@ -10,6 +10,11 @@ import {
   Typography,
 } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import PageContainer from '../components/admin/PageContainer';
+import { Route, Routes } from 'react-router-dom';
+import ProblemManagePage from '../components/admin/pages/ProblemManagePage';
+import ItemManagePage from '../components/admin/pages/ItemManagePage';
+import MemberManagePage from '../components/admin/pages/MemberManagePage';
 
 const AdminPage: React.FC = () => {
   const [popoverOpen, setPopoverOpen] = useState(false);
@@ -86,7 +91,13 @@ const AdminPage: React.FC = () => {
             height: 'calc(100vh - 60px)',
           }}
         >
-          Content
+          <PageContainer>
+            <Routes>
+              <Route path="problem" element={<ProblemManagePage />} />
+              <Route path="item" element={<ItemManagePage />} />
+              <Route path="members" element={<MemberManagePage />} />
+            </Routes>
+          </PageContainer>
         </Box>
       </Container>
     </Box>
