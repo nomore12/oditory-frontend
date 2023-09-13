@@ -15,6 +15,7 @@ import { Route, Routes } from 'react-router-dom';
 import ProblemManagePage from '../components/admin/pages/ProblemManagePage';
 import ItemManagePage from '../components/admin/pages/ItemManagePage';
 import MemberManagePage from '../components/admin/pages/MemberManagePage';
+import DynamicBreadcrumbs from '../components/admin/DynamicBreadcrumbs';
 
 const AdminPage: React.FC = () => {
   const [popoverOpen, setPopoverOpen] = useState(false);
@@ -47,15 +48,7 @@ const AdminPage: React.FC = () => {
           }}
         >
           <Box>
-            <Breadcrumbs aria-label="breadcrumb">
-              <Link underline="hover" color="inherit" href="#">
-                Home
-              </Link>
-              <Link underline="hover" color="inherit" href="#products">
-                Products
-              </Link>
-              <Typography color="text.primary">Item</Typography>
-            </Breadcrumbs>
+            <DynamicBreadcrumbs />
           </Box>
           <Box>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
