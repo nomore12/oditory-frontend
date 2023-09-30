@@ -1,58 +1,39 @@
 import React from 'react';
-import {
-  Box,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  TextField,
-  Typography,
-} from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import MainImage from '../components/auth/MainImage';
+import TextField from '../components/commons/TextField';
+
+const ContainerStyle = styled.div`
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+
+  .login-image__section {
+    width: 50%;
+  }
+
+  .login-form__section {
+    width: 50%;
+    padding: 100px;
+    display: flex;
+    flex-direction: column;
+  }
+`;
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    navigate('/main');
-  };
-
   return (
-    <Box
-      sx={{
-        width: '100vw',
-        height: '100vh',
-        display: 'flex',
-        gap: '2rem',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        position: 'relative',
-      }}
-    >
-      <Typography sx={{ fontWeight: 600 }} variant="h1">
-        오디토리
-      </Typography>
-      <Box
-        sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
-        component="form"
-        onSubmit={handleLogin}
-      >
-        <TextField label="아이디"></TextField>
-        <TextField label="비밀번호" type="password"></TextField>
-        <Box>
-          <FormControlLabel control={<Checkbox />} label="자동 로그인" />
-          <Button variant="outlined" type="submit">
-            로그인
-          </Button>
-        </Box>
-      </Box>
-      <Box sx={{ display: 'flex', gap: '1rem', position: 'fixed', bottom: 30 }}>
-        <Typography variant="body2">아직 회원이 아니신가요?</Typography>
-        <Link to="/signup">회원가입</Link>
-      </Box>
-    </Box>
+    <ContainerStyle>
+      <div className="login-image__section">
+        <MainImage />
+      </div>
+      <div className="login-form__section">
+        <TextField label="아이디" />
+        <TextField type="password" label="패스워드" />
+      </div>
+    </ContainerStyle>
   );
 };
 
