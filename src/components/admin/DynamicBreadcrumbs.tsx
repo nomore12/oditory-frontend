@@ -14,11 +14,11 @@ const DynamicBreadcrumbs = () => {
 
         return last ? (
           <Typography color="text.primary" key={to}>
-            {value}
+            {value === 'admin' ? 'Home' : value}
           </Typography>
         ) : (
           <Link underline="hover" color="inherit" href={to} key={to}>
-            {value}
+            {value === 'admin' ? 'Home' : value}
           </Link>
         );
       })}
