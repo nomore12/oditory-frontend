@@ -41,9 +41,9 @@ const ProblemManagePage: React.FC = () => {
       )}
       <PageContainer>
         <Routes>
-          <Route path="memory" element={<MemoryEnhancement />} />
-          <Route path="follow" element={<FollowInstructions />} />
-          <Route path="understand" element={<UnderstandSentences />} />
+          <Route path="memory/*" element={<MemoryEnhancement />} />
+          <Route path="follow/*" element={<FollowInstructions />} />
+          <Route path="understand/*" element={<UnderstandSentences />} />
         </Routes>
       </PageContainer>
     </Box>

@@ -9,19 +9,22 @@ import {
   TableRow,
   Typography,
   Paper,
+  styled,
 } from '@mui/material';
 
 interface PropsType {
-  level: number;
+  problemNumber: number;
+  handleProblemNumberClick: (selectedNumber: number) => void;
 }
 
-function createData(
-  level: number,
-  count: number,
-  answer: number,
-  delay: number
-) {
-  return { name, level, count, answer, delay };
+const RowStyle = styled(TableRow)(({ theme }) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover,
+  },
+}));
+
+function createData(no: number, count: number, answer: number, delay: number) {
+  return { no, count, answer, delay };
 }
 
 const rows = [
@@ -34,18 +37,21 @@ const rows = [
   createData(7, 10, 4, 1),
   createData(8, 10, 4, 1),
   createData(9, 10, 4, 1),
+  createData(10, 10, 4, 1),
 ];
 
-const MemoryEnhancement: React.FC<PropsType> = ({ level }) => {
+const MemoryEnhancement: React.FC<PropsType> = ({
+  problemNumber,
+  handleProblemNumberClick,
+}) => {
   return (
     <div>
-      <Typography>{level}</Typography>
       <Box>
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>레벨</TableCell>
+                <TableCell>No.</TableCell>
                 <TableCell>보기수</TableCell>
                 <TableCell>답변수</TableCell>
                 <TableCell>반응지연(초)</TableCell>
@@ -53,17 +59,21 @@ const MemoryEnhancement: React.FC<PropsType> = ({ level }) => {
             </TableHead>
             <TableBody>
               {rows.map((row) => (
-                <TableRow
-                  key={row.level}
+                <RowStyle
+                  key={row.no}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  onClick={() => {
+                    console.log('problem number is ', row.no);
+                    handleProblemNumberClick(row.no);
+                  }}
                 >
                   <TableCell component="th" scope="row">
-                    {row.level}
+                    {row.no}
                   </TableCell>
                   <TableCell>{row.count}</TableCell>
                   <TableCell>{row.answer}</TableCell>
                   <TableCell>{row.delay}</TableCell>
-                </TableRow>
+                </RowStyle>
               ))}
             </TableBody>
           </Table>
