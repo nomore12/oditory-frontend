@@ -1,10 +1,10 @@
 import React from 'react';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 
 const ItemManagePage: React.FC = () => {
   return (
     <Box>
-      <Box>아이템 관리</Box>
+      <Typography>아이템 관리</Typography>
     </Box>
   );
 };
