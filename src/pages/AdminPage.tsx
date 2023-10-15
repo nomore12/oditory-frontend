@@ -12,7 +12,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import PageContainer from '../components/admin/PageContainer';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import ProblemManagePage from '../components/admin/pages/problem/ProblemManagePage';
-import ItemManagePage from '../components/admin/pages/ItemManagePage';
+import ItemManagePage from '../components/admin/pages/ItemManager/ItemManagePage';
 import MemberManagePage from '../components/admin/pages/MemberManagePage';
 import DynamicBreadcrumbs from '../components/admin/DynamicBreadcrumbs';
 import { Link } from 'react-router-dom';
