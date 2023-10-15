@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 
 interface PropsType {
-  problemNumber: number;
+  problemNumber: string;
   handleProblemNumberClick: (selectedNumber: number) => void;
 }
 
