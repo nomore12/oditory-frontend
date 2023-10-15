@@ -3,6 +3,7 @@ import { Box, Button, styled, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import ItemListItem from './ItemListItem';
 import AddItemForm from './AddItemForm';
+import ItemCategorySelector from './ItemCategorySelector';
 
 const GridContainer = styled(Box)(({ theme }) => ({
   display: 'grid',
@@ -52,8 +53,10 @@ const ItemManagePage: React.FC = () => {
 
   return (
     <Box>
-      <Typography>아이템 관리</Typography>
-      <Box>Category</Box>
+      <Box sx={{ padding: '16px 0' }}>
+        <Typography>아이템 관리</Typography>
+      </Box>
+      <ItemCategorySelector />
       <Box>
         <GridContainer>
           {items}
@@ -61,7 +64,9 @@ const ItemManagePage: React.FC = () => {
         </GridContainer>
       </Box>
       <Box sx={{ width: '100%', display: 'flex', justifyContent: 'flex-end' }}>
-        <Button onClick={addItemHandler}>아이템 추가</Button>
+        <Button variant="outlined" onClick={addItemHandler}>
+          아이템 추가
+        </Button>
       </Box>
       {addItem && <AddItemForm openHandler={addItemHandler} />}
     </Box>

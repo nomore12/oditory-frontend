@@ -11,7 +11,7 @@ const ItemStyle = styled(Box)(({ theme }) => ({
 const ItemListItem: React.FC = () => {
   return (
     <ItemStyle>
-      <Box>fadsfasdf</Box>
+      <Box>아이템</Box>
     </ItemStyle>
   );
 };
