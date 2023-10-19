@@ -27,7 +27,7 @@ const usePostData = (url: string, data: any) => {
 
       console.log('response', response);
 
-      return !!(response && response.image);
+      return !!response;
     } catch (error) {
       console.error('Error during POST request:', error);
       return false;
