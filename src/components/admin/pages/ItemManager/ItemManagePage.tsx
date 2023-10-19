@@ -5,7 +5,7 @@ import ItemListItem from './ItemListItem';
 import AddItemForm from './AddItemForm';
 import ItemCategorySelector from './ItemCategorySelector';
 import { fetcher } from '../../../../utils/fetcher';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 
 const GridContainer = styled(Box)(({ theme }) => ({
   display: 'grid',
@@ -27,11 +27,6 @@ const ItemManagePage: React.FC = () => {
   const { data, error, isLoading } = useSWR('item/images/', (url) =>
     fetcher({ url })
   );
-
-  useEffect(() => {
-    console.log(data);
-    console.log(error);
-  }, [isLoading]);
 
   const modifyItemHandler = (pk: number) => {
     setIsModify(true);
@@ -72,6 +67,7 @@ const ItemManagePage: React.FC = () => {
                 created_at={item.created_at}
                 key={item.id}
                 modifyHandler={modifyItemHandler}
+                mutateData={mutate}
               />
             ))}
           {emptyItems}

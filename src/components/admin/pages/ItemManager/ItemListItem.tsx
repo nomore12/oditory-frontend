@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Button, styled, Typography } from '@mui/material';
+import useDeleteHook from '../../../../hooks/useDeleteHook';
 
 interface PropsType {
   id: number;
@@ -9,6 +10,7 @@ interface PropsType {
   item_name: string;
   syllable_count: number;
   modifyHandler: (pk: number) => void;
+  mutateData: (url: string) => void;
 }
 
 const ItemStyle = styled(Box)(({ theme }) => ({
@@ -28,15 +30,18 @@ const ItemListItem: React.FC<PropsType> = ({
   item_name,
   syllable_count,
   modifyHandler,
+  mutateData,
 }) => {
-  const onModify = () => {
-    // 수정 페이지로 이동
-  };
+  const { executeDelete } = useDeleteHook(`item/images/${id}/`);
 
-  const onDelete = () => {
-    // 삭제 및 취소 확인 창
-    // 확인을 누르면 삭제
-    // 취소를 누르면 취소
+  const onDelete = async () => {
+    const isSuccess = await executeDelete();
+    if (isSuccess) {
+      alert('삭제되었습니다.');
+      mutateData('item/images/');
+    } else {
+      alert('삭제에 실패하였습니다.');
+    }
   };
 
   return (
@@ -64,7 +69,9 @@ const ItemListItem: React.FC<PropsType> = ({
         <Button variant="outlined" onClick={() => modifyHandler(id)}>
           수정
         </Button>
-        <Button variant="outlined">삭제</Button>
+        <Button variant="outlined" onClick={onDelete}>
+          삭제
+        </Button>
       </Box>
     </ItemStyle>
   );
