@@ -4,6 +4,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import usePostData from '../../../../hooks/usePostHook';
 
 interface PropsType {
   openHandler: () => void;
@@ -26,7 +27,16 @@ const AddItemForm: React.FC<PropsType> = ({ openHandler }) => {
   const [itemName, setItemName] = useState('');
   const [syllableCount, setSyllableCount] = useState(0);
   const [file, setFile] = useState<File | null>(null); // [1]
+  const [filePreviewUrl, setFilePreviewUrl] = useState<string>(''); // [2
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const postData = {
+    image: file,
+    item_name: itemName,
+    syllable_count: syllableCount,
+    category: category,
+  };
+
+  const { data, error, executePost } = usePostData('item/images/', postData);
 
   const handleButtonClick = () => {
     if (fileInputRef.current) {
@@ -38,6 +48,8 @@ const AddItemForm: React.FC<PropsType> = ({ openHandler }) => {
     const file = event.target.files ? event.target.files[0] : null;
     if (file) {
       setFile(file);
+      const url = URL.createObjectURL(file);
+      setFilePreviewUrl(url);
     }
   };
 
@@ -45,11 +57,26 @@ const AddItemForm: React.FC<PropsType> = ({ openHandler }) => {
     setCategory(event.target.value as string);
   };
 
-  const onSubmit = () => {
-    console.log('category is ', category);
-    console.log('item name is ', itemName);
-    console.log('syllable count is ', syllableCount);
-    console.log('file is ', file);
+  const onSubmit = async () => {
+    console.log('file', file);
+    if (
+      category.trim() === '' ||
+      itemName.trim() === '' ||
+      syllableCount === 0 ||
+      file === null
+    ) {
+      alert('모든 항목을 입력해주세요.');
+      return;
+    }
+
+    const isSuccess = await executePost();
+    if (isSuccess) {
+      alert('아이템 추가가 완료되었습니다.');
+      openHandler();
+    } else {
+      alert('아이템 추가 중 오류가 발생했습니다.');
+      openHandler();
+    }
   };
 
   useEffect(() => {
@@ -130,7 +157,21 @@ const AddItemForm: React.FC<PropsType> = ({ openHandler }) => {
               onChange={handleFileChange}
             />
             <Button variant="outlined" onClick={handleButtonClick}>
-              Upload File
+              {file ? (
+                <Box sx={{ width: 80, height: 80 }}>
+                  <img
+                    style={{
+                      objectFit: 'contain',
+                      width: '100%',
+                      height: '100%',
+                    }}
+                    src={filePreviewUrl}
+                    alt={filePreviewUrl}
+                  />
+                </Box>
+              ) : (
+                'Upload File'
+              )}
             </Button>
           </div>
         </BlockStyle>

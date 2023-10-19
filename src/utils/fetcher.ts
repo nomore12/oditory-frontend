@@ -1,7 +1,7 @@
 import axios, { Method } from 'axios';
 
 // 오리진 URL 설정
-const BASE_URL = 'http://localhost:8000/api/';
+const BASE_URL = 'http://127.0.0.1:8000/api/';
 axios.defaults.baseURL = BASE_URL;
 
 interface FetcherArgs {
