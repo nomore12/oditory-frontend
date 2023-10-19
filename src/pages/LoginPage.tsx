@@ -24,6 +24,13 @@ const ContainerStyle = styled.div`
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
+
+  // 아이디와 패스워드 필드의 상태를 관리하는 함수
+  const [state, setState] = React.useState({
+    username: '',
+    password: '',
+  });
+
   return (
     <ContainerStyle>
       <div className="login-image__section">
