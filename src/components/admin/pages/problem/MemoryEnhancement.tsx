@@ -12,6 +12,8 @@ import MemoryEnhancementList from '../../problem/MemoryEnhancementList';
 import LevelSelect from '../../problem/LevelSelect';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import MemoryProblemForm from '../../problem/MemoryProblemForm';
+import { fetcher } from '../../../../utils/fetcher';
+import useSWR from 'swr';
 
 const MemoryEnhancement: React.FC = () => {
   const [currentLevel, setCurrentLevel] = useState('1');
@@ -20,16 +22,16 @@ const MemoryEnhancement: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const { data, error, isLoading } = useSWR('problem/memory/', (url) =>
+    fetcher({ url })
+  );
+
   const handleProblemNumberClick = (selectedNumber: number) => {
-    console.log(
-      `path is : /admin/problem/memory/${currentLevel}-${selectedNumber}`
-    );
-    setCurrentProblemNumber(`${currentLevel}-${selectedNumber}`);
-    navigate(`/admin/problem/memory/${currentLevel}-${selectedNumber}`);
+    setCurrentProblemNumber(`${selectedNumber}`);
+    navigate(`/admin/problem/memory/${selectedNumber}`);
   };
 
   useEffect(() => {
-    console.log('memory enhancement page', location.pathname);
     const paths = location.pathname.split('/');
     setCurrentLocation(paths[paths.length - 1]);
 
@@ -45,7 +47,12 @@ const MemoryEnhancement: React.FC = () => {
       <Routes>
         <Route
           path={currentProblemNumber}
-          element={<MemoryProblemForm currentLevel={Number(currentLevel)} />}
+          element={
+            <MemoryProblemForm
+              currentLevel={Number(currentLevel)}
+              currentProblemId={Number(currentProblemNumber)}
+            />
+          }
         />
       </Routes>
       {currentLocation === 'memory' && (
@@ -55,6 +62,8 @@ const MemoryEnhancement: React.FC = () => {
             setCurrentLevel={setCurrentLevel}
           />
           <MemoryEnhancementList
+            data={data}
+            currentLevel={Number(currentLevel)}
             problemNumber={currentProblemNumber}
             handleProblemNumberClick={handleProblemNumberClick}
           />
