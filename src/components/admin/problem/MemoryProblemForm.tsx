@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Box,
   TextField,
@@ -52,12 +52,10 @@ const MemoryProblemForm: React.FC<PropsType> = ({
   currentLevel,
   currentProblemId,
 }) => {
-  const [problemNumber, setProblemNumber] = useState(0);
   const [itemCount, setItemCount] = useState(0);
-  const [emptyItems, setEmptyItems] = useState<number[]>([]);
   const [delay, setDelay] = useState(0);
   const [problem, setProblem] = useState('');
-  const location = useLocation();
+  const [items, setItems] = useState(0);
 
   const { data, error, isLoading } = useSWR(
     `problem/memory/${currentProblemId}/`,
@@ -65,25 +63,29 @@ const MemoryProblemForm: React.FC<PropsType> = ({
   );
 
   const onCountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.value);
-    setItemCount(Number(e.target.value));
+    if (items > Number(e.target.value)) {
+      return;
+    } else {
+      setItemCount(Number(e.target.value));
+    }
   };
 
   useEffect(() => {
-    const paths = location.pathname.split('/');
-    const [level, number] = paths[paths.length - 1].split('-');
-  }, [location.pathname]);
+    if (data) {
+      setItemCount(data.choice_count || 0);
+      setDelay(data.response_delay || 0);
+      setItems(data.choices.length);
+      const problemText = data.choices
+        .map((item: any) => item.item_name)
+        .join(', ');
+      setProblem(problemText);
+    }
+  }, [data]);
 
-  useEffect(() => {
-    setItemCount(data?.choice_count ? data?.choice_count : 0);
-    setDelay(data?.response_delay ? data?.response_delay : 0);
+  const emptyItems = useMemo(() => {
     const length = data?.choices ? data.choices.length : 0;
-    setEmptyItems(Array(itemCount > length ? itemCount - length : 0).fill(0));
-    const problemText = data?.choices
-      .map((item: any) => item.item_name)
-      .join(', ');
-    setProblem(problemText);
-  }, [isLoading, itemCount]);
+    return Array(itemCount > length ? itemCount - length : 0).fill(0);
+  }, [itemCount, data]);
 
   return (
     <ContainerStyle>
@@ -104,7 +106,7 @@ const MemoryProblemForm: React.FC<PropsType> = ({
       <BlockStyle>
         <Typography>보기개수</Typography>
         <TextField
-          value={data ? data.choice_count : itemCount}
+          value={itemCount}
           type="number"
           sx={{ width: 620 }}
           size="small"
