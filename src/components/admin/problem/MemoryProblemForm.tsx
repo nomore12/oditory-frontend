@@ -12,6 +12,10 @@ import ItemButton from './ItemButton';
 import useSWR from 'swr';
 import { fetcher } from '../../../utils/fetcher';
 import EmptyItemButton from './EmptyItemButton';
+import AudioPlayer from 'react-h5-audio-player';
+import 'react-h5-audio-player/lib/styles.css';
+import Overlay from '../../commons/Overlay';
+import AddImageItemForm from './AddImageItemForm';
 
 interface PropsType {
   currentLevel: number;
@@ -24,8 +28,8 @@ const GridContainer = styled(Box)(({ theme }) => ({
   justifyContent: 'space-between',
   gap: 16,
   border: '1px solid black',
-  width: 960,
-  height: 480,
+  width: 760,
+  height: 420,
   overflowY: 'auto',
   padding: 16,
 }));
@@ -37,16 +41,34 @@ const ContainerStyle = styled(Box)({
   gap: '2rem',
 });
 
-const BlockStyle = styled(Box)({
+const BlockStyle = styled(Box)(({ height }: { height?: string }) => ({
   width: '100%',
-  height: 'fit-content',
+  height: height ? height : 'fit-content',
   display: 'flex',
   position: 'relative',
   '& > :nth-child(2)': {
     position: 'absolute',
     left: '80px',
   },
-});
+
+  '& > .rhap_container': {
+    width: '620px',
+  },
+
+  '& > .rhap_main': {
+    width: '600px',
+  },
+
+  '& .rhap_progress-section': {
+    width: '590px',
+  },
+
+  '& .rhap_controls-section': {
+    width: '590px',
+  },
+}));
+
+// ... other styles
 
 const MemoryProblemForm: React.FC<PropsType> = ({
   currentLevel,
@@ -68,6 +90,10 @@ const MemoryProblemForm: React.FC<PropsType> = ({
     } else {
       setItemCount(Number(e.target.value));
     }
+  };
+
+  const onDelayChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDelay(Number(e.target.value));
   };
 
   useEffect(() => {
@@ -94,6 +120,15 @@ const MemoryProblemForm: React.FC<PropsType> = ({
         <Typography>문제</Typography>
         <TextField value={problem} sx={{ width: 620 }} size="small" />
       </BlockStyle>
+      <BlockStyle height={'130px'}>
+        <Typography>음성</Typography>
+        <AudioPlayer
+          autoPlay
+          src="http://example.com/audio.mp3"
+          onPlay={(e) => console.log('onPlay')}
+          // other props here
+        />
+      </BlockStyle>
       <BlockStyle>
         <Typography>반응지연</Typography>
         <TextField
@@ -101,6 +136,7 @@ const MemoryProblemForm: React.FC<PropsType> = ({
           type="number"
           sx={{ width: 620 }}
           size="small"
+          onChange={onDelayChange}
         />
       </BlockStyle>
       <BlockStyle>
@@ -147,6 +183,7 @@ const MemoryProblemForm: React.FC<PropsType> = ({
         <Button variant="outlined">취소</Button>
         <Button variant="outlined">저장</Button>
       </Box>
+      <Overlay>{<AddImageItemForm />}</Overlay>
     </ContainerStyle>
   );
 };

@@ -10,6 +10,7 @@ interface PropsType {
   syllableCount: number;
   category: string;
   image: string;
+  isAdd?: boolean;
 }
 
 const ItemButton: React.FC<PropsType> = ({
@@ -18,6 +19,7 @@ const ItemButton: React.FC<PropsType> = ({
   category,
   syllableCount,
   image,
+  isAdd,
 }) => {
   const [isEmpty, setIsEmpty] = useState<boolean>(true);
   return (
@@ -47,7 +49,7 @@ const ItemButton: React.FC<PropsType> = ({
         <Typography>음절수: {syllableCount}</Typography>
       </Box>
       <Box>
-        <Button variant="outlined">삭제하기</Button>
+        <Button variant="outlined">{isAdd ? '추가하기' : '삭제하기'}</Button>
       </Box>
     </Box>
   );
