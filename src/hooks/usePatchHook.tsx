@@ -15,7 +15,6 @@ const usePatchHook = (url: string, initialData: any) => {
   });
 
   const executePatch = async (updatedData: any) => {
-    console.log(updatedData);
     try {
       const response = await fetcher({
         url,

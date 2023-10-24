@@ -25,8 +25,6 @@ const usePostData = (url: string, data: any) => {
 
       mutate(key, response, false); // SWR의 mutate를 사용하여 데이터를 갱신
 
-      console.log('response', response);
-
       return !!response;
     } catch (error) {
       console.error('Error during POST request:', error);

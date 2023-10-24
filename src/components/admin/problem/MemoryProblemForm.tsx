@@ -108,12 +108,10 @@ const MemoryProblemForm: React.FC<PropsType> = ({
 
   const onSubmit = () => {
     const choices = itemArray.map((item) => item.pk);
-    console.log(choices, answerItems);
   };
 
   useEffect(() => {
     if (data) {
-      console.log(data);
       setItemCount(data.choice_count || 0);
       setDelay(data.response_delay || 0);
       setItems(data.choices.length);

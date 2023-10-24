@@ -24,7 +24,6 @@ const AdminPage: React.FC = () => {
   const location = useLocation();
 
   const onUserProfileClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    console.log('popover open', popoverOpen);
     setAnchorEl(event.currentTarget);
   };
 

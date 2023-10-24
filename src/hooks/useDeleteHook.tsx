@@ -20,7 +20,6 @@ const useDeleteHook = (url: string) => {
         url,
         method: 'DELETE',
       });
-      console.log('response', response);
 
       // 데이터를 갱신하기 위해 mutate를 사용합니다.
       mutate(key, null, false);
