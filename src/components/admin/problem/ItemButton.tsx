@@ -1,4 +1,12 @@
-import { Box, Button, Grid, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Grid,
+  Typography,
+  Checkbox,
+  FormGroup,
+  FormControlLabel,
+} from '@mui/material';
 import React, { useState } from 'react';
 import ControlPointOutlinedIcon from '@mui/icons-material/ControlPointOutlined';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
@@ -22,15 +30,15 @@ const ItemButton: React.FC<PropsType> = ({
   image,
 }) => {
   const { isAdd, overlayHandler } = useOverlay();
-  const setClickedItemId = useAddItemStore(
-    (state: any) => state.setClickedItemId
+  const { setClickedItemId, setAnswerId } = useAddItemStore(
+    (state: any) => state
   );
 
   return (
     <Box
       sx={{
         border: '1px solid black',
-        height: 200,
+        height: 240,
         padding: 1,
         display: 'flex',
         flexDirection: 'column',
@@ -50,14 +58,28 @@ const ItemButton: React.FC<PropsType> = ({
         <Typography>음절수: {syllableCount}</Typography>
       </Box>
       <Box>
+        {isAdd ? null : (
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  onChange={(e) => {
+                    e.target.checked ? setAnswerId(id) : setAnswerId(id * -1);
+                  }}
+                />
+              }
+              label="정답"
+            />
+          </FormGroup>
+        )}
         <Button
           onClick={() => {
-            setClickedItemId(id);
-            overlayHandler();
+            isAdd ? setClickedItemId(id) : setClickedItemId(id * -1);
+            isAdd && overlayHandler();
           }}
           variant="outlined"
         >
-          {isAdd ? '추가하기' : '삭제하기'}
+          {isAdd ? '추가' : '삭제'}
         </Button>
       </Box>
     </Box>

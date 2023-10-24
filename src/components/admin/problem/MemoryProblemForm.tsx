@@ -80,11 +80,10 @@ const MemoryProblemForm: React.FC<PropsType> = ({
   const [delay, setDelay] = useState(0);
   const [problem, setProblem] = useState('');
   const [items, setItems] = useState(0);
-  const [isAdd, setIsAdd] = useState(false);
   const [itemArray, setItemArray] = useState<any[]>([]);
-  const { clickedItemId, setClickedItemId } = useAddItemStore(
-    (state: any) => state
-  );
+  const [answerItems, setAnswerItems] = useState<number[]>([]);
+  const { clickedItemId, answerId, setClickedItemId, setAnswerId } =
+    useAddItemStore((state: any) => state);
 
   const { data, error, isLoading } = useSWR(
     `problem/memory/${currentProblemId}/`,
@@ -107,12 +106,19 @@ const MemoryProblemForm: React.FC<PropsType> = ({
     setDelay(Number(e.target.value));
   };
 
+  const onSubmit = () => {
+    const choices = itemArray.map((item) => item.pk);
+    console.log(choices, answerItems);
+  };
+
   useEffect(() => {
     if (data) {
+      console.log(data);
       setItemCount(data.choice_count || 0);
       setDelay(data.response_delay || 0);
       setItems(data.choices.length);
       setItemArray([...data.choices]);
+      setAnswerItems([...data.answers]);
       const problemText = data.choices
         .map((item: any) => item.item_name)
         .join(', ');
@@ -126,14 +132,34 @@ const MemoryProblemForm: React.FC<PropsType> = ({
   }, [itemCount, itemArray]);
 
   useEffect(() => {
-    if (clickedItemId !== null) {
+    if (clickedItemId !== null && clickedItemId > 0) {
       setItemArray([
         ...itemArray,
         imageItemData?.find((item: any) => item.pk === clickedItemId),
       ]);
       setClickedItemId(null);
+    } else if (clickedItemId < 0) {
+      const deleteItemId = clickedItemId * -1;
+      setItemArray(itemArray.filter((item: any) => item.pk !== deleteItemId));
+      setClickedItemId(null);
     }
   }, [clickedItemId]);
+
+  useEffect(() => {
+    if (answerId !== null && answerId > 0) {
+      setAnswerItems([...answerItems, answerId]);
+      setAnswerId(null);
+    } else if (answerId < 0) {
+      const deletedId = answerId * -1;
+      setAnswerItems(answerItems.filter((item: any) => item !== deletedId));
+      setAnswerId(null);
+    }
+  }, [answerId]);
+
+  useEffect(() => {
+    const problemText = itemArray.map((item: any) => item.item_name).join(', ');
+    setProblem(problemText);
+  }, [itemArray]);
 
   return (
     <OverlayProvider>
@@ -202,7 +228,9 @@ const MemoryProblemForm: React.FC<PropsType> = ({
           }}
         >
           <Button variant="outlined">취소</Button>
-          <Button variant="outlined">저장</Button>
+          <Button onClick={onSubmit} variant="outlined">
+            저장
+          </Button>
         </Box>
 
         <Overlay>
