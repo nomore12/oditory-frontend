@@ -1,11 +1,11 @@
-import { Box, Button, Grid, Typography } from '@mui/material';
-import React, { useState } from 'react';
-import ControlPointOutlinedIcon from '@mui/icons-material/ControlPointOutlined';
+import { Box, IconButton } from '@mui/material';
+import React from 'react';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import { IconButton } from '@mui/material';
+import { useOverlay } from '../../../hooks/useOverlay';
 
 const ItemButton: React.FC = () => {
-  const [isEmpty, setIsEmpty] = useState<boolean>(true);
+  const { overlayHandler } = useOverlay();
+
   return (
     <Box
       sx={{
@@ -18,7 +18,12 @@ const ItemButton: React.FC = () => {
         alignItems: 'center',
       }}
     >
-      <IconButton aria-label="add">
+      <IconButton
+        aria-label="add"
+        onClick={() => {
+          overlayHandler();
+        }}
+      >
         <AddCircleOutlineIcon sx={{ fontSize: 80 }} />
       </IconButton>
     </Box>

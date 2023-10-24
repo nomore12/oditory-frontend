@@ -16,6 +16,8 @@ import AudioPlayer from 'react-h5-audio-player';
 import 'react-h5-audio-player/lib/styles.css';
 import Overlay from '../../commons/Overlay';
 import AddImageItemForm from './AddImageItemForm';
+import { OverlayProvider } from '../../../context/OverlayContext';
+import { useAddItemStore } from '../../../store/MemoryStore';
 
 interface PropsType {
   currentLevel: number;
@@ -78,10 +80,19 @@ const MemoryProblemForm: React.FC<PropsType> = ({
   const [delay, setDelay] = useState(0);
   const [problem, setProblem] = useState('');
   const [items, setItems] = useState(0);
+  const [isAdd, setIsAdd] = useState(false);
+  const [itemArray, setItemArray] = useState<any[]>([]);
+  const { clickedItemId, setClickedItemId } = useAddItemStore(
+    (state: any) => state
+  );
 
   const { data, error, isLoading } = useSWR(
     `problem/memory/${currentProblemId}/`,
     (url) => fetcher({ url })
+  );
+
+  const { data: imageItemData } = useSWR('item/images/', (url) =>
+    fetcher({ url })
   );
 
   const onCountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -101,6 +112,7 @@ const MemoryProblemForm: React.FC<PropsType> = ({
       setItemCount(data.choice_count || 0);
       setDelay(data.response_delay || 0);
       setItems(data.choices.length);
+      setItemArray([...data.choices]);
       const problemText = data.choices
         .map((item: any) => item.item_name)
         .join(', ');
@@ -109,82 +121,95 @@ const MemoryProblemForm: React.FC<PropsType> = ({
   }, [data]);
 
   const emptyItems = useMemo(() => {
-    const length = data?.choices ? data.choices.length : 0;
+    const length = itemArray ? itemArray.length : 0;
     return Array(itemCount > length ? itemCount - length : 0).fill(0);
-  }, [itemCount, data]);
+  }, [itemCount, itemArray]);
+
+  useEffect(() => {
+    if (clickedItemId !== null) {
+      setItemArray([
+        ...itemArray,
+        imageItemData?.find((item: any) => item.pk === clickedItemId),
+      ]);
+      setClickedItemId(null);
+    }
+  }, [clickedItemId]);
 
   return (
-    <ContainerStyle>
-      <Box>기억력 향상 폼 레벨. {currentLevel}</Box>
-      <BlockStyle>
-        <Typography>문제</Typography>
-        <TextField value={problem} sx={{ width: 620 }} size="small" />
-      </BlockStyle>
-      <BlockStyle height={'130px'}>
-        <Typography>음성</Typography>
-        <AudioPlayer
-          autoPlay
-          src="http://example.com/audio.mp3"
-          onPlay={(e) => console.log('onPlay')}
-          // other props here
-        />
-      </BlockStyle>
-      <BlockStyle>
-        <Typography>반응지연</Typography>
-        <TextField
-          value={delay}
-          type="number"
-          sx={{ width: 620 }}
-          size="small"
-          onChange={onDelayChange}
-        />
-      </BlockStyle>
-      <BlockStyle>
-        <Typography>보기개수</Typography>
-        <TextField
-          value={itemCount}
-          type="number"
-          sx={{ width: 620 }}
-          size="small"
-          onChange={onCountChange}
-        />
-      </BlockStyle>
-      <BlockStyle>
-        <Typography>보기</Typography>
-        <GridContainer>
-          {data &&
-            data.choices.map((item: any) => (
+    <OverlayProvider>
+      <ContainerStyle>
+        <Box>기억력 향상 폼 레벨. {currentLevel}</Box>
+        <BlockStyle>
+          <Typography>문제</Typography>
+          <TextField value={problem} sx={{ width: 620 }} size="small" />
+        </BlockStyle>
+        <BlockStyle height={'130px'}>
+          <Typography>음성</Typography>
+          <AudioPlayer
+            autoPlay
+            src="http://example.com/audio.mp3"
+            onPlay={(e) => console.log('onPlay')}
+          />
+        </BlockStyle>
+        <BlockStyle>
+          <Typography>반응지연</Typography>
+          <TextField
+            value={delay}
+            type="number"
+            sx={{ width: 620 }}
+            size="small"
+            onChange={onDelayChange}
+          />
+        </BlockStyle>
+        <BlockStyle>
+          <Typography>보기개수</Typography>
+          <TextField
+            value={itemCount}
+            type="number"
+            sx={{ width: 620 }}
+            size="small"
+            onChange={onCountChange}
+          />
+        </BlockStyle>
+        <BlockStyle>
+          <Typography>보기</Typography>
+          <GridContainer>
+            {itemArray.map((item: any) => (
               <ItemButton
                 key={item.pk}
-                fontSize={40}
+                id={item.pk}
                 name={item.item_name}
                 category={item.category}
                 syllableCount={item.syllable_count}
                 image={item.image}
               />
             ))}
-          {emptyItems.length > 0 &&
-            emptyItems.map((item: any, index: number) => (
-              <EmptyItemButton key={index} />
-            ))}
-        </GridContainer>
-      </BlockStyle>
-      <Box
-        sx={{
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          justifyContent: 'flex-end',
-          alignItems: 'flex-end',
-          marginTop: 'auto',
-          gap: 2,
-        }}
-      >
-        <Button variant="outlined">취소</Button>
-        <Button variant="outlined">저장</Button>
-      </Box>
-      <Overlay>{<AddImageItemForm />}</Overlay>
-    </ContainerStyle>
+            {emptyItems.length > 0 &&
+              emptyItems.map((item: any, index: number) => (
+                <EmptyItemButton key={index} />
+              ))}
+          </GridContainer>
+        </BlockStyle>
+        <Box
+          sx={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            justifyContent: 'flex-end',
+            alignItems: 'flex-end',
+            marginTop: 'auto',
+            gap: 2,
+          }}
+        >
+          <Button variant="outlined">취소</Button>
+          <Button variant="outlined">저장</Button>
+        </Box>
+
+        <Overlay>
+          <AddImageItemForm />
+        </Overlay>
+      </ContainerStyle>
+    </OverlayProvider>
   );
 };
 

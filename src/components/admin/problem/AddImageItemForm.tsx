@@ -21,25 +21,26 @@ const AddImageItemForm: React.FC = () => {
     fetcher({ url })
   );
 
-  useEffect(() => {
-    console.log('data', data);
-  }, [isLoading]);
+  const stopPropagation = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+  };
 
   return (
-    <Box sx={{ width: 720, height: 480, backgroundColor: '#fff' }}>
+    <Box
+      sx={{ width: 720, height: 480, backgroundColor: '#fff' }}
+      onClick={stopPropagation}
+    >
       <GridContainer>
-        {data &&
-          data?.map((item: any) => (
-            <ItemButton
-              key={item.pk}
-              fontSize={40}
-              name={item.item_name}
-              category={item.category}
-              syllableCount={item.syllable_count}
-              image={item.image}
-              isAdd={true}
-            />
-          ))}
+        {data?.map((item: any) => (
+          <ItemButton
+            key={item.pk}
+            id={item.pk}
+            name={item.item_name}
+            category={item.category}
+            syllableCount={item.syllable_count}
+            image={item.image}
+          />
+        ))}
       </GridContainer>
     </Box>
   );

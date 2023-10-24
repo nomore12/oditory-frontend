@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   Box,
+  Button,
   FormControl,
   InputLabel,
   MenuItem,
@@ -69,6 +70,7 @@ const MemoryEnhancement: React.FC = () => {
           />
         </>
       )}
+      <Button>문제 추가하기</Button>
     </Box>
   );
 };

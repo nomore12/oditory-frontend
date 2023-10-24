@@ -40,8 +40,8 @@ const AdminPage: React.FC = () => {
   const id = open ? 'simple-popover' : undefined;
 
   useEffect(() => {
-    const path = location.pathname.split('/');
-    const newIsHome = path[path.length - 1] === 'admin';
+    const newArray = location.pathname.split('/').filter((item) => item !== '');
+    const newIsHome = newArray[newArray.length - 1] === 'admin';
     setIsHome(newIsHome);
   }, [location.pathname]);
 

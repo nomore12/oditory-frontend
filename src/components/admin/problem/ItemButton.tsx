@@ -3,25 +3,29 @@ import React, { useState } from 'react';
 import ControlPointOutlinedIcon from '@mui/icons-material/ControlPointOutlined';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { IconButton } from '@mui/material';
+import { useOverlay } from '../../../hooks/useOverlay';
+import { useAddItemStore } from '../../../store/MemoryStore';
 
 interface PropsType {
-  fontSize: number;
+  id: number;
   name: string;
   syllableCount: number;
   category: string;
   image: string;
-  isAdd?: boolean;
 }
 
 const ItemButton: React.FC<PropsType> = ({
-  fontSize,
+  id,
   name,
   category,
   syllableCount,
   image,
-  isAdd,
 }) => {
-  const [isEmpty, setIsEmpty] = useState<boolean>(true);
+  const { isAdd, overlayHandler } = useOverlay();
+  const setClickedItemId = useAddItemStore(
+    (state: any) => state.setClickedItemId
+  );
+
   return (
     <Box
       sx={{
@@ -33,9 +37,6 @@ const ItemButton: React.FC<PropsType> = ({
         justifyContent: 'space-between',
       }}
     >
-      {/*<IconButton aria-label="add">*/}
-      {/*  <AddCircleOutlineIcon sx={{ fontSize }} />*/}
-      {/*</IconButton>*/}
       <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
         <img style={{ width: '64px' }} src={image} alt="상품 이미지" />
       </Box>
@@ -49,7 +50,15 @@ const ItemButton: React.FC<PropsType> = ({
         <Typography>음절수: {syllableCount}</Typography>
       </Box>
       <Box>
-        <Button variant="outlined">{isAdd ? '추가하기' : '삭제하기'}</Button>
+        <Button
+          onClick={() => {
+            setClickedItemId(id);
+            overlayHandler();
+          }}
+          variant="outlined"
+        >
+          {isAdd ? '추가하기' : '삭제하기'}
+        </Button>
       </Box>
     </Box>
   );
