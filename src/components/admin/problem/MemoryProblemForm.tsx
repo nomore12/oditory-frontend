@@ -82,6 +82,7 @@ const MemoryProblemForm: React.FC<PropsType> = ({
   const [items, setItems] = useState(0);
   const [itemArray, setItemArray] = useState<any[]>([]);
   const [answerItems, setAnswerItems] = useState<number[]>([]);
+  const [soundUrl, setSoundUrl] = useState('');
   const { clickedItemId, answerId, setClickedItemId, setAnswerId } =
     useAddItemStore((state: any) => state);
 
@@ -117,6 +118,7 @@ const MemoryProblemForm: React.FC<PropsType> = ({
       setItems(data.choices.length);
       setItemArray([...data.choices]);
       setAnswerItems([...data.answers]);
+      setSoundUrl(data.problem.sound_item.sound);
       const problemText = data.choices
         .map((item: any) => item.item_name)
         .join(', ');
@@ -171,7 +173,7 @@ const MemoryProblemForm: React.FC<PropsType> = ({
           <Typography>음성</Typography>
           <AudioPlayer
             autoPlay
-            src="http://example.com/audio.mp3"
+            src={soundUrl}
             onPlay={(e) => console.log('onPlay')}
           />
         </BlockStyle>
