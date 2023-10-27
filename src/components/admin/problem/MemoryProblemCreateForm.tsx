@@ -1,28 +1,15 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import {
-  Box,
-  TextField,
-  Typography,
-  styled,
-  Grid,
-  Button,
-} from '@mui/material';
-import { useLocation } from 'react-router-dom';
-import ItemButton from './ItemButton';
-import useSWR from 'swr';
-import { fetcher } from '../../../utils/fetcher';
-import EmptyItemButton from './EmptyItemButton';
+import { Box, Button, styled, TextField, Typography } from '@mui/material';
 import AudioPlayer from 'react-h5-audio-player';
-import 'react-h5-audio-player/lib/styles.css';
+import ItemButton from './ItemButton';
+import EmptyItemButton from './EmptyItemButton';
 import Overlay from '../../commons/Overlay';
 import AddImageItemForm from './AddImageItemForm';
 import { OverlayProvider } from '../../../context/OverlayContext';
 import { useAddItemStore } from '../../../store/MemoryStore';
-
-interface PropsType {
-  currentLevel: number;
-  currentProblemId: number;
-}
+import useSWR from 'swr';
+import { fetcher } from '../../../utils/fetcher';
+import usePostHook from '../../../hooks/usePostHook';
 
 const GridContainer = styled(Box)(({ theme }) => ({
   display: 'grid',
@@ -70,43 +57,62 @@ const BlockStyle = styled(Box)(({ height }: { height?: string }) => ({
   },
 }));
 
-// ... other styles
-
-const MemoryProblemForm: React.FC<PropsType> = ({
-  currentLevel,
-  currentProblemId,
-}) => {
-  const [itemCount, setItemCount] = useState(0);
+const MemoryProblemCreateForm: React.FC = () => {
+  const [problemText, setProblemText] = useState('');
   const [delay, setDelay] = useState(0);
-  const [problem, setProblem] = useState('');
-  const [items, setItems] = useState(0);
+  const [itemCount, setItemCount] = useState(0);
   const [itemArray, setItemArray] = useState<any[]>([]);
-  const [answerItems, setAnswerItems] = useState<number[]>([]);
-  const [soundUrl, setSoundUrl] = useState('');
   const [level, setLevel] = useState(0);
   const [problemNumber, setProblemNumber] = useState(0);
+  const [answerItems, setAnswerItems] = useState<number[]>([]);
+
   const { clickedItemId, answerId, setClickedItemId, setAnswerId } =
     useAddItemStore((state: any) => state);
-
-  const { data, error, isLoading } = useSWR(
-    `problem/memory/${currentProblemId}/`,
-    (url) => fetcher({ url })
-  );
 
   const { data: imageItemData } = useSWR('item/images/', (url) =>
     fetcher({ url })
   );
 
-  const onCountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (items > Number(e.target.value)) {
-      return;
-    } else {
-      setItemCount(Number(e.target.value));
-    }
+  const {
+    data: responseData,
+    error,
+    isValidating,
+    executePost,
+  } = usePostHook('problem/memory/', {
+    problem: {
+      type: 'memory',
+      level: level,
+      question_number: problemNumber,
+    },
+    choice_count: itemCount,
+    answer_count: answerItems.length,
+    choices: itemArray.map((item: any) => item.pk),
+    answers: answerItems,
+  });
+
+  const a = {
+    problem: {
+      type: 'memory',
+      level: 2,
+      question_number: 2,
+    },
+    choice_count: 4,
+    answer_count: 1,
+    choices: [25, 32, 28, 29],
+    answers: [32, 25],
   };
+
+  const emptyItems = useMemo(() => {
+    const length = itemArray ? itemArray.length : 0;
+    return Array(itemCount > length ? itemCount - length : 0).fill(0);
+  }, [itemCount, itemArray]);
 
   const onDelayChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDelay(Number(e.target.value));
+  };
+
+  const onCountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setItemCount(Number(e.target.value));
   };
 
   const onLevelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -118,28 +124,17 @@ const MemoryProblemForm: React.FC<PropsType> = ({
   };
 
   const onSubmit = () => {
-    const choices = itemArray.map((item) => item.pk);
-  };
-
-  useEffect(() => {
-    if (data) {
-      setItemCount(data.choice_count || 0);
-      setDelay(data.response_delay || 0);
-      setItems(data.choices.length);
-      setItemArray([...data.choices]);
-      setAnswerItems([...data.answers]);
-      setSoundUrl(data.problem.sound_item.sound);
-      const problemText = data.choices
-        .map((item: any) => item.item_name)
-        .join(', ');
-      setProblem(problemText);
+    if (
+      level < 1 ||
+      problemNumber < 1 ||
+      itemCount < 1 ||
+      itemArray.length < 1 ||
+      answerItems.length < 1 ||
+      emptyItems.length > 0
+    ) {
+      return;
     }
-  }, [data]);
-
-  const emptyItems = useMemo(() => {
-    const length = itemArray ? itemArray.length : 0;
-    return Array(itemCount > length ? itemCount - length : 0).fill(0);
-  }, [itemCount, itemArray]);
+  };
 
   useEffect(() => {
     if (clickedItemId !== null && clickedItemId > 0) {
@@ -174,25 +169,21 @@ const MemoryProblemForm: React.FC<PropsType> = ({
   }, [answerId]);
 
   useEffect(() => {
-    const problemText = itemArray.map((item: any) => item.item_name).join(', ');
-    setProblem(problemText);
+    const text = itemArray.map((item: any) => item.item_name).join(', ');
+    setProblemText(text);
   }, [itemArray]);
 
   return (
     <OverlayProvider>
       <ContainerStyle>
-        <Box>기억력 향상 폼 레벨. {currentLevel}</Box>
+        <Box>기억력 향상 문제 만들기</Box>
         <BlockStyle>
           <Typography>문제</Typography>
-          <TextField value={problem} sx={{ width: 620 }} size="small" />
+          <TextField value={problemText} sx={{ width: 620 }} size="small" />
         </BlockStyle>
         <BlockStyle height={'130px'}>
           <Typography>음성</Typography>
-          <AudioPlayer
-            autoPlay
-            src={soundUrl}
-            onPlay={(e) => console.log('onPlay')}
-          />
+          <AudioPlayer autoPlay src="" onPlay={(e) => console.log('onPlay')} />
         </BlockStyle>
         <BlockStyle>
           <Typography>반응지연</Typography>
@@ -278,4 +269,4 @@ const MemoryProblemForm: React.FC<PropsType> = ({
   );
 };
 
-export default MemoryProblemForm;
+export default MemoryProblemCreateForm;
