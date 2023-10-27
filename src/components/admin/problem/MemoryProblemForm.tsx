@@ -1,13 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import {
-  Box,
-  TextField,
-  Typography,
-  styled,
-  Grid,
-  Button,
-} from '@mui/material';
-import { useLocation } from 'react-router-dom';
+import { Box, TextField, Typography, styled, Button } from '@mui/material';
 import ItemButton from './ItemButton';
 import useSWR from 'swr';
 import { fetcher } from '../../../utils/fetcher';
@@ -18,6 +10,7 @@ import Overlay from '../../commons/Overlay';
 import AddImageItemForm from './AddImageItemForm';
 import { OverlayProvider } from '../../../context/OverlayContext';
 import { useAddItemStore } from '../../../store/MemoryStore';
+import usePostHook from '../../../hooks/usePostHook';
 
 interface PropsType {
   currentLevel: number;
@@ -88,6 +81,26 @@ const MemoryProblemForm: React.FC<PropsType> = ({
   const { clickedItemId, answerId, setClickedItemId, setAnswerId } =
     useAddItemStore((state: any) => state);
 
+  const {
+    data: responseData,
+    error: postError,
+    isValidating,
+    executePost,
+  } = usePostHook('api/problem/memory/', {
+    problem: {
+      type: 'memory',
+      level: level,
+      question_number: problemNumber,
+    },
+    choices: itemArray.map((item) => item.pk),
+    answers: answerItems,
+    choice_count: itemCount,
+    answer_count: answerItems.length,
+    syllable_count: 4,
+    has_response_delay: true,
+    response_delay: delay,
+  });
+
   const { data, error, isLoading } = useSWR(
     `problem/memory/${currentProblemId}/`,
     (url) => fetcher({ url })
@@ -118,10 +131,21 @@ const MemoryProblemForm: React.FC<PropsType> = ({
   };
 
   const onSubmit = () => {
-    const choices = itemArray.map((item) => item.pk);
+    if (
+      itemArray.length !== itemCount ||
+      itemArray.length < 1 ||
+      answerItems.length < 1 ||
+      problemNumber < 1 ||
+      level < 1
+    ) {
+      alert('보기 개수와 정답 개수를 확인해주세요.');
+      return;
+    }
+    // executePost().then((data) => console.log(data));
   };
 
   useEffect(() => {
+    console.log(data);
     if (data) {
       setItemCount(data.choice_count || 0);
       setDelay(data.response_delay || 0);
@@ -245,6 +269,9 @@ const MemoryProblemForm: React.FC<PropsType> = ({
                 category={item.category}
                 syllableCount={item.syllable_count}
                 image={item.image}
+                answer={answerItems.some(
+                  (answerItem: any) => answerItem.pk === item.pk
+                )}
               />
             ))}
             {emptyItems.length > 0 &&

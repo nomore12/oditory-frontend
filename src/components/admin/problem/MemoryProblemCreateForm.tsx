@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Box, Button, styled, TextField, Typography } from '@mui/material';
 import AudioPlayer from 'react-h5-audio-player';
 import ItemButton from './ItemButton';
@@ -65,6 +66,7 @@ const MemoryProblemCreateForm: React.FC = () => {
   const [level, setLevel] = useState(0);
   const [problemNumber, setProblemNumber] = useState(0);
   const [answerItems, setAnswerItems] = useState<number[]>([]);
+  const navigate = useNavigate();
 
   const { clickedItemId, answerId, setClickedItemId, setAnswerId } =
     useAddItemStore((state: any) => state);
@@ -90,18 +92,6 @@ const MemoryProblemCreateForm: React.FC = () => {
     answers: answerItems,
   });
 
-  const a = {
-    problem: {
-      type: 'memory',
-      level: 2,
-      question_number: 2,
-    },
-    choice_count: 4,
-    answer_count: 1,
-    choices: [25, 32, 28, 29],
-    answers: [32, 25],
-  };
-
   const emptyItems = useMemo(() => {
     const length = itemArray ? itemArray.length : 0;
     return Array(itemCount > length ? itemCount - length : 0).fill(0);
@@ -123,18 +113,25 @@ const MemoryProblemCreateForm: React.FC = () => {
     setProblemNumber(Number(e.target.value));
   };
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     if (
-      level < 1 ||
-      problemNumber < 1 ||
-      itemCount < 1 ||
+      itemArray.length !== itemCount ||
       itemArray.length < 1 ||
       answerItems.length < 1 ||
+      problemNumber < 1 ||
+      level < 1 ||
       emptyItems.length > 0
     ) {
+      alert('보기 개수와 정답 개수를 확인해주세요.');
       return;
     }
+    await executePost();
+    if (!error) navigate('/admin/problem/memory');
   };
+
+  // useEffect(() => {
+  //   console.log(responseData);
+  // }, [responseData]);
 
   useEffect(() => {
     if (clickedItemId !== null && clickedItemId > 0) {

@@ -7,7 +7,7 @@ import {
   FormGroup,
   FormControlLabel,
 } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ControlPointOutlinedIcon from '@mui/icons-material/ControlPointOutlined';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { IconButton } from '@mui/material';
@@ -20,6 +20,7 @@ interface PropsType {
   syllableCount: number;
   category: string;
   image: string;
+  answer?: boolean;
 }
 
 const ItemButton: React.FC<PropsType> = ({
@@ -28,11 +29,18 @@ const ItemButton: React.FC<PropsType> = ({
   category,
   syllableCount,
   image,
+  answer,
 }) => {
   const { isAdd, overlayHandler } = useOverlay();
+  const [isAnswer, setIsAnswer] = useState(false);
   const { setClickedItemId, setAnswerId } = useAddItemStore(
     (state: any) => state
   );
+
+  useEffect(() => {
+    console.log('answer', answer);
+    setIsAnswer(answer ? true : false);
+  }, [answer, isAnswer]);
 
   return (
     <Box
@@ -63,8 +71,10 @@ const ItemButton: React.FC<PropsType> = ({
             <FormControlLabel
               control={
                 <Checkbox
+                  defaultChecked={answer}
                   onChange={(e) => {
                     e.target.checked ? setAnswerId(id) : setAnswerId(id * -1);
+                    setIsAnswer(!isAnswer);
                   }}
                 />
               }

@@ -15,8 +15,10 @@ const MemoryEnhancement: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { data, error, isLoading } = useSWR('problem/memory/', (url) =>
-    fetcher({ url })
+  const { data, mutate, error, isLoading } = useSWR(
+    'problem/memory/',
+    (url) => fetcher({ url }),
+    { revalidateOnReconnect: true }
   );
 
   const handleProblemNumberClick = (selectedNumber: number) => {
@@ -29,6 +31,7 @@ const MemoryEnhancement: React.FC = () => {
   };
 
   useEffect(() => {
+    mutate();
     const paths = location.pathname.split('/');
     setCurrentLocation(paths[paths.length - 1]);
     const problemNumber = paths[paths.length - 1];
