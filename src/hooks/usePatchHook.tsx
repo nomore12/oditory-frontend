@@ -1,17 +1,19 @@
 import useSWR, { mutate } from 'swr';
 import { fetcher } from '../utils/fetcher';
 
-const usePatchHook = (url: string, initialData: any) => {
-  const key = JSON.stringify({ url, data: initialData });
+const usePatchHook = (url: string, data: any, contentType: any) => {
+  const key = JSON.stringify({ url, data });
 
   const {
     data: responseData,
     error,
     isValidating,
   } = useSWR(key, null, {
-    // 초기 호출은 하지 않기 위해 fetcher 대신 null을 전달합니다.
     revalidateOnMount: false,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
     shouldRetryOnError: false,
+    initialData: data,
   });
 
   const executePatch = async (updatedData: any) => {
@@ -20,16 +22,12 @@ const usePatchHook = (url: string, initialData: any) => {
         url,
         method: 'PATCH',
         data: updatedData,
-        headers: { 'Content-Type': 'multipart/form-data' },
+        headers: contentType,
       });
 
       mutate(key, response, false);
 
-      if (response) {
-        return true;
-      } else {
-        return false;
-      }
+      return !!response;
     } catch (error) {
       console.error('Error during PUT request:', error);
       return false;
@@ -40,7 +38,7 @@ const usePatchHook = (url: string, initialData: any) => {
     data: responseData,
     error,
     isValidating,
-    executePut: executePatch,
+    executePatch,
   };
 };
 

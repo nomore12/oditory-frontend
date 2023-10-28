@@ -47,12 +47,17 @@ const AddItemForm: React.FC<PropsType> = ({
     category: category,
   };
 
-  const { executePost } = usePostData('item/images/', postData);
+  const { executePost } = usePostData('item/images/', postData, {
+    'Content-Type': 'multipart/form-data',
+  });
+
   const {
     data: puData,
     error: putError,
-    executePut,
-  } = usePatchHook(`item/images/${id}/`, postData);
+    executePatch,
+  } = usePatchHook(`item/images/${id}/`, postData, {
+    'Content-Type': 'multipart/form-data',
+  });
 
   const fetchUrl = title === '수정하기' ? `item/images/${id}/` : null;
   const {
@@ -111,7 +116,7 @@ const AddItemForm: React.FC<PropsType> = ({
       return;
     }
 
-    const isSuccess = await executePut(postData);
+    const isSuccess = await executePatch(postData);
     if (isSuccess) {
       alert('아이템 변경이 완료되었습니다.');
       openHandler();

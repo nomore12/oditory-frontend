@@ -80,17 +80,21 @@ const MemoryProblemCreateForm: React.FC = () => {
     error,
     isValidating,
     executePost,
-  } = usePostHook('problem/memory/', {
-    problem: {
-      type: 'memory',
-      level: level,
-      question_number: problemNumber,
+  } = usePostHook(
+    'problem/memory/',
+    {
+      problem: {
+        type: 'memory',
+        level: level,
+        question_number: problemNumber,
+      },
+      choice_count: itemCount,
+      answer_count: answerItems.length,
+      choices: itemArray.map((item: any) => item.pk),
+      answers: answerItems,
     },
-    choice_count: itemCount,
-    answer_count: answerItems.length,
-    choices: itemArray.map((item: any) => item.pk),
-    answers: answerItems,
-  });
+    { 'Content-Type': 'application/json' }
+  );
 
   const emptyItems = useMemo(() => {
     const length = itemArray ? itemArray.length : 0;

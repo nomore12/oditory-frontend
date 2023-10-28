@@ -38,7 +38,6 @@ const ItemButton: React.FC<PropsType> = ({
   );
 
   useEffect(() => {
-    console.log('answer', answer);
     setIsAnswer(answer ? true : false);
   }, [answer, isAnswer]);
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Box, TextField, Typography, styled, Button } from '@mui/material';
 import ItemButton from './ItemButton';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import { fetcher } from '../../../utils/fetcher';
 import EmptyItemButton from './EmptyItemButton';
 import AudioPlayer from 'react-h5-audio-player';
@@ -11,6 +11,8 @@ import AddImageItemForm from './AddImageItemForm';
 import { OverlayProvider } from '../../../context/OverlayContext';
 import { useAddItemStore } from '../../../store/MemoryStore';
 import usePostHook from '../../../hooks/usePostHook';
+import usePatchHook from '../../../hooks/usePatchHook';
+import { useNavigate } from 'react-router-dom';
 
 interface PropsType {
   currentLevel: number;
@@ -80,26 +82,31 @@ const MemoryProblemForm: React.FC<PropsType> = ({
   const [problemNumber, setProblemNumber] = useState(0);
   const { clickedItemId, answerId, setClickedItemId, setAnswerId } =
     useAddItemStore((state: any) => state);
+  const navigate = useNavigate();
 
   const {
     data: responseData,
-    error: postError,
+    error: patchError,
     isValidating,
-    executePost,
-  } = usePostHook('api/problem/memory/', {
-    problem: {
-      type: 'memory',
-      level: level,
-      question_number: problemNumber,
+    executePatch,
+  } = usePatchHook(
+    `problem/memory/${currentProblemId}/`,
+    {
+      problem: {
+        type: 'memory',
+        level: level,
+        question_number: problemNumber,
+      },
+      choices: itemArray.map((item) => item.pk),
+      answers: answerItems,
+      choice_count: itemCount,
+      answer_count: answerItems.length,
+      syllable_count: 4,
+      has_response_delay: true,
+      response_delay: delay,
     },
-    choices: itemArray.map((item) => item.pk),
-    answers: answerItems,
-    choice_count: itemCount,
-    answer_count: answerItems.length,
-    syllable_count: 4,
-    has_response_delay: true,
-    response_delay: delay,
-  });
+    { 'Content-Type': 'application/json' }
+  );
 
   const { data, error, isLoading } = useSWR(
     `problem/memory/${currentProblemId}/`,
@@ -131,6 +138,7 @@ const MemoryProblemForm: React.FC<PropsType> = ({
   };
 
   const onSubmit = () => {
+    console.log('patch', currentProblemId, answerItems, itemArray);
     if (
       itemArray.length !== itemCount ||
       itemArray.length < 1 ||
@@ -141,7 +149,25 @@ const MemoryProblemForm: React.FC<PropsType> = ({
       alert('보기 개수와 정답 개수를 확인해주세요.');
       return;
     }
-    // executePost().then((data) => console.log(data));
+    setTimeout(() => console.log('timeout'), 3000);
+    executePatch({
+      problem: {
+        type: 'memory',
+        level: level,
+        question_number: problemNumber,
+      },
+      choices: itemArray.map((item) => item.pk),
+      answers: answerItems,
+      choice_count: itemCount,
+      answer_count: answerItems.length,
+      syllable_count: 4,
+      has_response_delay: true,
+      response_delay: delay,
+    }).then(() => {
+      // 패치 요청이 성공적으로 완료되면 SWR 캐시를 갱신하고 페이지 이동
+      mutate(`problem/memory/${currentProblemId}/`);
+      navigate('/admin/problem/memory');
+    });
   };
 
   useEffect(() => {
@@ -151,8 +177,10 @@ const MemoryProblemForm: React.FC<PropsType> = ({
       setDelay(data.response_delay || 0);
       setItems(data.choices.length);
       setItemArray([...data.choices]);
-      setAnswerItems([...data.answers]);
+      setAnswerItems([...data.answers.map((answer: any) => answer.pk)]);
       setSoundUrl(data.problem.sound_item.sound);
+      setLevel(data.problem.level);
+      setProblemNumber(data.problem.question_number);
       const problemText = data.choices
         .map((item: any) => item.item_name)
         .join(', ');
@@ -187,12 +215,13 @@ const MemoryProblemForm: React.FC<PropsType> = ({
   }, [clickedItemId]);
 
   useEffect(() => {
+    console.log('answerId', answerId, answerItems);
     if (answerId !== null && answerId > 0) {
-      setAnswerItems([...answerItems, answerId]);
+      setAnswerItems((prev) => [...prev, answerId]);
       setAnswerId(null);
     } else if (answerId < 0) {
       const deletedId = answerId * -1;
-      setAnswerItems(answerItems.filter((item: any) => item !== deletedId));
+      setAnswerItems((prev) => prev.filter((item) => item !== deletedId));
       setAnswerId(null);
     }
   }, [answerId]);
@@ -270,7 +299,7 @@ const MemoryProblemForm: React.FC<PropsType> = ({
                 syllableCount={item.syllable_count}
                 image={item.image}
                 answer={answerItems.some(
-                  (answerItem: any) => answerItem.pk === item.pk
+                  (answerItem: any) => answerItem === item.pk
                 )}
               />
             ))}

@@ -1,7 +1,7 @@
 import useSWR, { mutate } from 'swr';
 import { fetcher } from '../utils/fetcher';
 
-const usePostData = (url: string, data: any) => {
+const usePostData = (url: string, data: any, header: any) => {
   const key = JSON.stringify({ url, data });
 
   // useSWR with null fetcher to prevent automatic fetching
@@ -25,7 +25,7 @@ const usePostData = (url: string, data: any) => {
         url,
         method: 'POST',
         data,
-        headers: { 'Content-Type': 'application/json' },
+        headers: header,
       });
 
       mutate(key, response, false);
