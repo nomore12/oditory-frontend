@@ -181,7 +181,7 @@ const MemoryProblemForm: React.FC<PropsType> = ({
       setSoundUrl(data.problem.sound_item.sound);
       setLevel(data.problem.level);
       setProblemNumber(data.problem.question_number);
-      const problemText = data.choices
+      const problemText = data.answers
         .map((item: any) => item.item_name)
         .join(', ');
       setProblem(problemText);
@@ -227,9 +227,12 @@ const MemoryProblemForm: React.FC<PropsType> = ({
   }, [answerId]);
 
   useEffect(() => {
-    const problemText = itemArray.map((item: any) => item.item_name).join(', ');
-    setProblem(problemText);
-  }, [itemArray]);
+    const text = itemArray
+      .filter((item: any) => answerItems.includes(item.pk))
+      .map((item: any) => item.item_name)
+      .join(', ');
+    setProblem(text);
+  }, [answerItems]);
 
   return (
     <OverlayProvider>

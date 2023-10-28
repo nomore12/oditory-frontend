@@ -170,9 +170,12 @@ const MemoryProblemCreateForm: React.FC = () => {
   }, [answerId]);
 
   useEffect(() => {
-    const text = itemArray.map((item: any) => item.item_name).join(', ');
+    const text = itemArray
+      .filter((item: any) => answerItems.includes(item.pk))
+      .map((item: any) => item.item_name)
+      .join(', ');
     setProblemText(text);
-  }, [itemArray]);
+  }, [answerItems]);
 
   return (
     <OverlayProvider>
@@ -180,7 +183,12 @@ const MemoryProblemCreateForm: React.FC = () => {
         <Box>기억력 향상 문제 만들기</Box>
         <BlockStyle>
           <Typography>문제</Typography>
-          <TextField value={problemText} sx={{ width: 620 }} size="small" />
+          <TextField
+            disabled
+            value={problemText}
+            sx={{ width: 620 }}
+            size="small"
+          />
         </BlockStyle>
         <BlockStyle height={'130px'}>
           <Typography>음성</Typography>
