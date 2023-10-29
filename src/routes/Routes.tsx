@@ -6,6 +6,7 @@ import PlayUnderstandPage from '../pages/PlayUnderstandPage';
 import PlayRememberPage from '../pages/PlayRememberPage';
 import AdminLoginPage from '../pages/AdminLoginPage';
 import AdminPage from '../pages/AdminPage';
+import RegisterPage from '../pages/RegisterPage';
 
 export interface RouteItem {
   path: string;
@@ -23,6 +24,11 @@ const routes: RouteItem[] = [
   {
     path: '/login',
     element: <LoginPage />,
+    exact: true,
+  },
+  {
+    path: '/register',
+    element: <RegisterPage />,
     exact: true,
   },
   {

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import MainImage from '../components/auth/MainImage';
 import TextField from '../components/commons/TextField';
+import LoginForm from '../components/auth/LoginForm';
 
 const ContainerStyle = styled.div`
   width: 100vw;
@@ -37,8 +38,7 @@ const LoginPage: React.FC = () => {
         <MainImage />
       </div>
       <div className="login-form__section">
-        <TextField label="아이디" />
-        <TextField type="password" label="패스워드" />
+        <LoginForm />
       </div>
     </ContainerStyle>
   );

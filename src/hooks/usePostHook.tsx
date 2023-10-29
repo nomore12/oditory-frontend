@@ -19,7 +19,7 @@ const usePostData = (url: string, data: any, header: any) => {
 
   // Manually trigger the POST request with this function
   const executePost = async () => {
-    console.log(data);
+    console.log('executePost', data);
     try {
       const response = await fetcher({
         url,
@@ -30,10 +30,10 @@ const usePostData = (url: string, data: any, header: any) => {
 
       mutate(key, response, false);
 
-      return !!response;
+      return response;
     } catch (error) {
       console.error('Error during POST request:', error);
-      return false;
+      return undefined;
     }
   };
 
