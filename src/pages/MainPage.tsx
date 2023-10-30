@@ -3,8 +3,12 @@ import { Box, Typography } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
 import ClearIcon from '@mui/icons-material/Clear';
 import { Link } from 'react-router-dom';
+import useAuthStore from '../store/AuthStore';
 
 const MainPage: React.FC = () => {
+  const { token, user } = useAuthStore();
+  console.log(user);
+
   return (
     <Box
       sx={{

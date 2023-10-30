@@ -31,7 +31,7 @@ const LoginForm: React.FC = () => {
   const [id, setId] = useState<string>('');
   const [pw, setPw] = useState<string>('');
   const [rememberId, setRememberId] = useState<boolean>(false);
-  const { setToken } = useAuthStore;
+  const { setAuth } = useAuthStore();
   const navigate = useNavigate();
 
   const { data, error, isValidating, executePost } = usePostData(
@@ -62,10 +62,9 @@ const LoginForm: React.FC = () => {
 
     const data = await executePost();
 
-    if (data && data.token) {
-      // console.log(data);
-      // Cookie.set('token', data.token, { expires: 7, path: '/' });
-      sessionStorage.setItem('token', data.token);
+    if (data && data.token && data.user) {
+      delete data.user.user.password;
+      setAuth(data.token, data.user);
       navigate('/main');
     }
   };

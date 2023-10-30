@@ -12,6 +12,7 @@ export interface RouteItem {
   path: string;
   element: React.ReactElement;
   exact?: boolean;
+  needLogin?: boolean;
   children?: RouteItem[];
 }
 
@@ -20,6 +21,7 @@ const routes: RouteItem[] = [
     path: '/main',
     element: <MainPage />,
     exact: true,
+    needLogin: true,
   },
   {
     path: '/login',
@@ -40,21 +42,25 @@ const routes: RouteItem[] = [
     path: '/play-understand',
     element: <PlayUnderstandPage />,
     exact: true,
+    needLogin: true,
   },
   {
     path: '/play-remember',
     element: <PlayRememberPage />,
     exact: true,
+    needLogin: true,
   },
   {
     path: '/admin/login',
     element: <AdminLoginPage />,
     exact: true,
+    needLogin: true,
   },
   {
     path: '/admin/*',
     element: <AdminPage />,
     exact: true,
+    needLogin: true,
   },
 ];
 
