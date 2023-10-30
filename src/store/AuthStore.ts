@@ -1,4 +1,4 @@
-import create from 'zustand';
+import { create } from 'zustand';
 import { devtools, persist, createJSONStorage } from 'zustand/middleware';
 
 type User = {
@@ -44,36 +44,6 @@ type AuthStore = {
   clearAuth: () => void;
 };
 
-const a = {
-  user: {
-    id: 2,
-    password:
-      'pbkdf2_sha256$600000$MrYf9EOAaNSyhBqXevxV4U$6K6PEiNqRA9pGAi2A9Z1E36vwOvxg0WCvRrMKS/4ekQ=',
-    last_login: null,
-    is_superuser: false,
-    username: '노성호',
-    first_name: '',
-    last_name: '',
-    email: 'nightwing@naver.com',
-    is_staff: true,
-    is_active: true,
-    date_joined: '2023-10-28T15:38:34.831054+09:00',
-    groups: [],
-    user_permissions: [],
-  },
-  profile: {
-    id: 1,
-    is_teacher: false,
-    phone_number: '',
-    user: 2,
-  },
-  teacher_info: null,
-  student_info: {
-    id: 1,
-    user: 2,
-  },
-};
-
 const useAuthStoreInternal = create(
   devtools(
     persist(
@@ -103,5 +73,3 @@ export const useAuthStore = (): AuthStore => {
 };
 
 export default useAuthStore;
-// 사용 예:
-// useAuthStore.getState().setToken('YOUR_NEW_TOKEN');
