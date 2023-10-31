@@ -8,6 +8,7 @@ import AdminLoginPage from '../pages/AdminLoginPage';
 import AdminPage from '../pages/AdminPage';
 import RegisterPage from '../pages/RegisterPage';
 import RegisterConfirmPage from '../pages/RegisterConfirmPage';
+import EmailVerify from '../pages/EmailVerify';
 
 export interface RouteItem {
   path: string;
@@ -37,6 +38,11 @@ const routes: RouteItem[] = [
   {
     path: '/register-confirm',
     element: <RegisterConfirmPage />,
+    exact: true,
+  },
+  {
+    path: '/verify/*',
+    element: <EmailVerify />,
     exact: true,
   },
   {

@@ -1,6 +1,21 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
-import StageIcon from '../components/play/StageIcon';
+import styled from 'styled-components';
+import StarNumberIcon from '../components/commons/StarNumberIcon';
+import useGetHook from '../hooks/useGetHook';
+
+const ContainerStyle = styled.div`
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-image: url('/images/bg-01-01-1@2x.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+`;
 
 const arr = [];
 for (let i = 0; i < 40; i++) {
@@ -10,35 +25,35 @@ for (let i = 0; i < 40; i++) {
 const stageArr = arr.map((item, index) => {
   return (
     <Box key={index} sx={{ margin: '1rem' }}>
-      <StageIcon
-        isClear={index < 9 ? true : false}
-        isStar={index < 5 ? true : false}
-        stageNumber={item}
-      />
+      <StarNumberIcon starNumber={index + 1} />
     </Box>
   );
 });
 
 const PlayRememberPage: React.FC = () => {
+  const { data, error, mutate } = useGetHook('problem/memory/');
+
+  useEffect(() => {
+    console.log('data', data);
+  }, [data]);
+
+  const starArr = data?.map((item: any, index: number) => {
+    return (
+      <Box key={index} sx={{ margin: '1rem' }}>
+        <StarNumberIcon starNumber={item.problem.question_number} />
+      </Box>
+    );
+  });
+
   return (
-    <Box
-      sx={{
-        width: '100vw',
-        height: '100vh',
-        padding: '4rem',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-      }}
-    >
+    <ContainerStyle>
       <Typography variant="h2" fontWeight={600}>
-        기억하기
+        단어를 듣고 알맞은 정답을 찾아보세요.
       </Typography>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', padding: 25 }}>
-        {/*<StageIcon isClear={true} isStar={true} stageNumber={4} />*/}
-        {stageArr}
+        {starArr}
       </Box>
-    </Box>
+    </ContainerStyle>
   );
 };
 

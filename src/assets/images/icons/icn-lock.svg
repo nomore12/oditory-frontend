@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32.1" viewBox="0 0 32 32.1">
+  <g id="icn-lock" transform="translate(-718 -313.9)">
+    <rect id="Rectangle_627" data-name="Rectangle 627" width="32" height="32" transform="translate(718 314)" fill="red" opacity="0"/>
+    <g id="Group_893" data-name="Group 893" transform="translate(721.124 311.67)">
+      <path id="Path_5631" data-name="Path 5631" d="M7.27,9.725V7.911a7.911,7.911,0,1,1,15.822,0V9.725M15.181,1.941a5.965,5.965,0,0,0-5.97,5.97V9.725c0,3.292,11.94,3.292,11.94,0V7.911a5.977,5.977,0,0,0-5.97-5.97" transform="translate(-2.305 2.73)" fill="#d5cece" stroke="#d5cece" stroke-width="1"/>
+      <path id="Subtraction_1" data-name="Subtraction 1" d="M23.048,20.495H2.7a2.706,2.706,0,0,1-2.7-2.7V2.7A2.706,2.706,0,0,1,2.7,0H23.048a2.706,2.706,0,0,1,2.7,2.7V17.792A2.706,2.706,0,0,1,23.048,20.495ZM12.874,5.583a2.894,2.894,0,0,0-1.172,5.54v3.133a1.023,1.023,0,0,0,1.021,1.022h.3a1.024,1.024,0,0,0,1.022-1.022V11.123a2.894,2.894,0,0,0-1.174-5.539Z" transform="translate(0 11.627)" fill="#d5cece"/>
+    </g>
+  </g>
+</svg>

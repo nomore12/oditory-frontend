@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24.159" height="24" viewBox="0 0 24.159 24">
+  <g id="icn-listen" transform="translate(-956 -704)">
+    <rect id="Rectangle_643" data-name="Rectangle 643" width="24" height="24" transform="translate(956 704)" fill="red" opacity="0"/>
+    <g id="Group_930" data-name="Group 930" transform="translate(6461.5 3004.599)">
+      <path id="Path_5637" data-name="Path 5637" d="M4.779,20.573H1.317A.816.816,0,0,1,.5,19.756V13.575a.816.816,0,0,1,.817-.817H4.779Z" transform="translate(-5505 -2305.253)" fill="none" stroke="#fff" stroke-width="1.7"/>
+      <path id="Path_5638" data-name="Path 5638" d="M10.979,5.506,17.285.585s.906-.616.856.405V18.152s-.006.973-1.036.225l-6.126-5.056" transform="translate(-5511.2 -2298)" fill="none" stroke="#fff" stroke-width="1.7"/>
+      <path id="Path_5640" data-name="Path 5640" d="M39.6,9.6a5.4,5.4,0,0,1,0,7.933" transform="translate(-5528.395 -2302.153)" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="1.7"/>
+      <path id="Path_5641" data-name="Path 5641" d="M45.444,2.966A10.009,10.009,0,0,1,45.5,17.733" transform="translate(-5530.914 -2298.963)" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="1.7"/>
+    </g>
+  </g>
+</svg>
