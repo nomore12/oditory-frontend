@@ -9,6 +9,7 @@ import AdminPage from '../pages/AdminPage';
 import RegisterPage from '../pages/RegisterPage';
 import RegisterConfirmPage from '../pages/RegisterConfirmPage';
 import EmailVerify from '../pages/EmailVerify';
+import RememberProblemPage from '../pages/RememberProblemPage';
 
 export interface RouteItem {
   path: string;
@@ -59,6 +60,12 @@ const routes: RouteItem[] = [
   {
     path: '/play-remember',
     element: <PlayRememberPage />,
+    exact: true,
+    needLogin: true,
+  },
+  {
+    path: '/play-remember/:level',
+    element: <RememberProblemPage />,
     exact: true,
     needLogin: true,
   },

@@ -1,11 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import { ReactComponent as Star } from '../../assets/images/icons/icn-star.svg';
-import { useNavigate } from 'react-router-dom';
+import { ReactComponent as Lock } from '../../assets/images/icons/icn-lock.svg';
 
 interface PropsType {
   starNumber: number;
-  url: string;
 }
 
 const ContainerStyle = styled.div`
@@ -13,7 +11,7 @@ const ContainerStyle = styled.div`
   justify-content: center;
   align-items: center;
   border-radius: 50%;
-  background-color: #f5d319;
+  background-color: #ffffff;
   width: 64px;
   height: 64px;
   position: relative;
@@ -32,19 +30,13 @@ const ContainerStyle = styled.div`
   }
 `;
 
-const StarNumberIcon: React.FC<PropsType> = ({ starNumber, url }) => {
-  const navigate = useNavigate();
-
-  const onIconClick = () => {
-    navigate(url);
-  };
-
+const LockNumberIcon: React.FC<PropsType> = ({ starNumber }) => {
   return (
-    <ContainerStyle onClick={onIconClick}>
-      <Star width="44px" height="44px" fill="#fff" />
-      <div className="star-icon-number">{starNumber}</div>
+    <ContainerStyle>
+      <Lock width="44px" height="44px" fill="#fff" />
+      {/*<div className="star-icon-number">{starNumber}</div>*/}
     </ContainerStyle>
   );
 };
 
-export default StarNumberIcon;
+export default LockNumberIcon;

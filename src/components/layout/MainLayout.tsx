@@ -14,11 +14,18 @@ import ProblemNavigation from '../../components/commons/ProblemNavigation';
 function MainLayout() {
   const location = useLocation();
   const showNavigation = ['/main'].includes(location.pathname);
-  const showProblemNavigation = [
-    '/play-remember',
-    '/play-order',
-    'play-understand',
-  ].includes(location.pathname);
+  const isPathMatching = (path: string) => {
+    const patterns = [
+      /^\/play-remember$/,
+      /^\/play-remember\/\d+$/,
+      /^\/play-order$/,
+      /^\/play-understand$/,
+    ];
+
+    return patterns.some((pattern) => pattern.test(path));
+  };
+
+  const showProblemNavigation = isPathMatching(location.pathname);
 
   return (
     <>

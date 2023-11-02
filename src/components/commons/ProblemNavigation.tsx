@@ -28,17 +28,12 @@ const ContainerStyle = styled.div`
 
 const ProblemNavigation: React.FC = () => {
   const { user } = useAuthStore();
-  const location = useLocation();
   const navigate = useNavigate();
 
   return (
     <ContainerStyle>
       <div className="back-wrapper">
-        <BackIcon
-          width="36px"
-          height="36px"
-          onClick={() => navigate('/main')}
-        />
+        <BackIcon width="36px" height="36px" onClick={() => navigate(-1)} />
         <h2>기억력 향상</h2>
       </div>
 
