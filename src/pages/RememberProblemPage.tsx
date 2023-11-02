@@ -5,6 +5,9 @@ import useSWR from 'swr';
 import { fetcher } from '../utils/fetcher';
 import { shuffleArray } from '../utils/utils';
 import type { MemoryProblemData, AnswerItem } from '../type';
+import ChoicesBoard from '../components/play/remember/ChoicesBoard';
+import { useMemoryProblemStore } from '../store/MemoryStore';
+import AudioComponent from '../components/play/AudioComponent';
 
 const ContainerStyle = styled.div`
   display: flex;
@@ -27,29 +30,41 @@ const RememberProblemPage: React.FC = () => {
     `problem/memory/?level=${level}`,
     (url) => fetcher({ url })
   );
-  const [currentProblemData, setCurrentProblemData] =
-    useState<MemoryProblemData | null>(null);
+  const [currentProblemData, setCurrentProblemData] = useState<
+    MemoryProblemData[] | null
+  >(null);
   const [problemArray, setProblemArray] = useState<AnswerItem[]>([]);
+  const {
+    currentProblemNumber,
+    memoryProblemStateData,
+    setInitialMemoryProblemStateData,
+    setCurrentProblemIsCorrect,
+    setCurrentProblemIsWrong,
+  } = useMemoryProblemStore();
 
   useEffect(() => {
     if (data) {
-      console.log(data);
       setCurrentProblemData(data);
-      const shuffledArr = data?.choices ? shuffleArray(data.choices) : [];
-      if (Array.isArray(shuffledArr)) {
-        setProblemArray(shuffledArr);
-      }
+      console.log('data', data, data[currentProblemNumber]);
+      const problems = data[currentProblemNumber]?.choices;
+      setProblemArray(problems);
     }
   }, [data, isLoading]);
 
+  useEffect(() => {
+    console.log('currentProblemData', currentProblemData, problemArray);
+  }, [currentProblemData, problemArray]);
+
   return (
     <ContainerStyle>
-      <h2
-        className="memory-page-title"
-        onClick={() => console.log(currentProblemData, problemArray)}
-      >
-        단어를 듣고 알맞은 정답을 찾아보세요.
-      </h2>
+      {problemArray && <ChoicesBoard itemArray={problemArray} />}
+      {currentProblemData && (
+        <AudioComponent
+          src={
+            currentProblemData[currentProblemNumber].problem.sound_item.sound
+          }
+        />
+      )}
     </ContainerStyle>
   );
 };
