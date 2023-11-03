@@ -32,6 +32,20 @@ const AudioComponent: React.FC<AudioComponentProps> = ({
     if (audioRef.current) {
       if (isPlaying) {
         audioRef.current.play();
+        setTimeout(
+          () => setIsPlaying(false),
+          audioRef.current?.duration * 1000 + 500
+        );
+        console.log('audio', audioRef.current?.onplaying);
+        setTimeout(
+          () =>
+            console.log(
+              audioRef.current?.currentTime,
+              audioRef.current?.currentSrc,
+              audioRef.current?.duration
+            ),
+          5000
+        );
       } else {
         audioRef.current.pause();
       }
@@ -51,7 +65,7 @@ const AudioComponent: React.FC<AudioComponentProps> = ({
   return (
     <ContainerStyle>
       <audio ref={audioRef} src={src} />
-      <button onClick={togglePlay}>{isPlaying ? '다시듣기' : '재생중'}</button>
+      <button onClick={togglePlay}>{isPlaying ? '재생중' : '다시듣기'}</button>
     </ContainerStyle>
   );
 };

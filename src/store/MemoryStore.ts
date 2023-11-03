@@ -10,9 +10,12 @@ type MemoryProblemStateData = {
 type MemoryProblemStoreState = {
   currentProblemNumber: number;
   memoryProblemStateData: MemoryProblemStateData[];
+  userCheckedAnswers: number[];
   setInitialMemoryProblemStateData: (data: MemoryProblemData[]) => void;
   setCurrentProblemIsCorrect: () => void;
   setCurrentProblemIsWrong: () => void;
+  setUserCheckedAnswers: (id: number, remove?: boolean) => void;
+  clearUserCheckedAnswers: () => void;
 };
 
 export const useAddItemStore = create(
@@ -30,6 +33,7 @@ const useMemoryProblemInternalStore = create(
       (set) => ({
         currentProblemNumber: 0,
         memoryProblemStateData: [] as MemoryProblemStateData[],
+        userCheckedAnswers: [] as number[],
         setInitialMemoryProblemStateData: (data: MemoryProblemData[]) => {
           const problemData = data.map(
             (item: MemoryProblemData, index: number) => ({
@@ -76,6 +80,16 @@ const useMemoryProblemInternalStore = create(
               memoryProblemStateData: state.memoryProblemStateData,
             };
           }),
+        setUserCheckedAnswers: (id: number, remove = false) =>
+          set((state: MemoryProblemStoreState) => ({
+            userCheckedAnswers: remove
+              ? [...state.userCheckedAnswers.filter((item) => item !== id)]
+              : [...state.userCheckedAnswers, id],
+          })),
+        clearUserCheckedAnswers: () =>
+          set((state: MemoryProblemStoreState) => ({
+            userCheckedAnswers: [],
+          })),
       }),
       {
         name: 'memory-problem-storage',
@@ -90,8 +104,11 @@ export const useMemoryProblemStore = (): MemoryProblemStoreState => {
   return {
     currentProblemNumber: state.currentProblemNumber,
     memoryProblemStateData: state.memoryProblemStateData,
+    userCheckedAnswers: state.userCheckedAnswers,
     setInitialMemoryProblemStateData: state.setInitialMemoryProblemStateData,
     setCurrentProblemIsCorrect: state.setCurrentProblemIsCorrect,
     setCurrentProblemIsWrong: state.setCurrentProblemIsWrong,
+    setUserCheckedAnswers: state.setUserCheckedAnswers,
+    clearUserCheckedAnswers: state.clearUserCheckedAnswers,
   };
 };

@@ -11,7 +11,7 @@ const GridContainer = styled(Box)(({ theme }) => ({
   gap: 16,
   border: '1px solid black',
   width: 700,
-  height: 460,
+  height: 560,
   overflowY: 'auto',
   padding: 4,
 }));
@@ -27,7 +27,7 @@ const AddImageItemForm: React.FC = () => {
 
   return (
     <Box
-      sx={{ width: 720, height: 480, backgroundColor: '#fff' }}
+      sx={{ width: 720, height: 560, backgroundColor: '#fff' }}
       onClick={stopPropagation}
     >
       <GridContainer>

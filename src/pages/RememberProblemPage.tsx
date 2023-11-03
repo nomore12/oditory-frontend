@@ -30,38 +30,51 @@ const RememberProblemPage: React.FC = () => {
     `problem/memory/?level=${level}`,
     (url) => fetcher({ url })
   );
-  const [currentProblemData, setCurrentProblemData] = useState<
+  const [currentLevelProblemData, setCurrentLevelProblemData] = useState<
     MemoryProblemData[] | null
   >(null);
-  const [problemArray, setProblemArray] = useState<AnswerItem[]>([]);
+  const [currentProblemData, setCurrentProblemData] = useState<AnswerItem[]>(
+    []
+  );
   const {
     currentProblemNumber,
     memoryProblemStateData,
+    userCheckedAnswers,
     setInitialMemoryProblemStateData,
     setCurrentProblemIsCorrect,
     setCurrentProblemIsWrong,
+    clearUserCheckedAnswers,
   } = useMemoryProblemStore();
 
   useEffect(() => {
+    clearUserCheckedAnswers();
+  }, []);
+
+  useEffect(() => {
     if (data) {
-      setCurrentProblemData(data);
+      setCurrentLevelProblemData(data);
       console.log('data', data, data[currentProblemNumber]);
       const problems = data[currentProblemNumber]?.choices;
-      setProblemArray(problems);
+      setCurrentProblemData(problems);
     }
   }, [data, isLoading]);
 
   useEffect(() => {
-    console.log('currentProblemData', currentProblemData, problemArray);
-  }, [currentProblemData, problemArray]);
+    console.log(
+      'currentLevelProblemData',
+      currentLevelProblemData,
+      currentProblemData
+    );
+  }, [currentLevelProblemData, currentProblemData]);
 
   return (
     <ContainerStyle>
-      {problemArray && <ChoicesBoard itemArray={problemArray} />}
-      {currentProblemData && (
+      {currentProblemData && <ChoicesBoard itemArray={currentProblemData} />}
+      {currentLevelProblemData && (
         <AudioComponent
           src={
-            currentProblemData[currentProblemNumber].problem.sound_item.sound
+            currentLevelProblemData[currentProblemNumber].problem.sound_item
+              .sound
           }
         />
       )}
