@@ -1,7 +1,8 @@
 import axios, { Method } from 'axios';
+import * as process from 'process';
 
 // 오리진 URL 설정
-const BASE_URL = 'http://127.0.0.1:8000/api/';
+const BASE_URL = process.env.REACT_APP_BACKEND_HOST;
 axios.defaults.baseURL = BASE_URL;
 
 interface FetcherArgs {
