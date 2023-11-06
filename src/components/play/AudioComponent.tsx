@@ -4,6 +4,7 @@ import styled from 'styled-components';
 type AudioComponentProps = {
   src: string;
   autoPlay?: boolean;
+  setPlaySound?: (value: boolean) => void;
 };
 
 const ContainerStyle = styled.div`
@@ -12,6 +13,9 @@ const ContainerStyle = styled.div`
   background-color: #000;
   border-radius: 12px;
   color: #fff;
+  position: absolute;
+  bottom: 28px;
+  right: 28px;
 
   & button {
     width: 100%;
@@ -23,6 +27,7 @@ const ContainerStyle = styled.div`
 
 const AudioComponent: React.FC<AudioComponentProps> = ({
   src,
+  setPlaySound,
   autoPlay = false,
 }) => {
   const [isPlaying, setIsPlaying] = useState(autoPlay);
@@ -48,6 +53,7 @@ const AudioComponent: React.FC<AudioComponentProps> = ({
         );
       } else {
         audioRef.current.pause();
+        setPlaySound && setPlaySound(false);
       }
     }
   }, [isPlaying]);

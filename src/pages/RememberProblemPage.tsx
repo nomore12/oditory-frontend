@@ -8,6 +8,8 @@ import type { MemoryProblemData, AnswerItem } from '../type';
 import ChoicesBoard from '../components/play/remember/ChoicesBoard';
 import { useMemoryProblemStore } from '../store/MemoryStore';
 import AudioComponent from '../components/play/AudioComponent';
+import { useOverlay } from '../hooks/useOverlay';
+import Overlay from '../components/commons/Overlay';
 
 const ContainerStyle = styled.div`
   display: flex;
@@ -17,6 +19,7 @@ const ContainerStyle = styled.div`
   justify-content: center;
   align-items: center;
   gap: 50px;
+  position: relative;
   background-image: url('/images/bg-01-02@2x.png');
   background-size: cover;
   background-repeat: no-repeat;
@@ -36,6 +39,8 @@ const RememberProblemPage: React.FC = () => {
   const [currentProblemData, setCurrentProblemData] = useState<AnswerItem[]>(
     []
   );
+  const [playSound, setPlaySound] = useState(false);
+  const { isAdd, overlayHandler } = useOverlay();
   const {
     currentProblemNumber,
     memoryProblemStateData,
@@ -45,6 +50,10 @@ const RememberProblemPage: React.FC = () => {
     setCurrentProblemIsWrong,
     clearUserCheckedAnswers,
   } = useMemoryProblemStore();
+
+  const playSoundHandler = () => {
+    setPlaySound(true);
+  };
 
   useEffect(() => {
     clearUserCheckedAnswers();
@@ -70,14 +79,26 @@ const RememberProblemPage: React.FC = () => {
   return (
     <ContainerStyle>
       {currentProblemData && <ChoicesBoard itemArray={currentProblemData} />}
+      <button onClick={overlayHandler}>dddd</button>
+      <div></div>
       {currentLevelProblemData && (
         <AudioComponent
           src={
             currentLevelProblemData[currentProblemNumber].problem.sound_item
               .sound
           }
+          autoPlay={playSound}
+          setPlaySound={setPlaySound}
         />
       )}
+      <Overlay>
+        {isAdd && (
+          <div>
+            <h1>asdfasdfasdfasfdsdaf</h1>
+            <button onClick={overlayHandler}>닫기</button>
+          </div>
+        )}
+      </Overlay>
     </ContainerStyle>
   );
 };

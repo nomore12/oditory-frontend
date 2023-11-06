@@ -10,6 +10,7 @@ import ProtectedRoute from '../../routes/ProtectedWrapper';
 import NotFound from '../../pages/NotFound';
 import Navigation from '../../components/commons/Navigation';
 import ProblemNavigation from '../../components/commons/ProblemNavigation';
+import { OverlayProvider } from '../../context/OverlayContext';
 
 function MainLayout() {
   const location = useLocation();
@@ -28,7 +29,7 @@ function MainLayout() {
   const showProblemNavigation = isPathMatching(location.pathname);
 
   return (
-    <>
+    <OverlayProvider>
       {showNavigation && <Navigation />}
       {showProblemNavigation && <ProblemNavigation />}
       <Routes>
@@ -45,7 +46,7 @@ function MainLayout() {
         )}
         <Route path="*" element={<NotFound />} />
       </Routes>
-    </>
+    </OverlayProvider>
   );
 }
 
