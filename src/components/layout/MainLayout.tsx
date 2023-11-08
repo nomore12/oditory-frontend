@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   BrowserRouter as Router,
   Route,
@@ -15,6 +15,7 @@ import { OverlayProvider } from '../../context/OverlayContext';
 function MainLayout() {
   const location = useLocation();
   const showNavigation = ['/main'].includes(location.pathname);
+  const [showProblemNavigation, setShowProblemNavigation] = useState(false);
   const isPathMatching = (path: string) => {
     const patterns = [
       /^\/play-remember$/,
@@ -26,7 +27,11 @@ function MainLayout() {
     return patterns.some((pattern) => pattern.test(path));
   };
 
-  const showProblemNavigation = isPathMatching(location.pathname);
+  // const showProblemNavigation = isPathMatching(location.pathname.trim());
+
+  useEffect(() => {
+    setShowProblemNavigation(isPathMatching(location.pathname.trim()));
+  }, [showProblemNavigation, location.pathname]);
 
   return (
     <OverlayProvider>

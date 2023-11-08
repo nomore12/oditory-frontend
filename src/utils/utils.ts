@@ -6,3 +6,19 @@ export function shuffleArray<T>(array: T[]): T[] {
   }
   return arr;
 }
+
+export function arraysMatch(arr1: number[], arr2: number[]): boolean {
+  // 먼저 배열 길이를 비교합니다.
+  if (arr1.length !== arr2.length) return false;
+
+  // 다음으로, 각 요소를 비교합니다.
+  for (let i = 0; i < arr1.length; i++) {
+    if (arr1[i] !== arr2[i]) {
+      // 요소가 다르면, 배열이 일치하지 않습니다.
+      return false;
+    }
+  }
+
+  // 모든 요소가 일치하면, 배열이 일치합니다.
+  return true;
+}

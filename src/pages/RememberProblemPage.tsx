@@ -3,13 +3,14 @@ import styled from 'styled-components';
 import { useLocation, matchPath, useParams } from 'react-router-dom';
 import useSWR from 'swr';
 import { fetcher } from '../utils/fetcher';
-import { shuffleArray } from '../utils/utils';
+import { arraysMatch, shuffleArray } from '../utils/utils';
 import type { MemoryProblemData, AnswerItem } from '../type';
 import ChoicesBoard from '../components/play/remember/ChoicesBoard';
 import { useMemoryProblemStore } from '../store/MemoryStore';
 import AudioComponent from '../components/play/AudioComponent';
 import { useOverlay } from '../hooks/useOverlay';
 import Overlay from '../components/commons/Overlay';
+import type { MemoryProblemStateData } from '../store/MemoryStore';
 
 const ContainerStyle = styled.div`
   display: flex;
@@ -28,6 +29,7 @@ const ContainerStyle = styled.div`
 
 const RememberProblemPage: React.FC = () => {
   const params = useParams();
+  const location = useLocation();
   const level = params.level;
   const { data, error, isLoading } = useSWR(
     `problem/memory/?level=${level}`,
@@ -45,28 +47,51 @@ const RememberProblemPage: React.FC = () => {
     currentProblemNumber,
     memoryProblemStateData,
     userCheckedAnswers,
+    correctAnswers,
+    setCorrectAnswers,
     setInitialMemoryProblemStateData,
     setCurrentProblemIsCorrect,
     setCurrentProblemIsWrong,
     clearUserCheckedAnswers,
   } = useMemoryProblemStore();
 
+  console.log(location.pathname);
+
   const playSoundHandler = () => {
     setPlaySound(true);
   };
 
   useEffect(() => {
-    clearUserCheckedAnswers();
-  }, []);
-
-  useEffect(() => {
     if (data) {
+      setInitialMemoryProblemStateData(data);
       setCurrentLevelProblemData(data);
-      console.log('data', data, data[currentProblemNumber]);
       const problems = data[currentProblemNumber]?.choices;
       setCurrentProblemData(problems);
+      const corrects = data[currentProblemNumber].answers.map(
+        (item: any) => item.pk
+      );
+      setCorrectAnswers(corrects);
     }
   }, [data, isLoading]);
+
+  useEffect(() => {
+    setCurrentLevelProblemData(data);
+  }, [currentProblemNumber]);
+
+  useEffect(() => {
+    if (
+      correctAnswers.length > 0 &&
+      arraysMatch(correctAnswers, userCheckedAnswers)
+    ) {
+      console.log('correct');
+      setCurrentProblemIsCorrect();
+      overlayHandler();
+    } else if (correctAnswers.length === userCheckedAnswers.length) {
+      console.log('wrong');
+      setCurrentProblemIsWrong();
+      overlayHandler();
+    }
+  }, [userCheckedAnswers.length]);
 
   useEffect(() => {
     console.log(
@@ -94,8 +119,27 @@ const RememberProblemPage: React.FC = () => {
       <Overlay>
         {isAdd && (
           <div>
-            <h1>asdfasdfasdfasfdsdaf</h1>
-            <button onClick={overlayHandler}>닫기</button>
+            <h1>
+              {memoryProblemStateData.length > 2 &&
+              memoryProblemStateData[currentProblemNumber - 1].status ===
+                'correct'
+                ? '정답이에요'
+                : '오답이에요'}
+            </h1>
+            <button
+              onClick={() => {
+                const problems = data[currentProblemNumber]?.choices;
+                setCurrentProblemData(problems);
+                const corrects = data[currentProblemNumber].answers.map(
+                  (item: any) => item.pk
+                );
+                setCorrectAnswers(corrects);
+                clearUserCheckedAnswers();
+                overlayHandler();
+              }}
+            >
+              다음 문제
+            </button>
           </div>
         )}
       </Overlay>

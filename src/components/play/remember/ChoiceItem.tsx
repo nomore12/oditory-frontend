@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useMemoryProblemStore } from '../../../store/MemoryStore';
+import { arraysMatch } from '../../../utils/utils';
 
 interface PropsType {
   src: string;
@@ -19,7 +20,8 @@ const ContainerStyle = styled.div<ContainerStyleProps>`
   display: flex;
   justify-content: center;
   align-items: center;
-  border: ${(props) => (props.checked ? '10px solid #F81D1D' : 'none')};
+  position: relative;
+  // border: ${(props) => (props.checked ? '10px solid #F81D1D' : 'none')};
 
   .item-image-wrapper {
     width: 130px;
@@ -28,13 +30,30 @@ const ContainerStyle = styled.div<ContainerStyleProps>`
     & img {
       width: 100%;
       height: 100%;
+
+      opacity: ${(props) => (props.checked ? '0.5' : '1')};
     }
+  }
+
+  .item-numbering {
+    position: absolute;
+    top: calc(50% - 45px);
+    right: calc(50% - 25px);
+    font-size: 90px;
+    font-weight: 700;
   }
 `;
 
 const ChoiceItem: React.FC<PropsType> = ({ src, itemId }) => {
   const [checked, setChecked] = useState(false);
-  const { userCheckedAnswers, setUserCheckedAnswers } = useMemoryProblemStore();
+  const [numbering, setNumbering] = useState(0);
+
+  const {
+    currentProblemNumber,
+    correctAnswers,
+    userCheckedAnswers,
+    setUserCheckedAnswers,
+  } = useMemoryProblemStore();
 
   const onClick = () => {
     if (userCheckedAnswers.includes(itemId)) {
@@ -43,18 +62,25 @@ const ChoiceItem: React.FC<PropsType> = ({ src, itemId }) => {
     } else {
       setChecked(true);
       setUserCheckedAnswers(itemId);
+      setNumbering(0);
     }
   };
 
   useEffect(() => {
-    console.log('checked', checked);
-  }, [checked]);
+    setChecked(false);
+  }, [currentProblemNumber]);
+
+  useEffect(() => {
+    const num = userCheckedAnswers.findIndex((item) => item === itemId);
+    setNumbering(num + 1);
+  }, [checked, userCheckedAnswers.length]);
 
   return (
     <ContainerStyle onClick={onClick} checked={checked}>
       <div className="item-image-wrapper">
         <img src={src} alt={src} />
       </div>
+      <div className="item-numbering">{numbering !== 0 && numbering}</div>
     </ContainerStyle>
   );
 };

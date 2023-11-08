@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { createJSONStorage, devtools, persist } from 'zustand/middleware';
 import type { MemoryProblemData } from '../type.d';
 
-type MemoryProblemStateData = {
+export type MemoryProblemStateData = {
   problemNumber: number;
   status: 'correct' | 'wrong' | 'solving' | 'none';
 };
@@ -11,6 +11,8 @@ type MemoryProblemStoreState = {
   currentProblemNumber: number;
   memoryProblemStateData: MemoryProblemStateData[];
   userCheckedAnswers: number[];
+  correctAnswers: number[];
+  setCorrectAnswers: (answers: number[]) => void;
   setInitialMemoryProblemStateData: (data: MemoryProblemData[]) => void;
   setCurrentProblemIsCorrect: () => void;
   setCurrentProblemIsWrong: () => void;
@@ -32,20 +34,26 @@ const useMemoryProblemInternalStore = create(
     persist(
       (set) => ({
         currentProblemNumber: 0,
-        memoryProblemStateData: [] as MemoryProblemStateData[],
+        memoryProblemStateData: [
+          { problemNumber: 0, status: 'none' },
+        ] as MemoryProblemStateData[],
         userCheckedAnswers: [] as number[],
-        setInitialMemoryProblemStateData: (data: MemoryProblemData[]) => {
-          const problemData = data.map(
-            (item: MemoryProblemData, index: number) => ({
-              problemNumber: index + 1,
-              status: index === 0 ? 'solving' : 'none',
-            })
-          );
-          return {
-            memoryProblemStateData: problemData,
-            currentProblemNumber: 1,
-          };
-        },
+        correctAnswers: [] as number[],
+        setCorrectAnswers: (answers: number[]) =>
+          set({ correctAnswers: answers }),
+        setInitialMemoryProblemStateData: (data: MemoryProblemData[]) =>
+          set((state: MemoryProblemStoreState) => {
+            const problemData = data.map(
+              (item: MemoryProblemData, index: number) => ({
+                problemNumber: index,
+                status: index === 0 ? 'solving' : 'none',
+              })
+            );
+            return {
+              memoryProblemStateData: [...problemData],
+              currentProblemNumber: 0,
+            };
+          }),
         setCurrentProblemIsCorrect: () =>
           set((state: MemoryProblemStoreState) => {
             state.memoryProblemStateData[state.currentProblemNumber].status =
@@ -105,6 +113,8 @@ export const useMemoryProblemStore = (): MemoryProblemStoreState => {
     currentProblemNumber: state.currentProblemNumber,
     memoryProblemStateData: state.memoryProblemStateData,
     userCheckedAnswers: state.userCheckedAnswers,
+    correctAnswers: state.correctAnswers,
+    setCorrectAnswers: state.setCorrectAnswers,
     setInitialMemoryProblemStateData: state.setInitialMemoryProblemStateData,
     setCurrentProblemIsCorrect: state.setCurrentProblemIsCorrect,
     setCurrentProblemIsWrong: state.setCurrentProblemIsWrong,
