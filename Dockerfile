@@ -4,8 +4,9 @@ FROM node:18.17.1 AS build
 # 작업 디렉터리 설정
 WORKDIR /app
 
-# package.json, yarn.lock 및 기타 필요한 파일들을 컨테이너 내부로 복사
-COPY package.json yarn.lock ./
+# package.json, yarn.lock 및 필요한 환경설정 파일들을 컨테이너 내부로 복사
+COPY package.json yarn.lock .env* ./
+
 RUN yarn install
 
 # 소스 코드 및 기타 필요한 파일들을 컨테이너 내부로 복사
@@ -20,8 +21,8 @@ FROM nginx:1.19
 # 빌드된 애플리케이션을 Nginx로 복사
 COPY --from=build /app/build /usr/share/nginx/html
 
+# Nginx 구성 파일 복사
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-
 
 # Nginx 포트 80에서 실행
 EXPOSE 80
