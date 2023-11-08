@@ -20,6 +20,9 @@ FROM nginx:1.19
 # 빌드된 애플리케이션을 Nginx로 복사
 COPY --from=build /app/build /usr/share/nginx/html
 
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+
 # Nginx 포트 80에서 실행
 EXPOSE 80
 

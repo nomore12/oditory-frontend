@@ -79,7 +79,7 @@ const RememberProblemPage: React.FC = () => {
   return (
     <ContainerStyle>
       {currentProblemData && <ChoicesBoard itemArray={currentProblemData} />}
-      <button onClick={overlayHandler}>dddd</button>
+      {/*<button onClick={overlayHandler}>dddd</button>*/}
       <div></div>
       {currentLevelProblemData && (
         <AudioComponent
