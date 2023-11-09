@@ -42,6 +42,7 @@ const RememberProblemPage: React.FC = () => {
     []
   );
   const [playSound, setPlaySound] = useState(false);
+  const [finished, setFinished] = useState(false);
   const { isAdd, overlayHandler } = useOverlay();
   const {
     currentProblemNumber,
@@ -53,13 +54,39 @@ const RememberProblemPage: React.FC = () => {
     setCurrentProblemIsCorrect,
     setCurrentProblemIsWrong,
     clearUserCheckedAnswers,
+    clearMemoryProblemStore,
   } = useMemoryProblemStore();
-
-  console.log(location.pathname);
 
   const playSoundHandler = () => {
     setPlaySound(true);
   };
+
+  const toTheNextProblem = () => {
+    console.log('toTheNextProblem');
+    if (currentProblemNumber > 9) {
+      setFinished(true);
+      return;
+    }
+    const problems = data[currentProblemNumber]?.choices;
+    setCurrentProblemData(problems);
+    const corrects = data[currentProblemNumber].answers.map(
+      (item: any) => item.pk
+    );
+    console.log(corrects);
+    setCorrectAnswers(corrects);
+    clearUserCheckedAnswers();
+    console.log(
+      'currentProblemNumber',
+      currentProblemNumber,
+      correctAnswers,
+      userCheckedAnswers
+    );
+    overlayHandler();
+  };
+
+  useEffect(() => {
+    clearMemoryProblemStore();
+  }, []);
 
   useEffect(() => {
     if (data) {
@@ -80,14 +107,17 @@ const RememberProblemPage: React.FC = () => {
 
   useEffect(() => {
     if (
+      !isLoading &&
       correctAnswers.length > 0 &&
       arraysMatch(correctAnswers, userCheckedAnswers)
     ) {
-      console.log('correct');
       setCurrentProblemIsCorrect();
       overlayHandler();
-    } else if (correctAnswers.length === userCheckedAnswers.length) {
-      console.log('wrong');
+    } else if (
+      !isLoading &&
+      correctAnswers.length > 0 &&
+      correctAnswers.length === userCheckedAnswers.length
+    ) {
       setCurrentProblemIsWrong();
       overlayHandler();
     }
@@ -104,42 +134,37 @@ const RememberProblemPage: React.FC = () => {
   return (
     <ContainerStyle>
       {currentProblemData && <ChoicesBoard itemArray={currentProblemData} />}
-      {/*<button onClick={overlayHandler}>dddd</button>*/}
       <div></div>
       {currentLevelProblemData && (
         <AudioComponent
           src={
-            currentLevelProblemData[currentProblemNumber].problem.sound_item
-              .sound
+            currentProblemNumber < 10
+              ? currentLevelProblemData[currentProblemNumber].problem.sound_item
+                  .sound
+              : ''
           }
           autoPlay={playSound}
           setPlaySound={setPlaySound}
         />
       )}
-      <Overlay>
+      <Overlay blockBackground>
         {isAdd && (
           <div>
-            <h1>
-              {memoryProblemStateData.length > 2 &&
-              memoryProblemStateData[currentProblemNumber - 1].status ===
-                'correct'
-                ? '정답이에요'
-                : '오답이에요'}
-            </h1>
-            <button
-              onClick={() => {
-                const problems = data[currentProblemNumber]?.choices;
-                setCurrentProblemData(problems);
-                const corrects = data[currentProblemNumber].answers.map(
-                  (item: any) => item.pk
-                );
-                setCorrectAnswers(corrects);
-                clearUserCheckedAnswers();
-                overlayHandler();
-              }}
-            >
-              다음 문제
-            </button>
+            {finished ? (
+              <div>문제를 모두 마쳤어요.</div>
+            ) : (
+              <>
+                <h1>
+                  {memoryProblemStateData.length > 0 &&
+                  currentProblemNumber !== 0 &&
+                  memoryProblemStateData[currentProblemNumber - 1].status ===
+                    'correct'
+                    ? '정답이에요'
+                    : '오답이에요'}
+                </h1>
+                <button onClick={toTheNextProblem}>다음 문제</button>
+              </>
+            )}
           </div>
         )}
       </Overlay>

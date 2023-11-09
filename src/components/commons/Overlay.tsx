@@ -4,9 +4,10 @@ import { useOverlay } from '../../hooks/useOverlay';
 
 interface PropsType {
   children: React.ReactNode;
+  blockBackground?: boolean;
 }
 
-const Overlay: React.FC<PropsType> = ({ children }) => {
+const Overlay: React.FC<PropsType> = ({ children, blockBackground }) => {
   const { isAdd, overlayHandler } = useOverlay();
   return isAdd ? (
     <Box
@@ -21,7 +22,7 @@ const Overlay: React.FC<PropsType> = ({ children }) => {
         justifyContent: 'center',
         alignItems: 'center',
       }}
-      onClick={overlayHandler}
+      onClick={blockBackground ? undefined : overlayHandler}
     >
       {children}
     </Box>

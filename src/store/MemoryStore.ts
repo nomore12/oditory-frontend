@@ -18,6 +18,7 @@ type MemoryProblemStoreState = {
   setCurrentProblemIsWrong: () => void;
   setUserCheckedAnswers: (id: number, remove?: boolean) => void;
   clearUserCheckedAnswers: () => void;
+  clearMemoryProblemStore: () => void;
 };
 
 export const useAddItemStore = create(
@@ -73,9 +74,19 @@ const useMemoryProblemInternalStore = create(
           }),
         setCurrentProblemIsWrong: () =>
           set((state: MemoryProblemStoreState) => {
-            state.memoryProblemStateData[state.currentProblemNumber].status =
-              'wrong';
-            if (state.currentProblemNumber <= 10) {
+            console.log(
+              state.currentProblemNumber,
+              state.memoryProblemStateData[state.currentProblemNumber]
+            );
+
+            if (
+              state.memoryProblemStateData[state.currentProblemNumber]
+                .status !== undefined
+            ) {
+              state.memoryProblemStateData[state.currentProblemNumber].status =
+                'wrong';
+            }
+            if (state.currentProblemNumber < 9) {
               state.memoryProblemStateData[
                 state.currentProblemNumber + 1
               ].status = 'solving';
@@ -97,6 +108,15 @@ const useMemoryProblemInternalStore = create(
         clearUserCheckedAnswers: () =>
           set((state: MemoryProblemStoreState) => ({
             userCheckedAnswers: [],
+          })),
+        clearMemoryProblemStore: () =>
+          set((state: MemoryProblemStoreState) => ({
+            currentProblemNumber: 0,
+            memoryProblemStateData: [
+              { problemNumber: 0, status: 'none' },
+            ] as MemoryProblemStateData[],
+            userCheckedAnswers: [] as number[],
+            correctAnswers: [] as number[],
           })),
       }),
       {
@@ -120,5 +140,6 @@ export const useMemoryProblemStore = (): MemoryProblemStoreState => {
     setCurrentProblemIsWrong: state.setCurrentProblemIsWrong,
     setUserCheckedAnswers: state.setUserCheckedAnswers,
     clearUserCheckedAnswers: state.clearUserCheckedAnswers,
+    clearMemoryProblemStore: state.clearMemoryProblemStore,
   };
 };

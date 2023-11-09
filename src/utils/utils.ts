@@ -8,6 +8,7 @@ export function shuffleArray<T>(array: T[]): T[] {
 }
 
 export function arraysMatch(arr1: number[], arr2: number[]): boolean {
+  console.log('arrays match');
   // 먼저 배열 길이를 비교합니다.
   if (arr1.length !== arr2.length) return false;
 
