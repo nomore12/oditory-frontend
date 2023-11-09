@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useLocation, matchPath, useParams } from 'react-router-dom';
+import {
+  useLocation,
+  matchPath,
+  useParams,
+  useNavigate,
+} from 'react-router-dom';
 import useSWR from 'swr';
 import { fetcher } from '../utils/fetcher';
 import { arraysMatch, shuffleArray } from '../utils/utils';
@@ -11,6 +16,7 @@ import AudioComponent from '../components/play/AudioComponent';
 import { useOverlay } from '../hooks/useOverlay';
 import Overlay from '../components/commons/Overlay';
 import type { MemoryProblemStateData } from '../store/MemoryStore';
+import CorrectPanel from '../components/play/remember/CorrectPanel';
 
 const ContainerStyle = styled.div`
   display: flex;
@@ -25,11 +31,21 @@ const ContainerStyle = styled.div`
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
+
+  .start-button {
+    width: 280px;
+    height: 76px;
+    background-color: #000;
+    color: #fff;
+    font-size: 26px;
+    border-radius: 20px;
+  }
 `;
 
 const RememberProblemPage: React.FC = () => {
   const params = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
   const level = params.level;
   const { data, error, isLoading } = useSWR(
     `problem/memory/?level=${level}`,
@@ -43,6 +59,7 @@ const RememberProblemPage: React.FC = () => {
   );
   const [playSound, setPlaySound] = useState(false);
   const [finished, setFinished] = useState(false);
+  const [isStart, setIsStart] = useState(false);
   const { isAdd, overlayHandler } = useOverlay();
   const {
     currentProblemNumber,
@@ -62,8 +79,9 @@ const RememberProblemPage: React.FC = () => {
   };
 
   const toTheNextProblem = () => {
-    if (currentProblemNumber > 9) {
+    if (currentProblemNumber === -1) {
       setFinished(true);
+      clearMemoryProblemStore();
       return;
     }
     const problems = data[currentProblemNumber]?.choices;
@@ -75,15 +93,8 @@ const RememberProblemPage: React.FC = () => {
     clearUserCheckedAnswers();
 
     overlayHandler();
+    setTimeout(() => setPlaySound(true), 500);
   };
-
-  // useEffect(() => {
-  //   // 여기서 라우트 변경에 따른 사이드 이펙트를 처리합니다.
-  //   console.log('라우트가 변경되었습니다:', location.pathname);
-  //   if (confirm('정말로 이전 페이지로 돌아가시겠습니까?')) {
-  //     clearMemoryProblemStore();
-  //   }
-  // }, [location.key]); // location이 변경될 때마다 useEffect가 실행됩니다.
 
   useEffect(() => {
     clearMemoryProblemStore();
@@ -126,12 +137,26 @@ const RememberProblemPage: React.FC = () => {
 
   return (
     <ContainerStyle>
-      {currentProblemData && <ChoicesBoard itemArray={currentProblemData} />}
-      <div></div>
-      {currentLevelProblemData && (
+      {isStart && currentProblemData && (
+        <ChoicesBoard itemArray={currentProblemData} />
+      )}
+      <div>
+        {!isStart && (
+          <button
+            className="start-button"
+            onClick={() => {
+              setIsStart(true);
+              setTimeout(() => setPlaySound(true), 500);
+            }}
+          >
+            시작하기
+          </button>
+        )}
+      </div>
+      {isStart && currentLevelProblemData && (
         <AudioComponent
           src={
-            currentProblemNumber < 10
+            currentProblemNumber < 10 && currentProblemNumber !== -1
               ? currentLevelProblemData[currentProblemNumber].problem.sound_item
                   .sound
               : ''
@@ -150,6 +175,7 @@ const RememberProblemPage: React.FC = () => {
                   onClick={() => {
                     clearMemoryProblemStore();
                     overlayHandler();
+                    navigate('/play-remember');
                   }}
                 >
                   이전 페이지로 돌아가기.
@@ -160,12 +186,21 @@ const RememberProblemPage: React.FC = () => {
                 <h1>
                   {memoryProblemStateData.length > 0 &&
                   currentProblemNumber !== 0 &&
-                  memoryProblemStateData[currentProblemNumber - 1].status ===
-                    'correct'
-                    ? '정답이에요'
-                    : '오답이에요'}
+                  currentProblemNumber !== -1 &&
+                  memoryProblemStateData[
+                    currentProblemNumber === 9 || currentProblemNumber === -1
+                      ? memoryProblemStateData.length - 1
+                      : currentProblemNumber - 1
+                  ].status === 'correct' ? (
+                    <CorrectPanel isCorrect={true} onClick={toTheNextProblem} />
+                  ) : (
+                    <CorrectPanel
+                      isCorrect={false}
+                      onClick={toTheNextProblem}
+                    />
+                  )}
                 </h1>
-                <button onClick={toTheNextProblem}>다음 문제</button>
+                {/*<button onClick={toTheNextProblem}>다음</button>*/}
               </>
             )}
           </div>

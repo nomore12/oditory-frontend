@@ -57,34 +57,27 @@ const useMemoryProblemInternalStore = create(
           }),
         setCurrentProblemIsCorrect: () =>
           set((state: MemoryProblemStoreState) => {
-            state.memoryProblemStateData[state.currentProblemNumber].status =
-              'correct';
-            if (state.currentProblemNumber <= 10) {
-              state.memoryProblemStateData[
-                state.currentProblemNumber + 1
-              ].status = 'solving';
-            }
-            return {
-              currentProblemNumber:
-                state.currentProblemNumber < 10
-                  ? state.currentProblemNumber + 1
-                  : 10,
-              memoryProblemStateData: state.memoryProblemStateData,
-            };
-          }),
-        setCurrentProblemIsWrong: () =>
-          set((state: MemoryProblemStoreState) => {
             console.log(
+              'state',
               state.currentProblemNumber,
-              state.memoryProblemStateData[state.currentProblemNumber]
+              state.memoryProblemStateData
             );
+            if (
+              state.currentProblemNumber === state.memoryProblemStateData.length
+            ) {
+              console.log('equal');
 
+              return {
+                currentProblemNumber: 10,
+                memoryProblemStateData: state.memoryProblemStateData,
+              };
+            }
             if (
               state.memoryProblemStateData[state.currentProblemNumber]
                 .status !== undefined
             ) {
               state.memoryProblemStateData[state.currentProblemNumber].status =
-                'wrong';
+                'correct';
             }
             if (state.currentProblemNumber < 9) {
               state.memoryProblemStateData[
@@ -93,9 +86,32 @@ const useMemoryProblemInternalStore = create(
             }
             return {
               currentProblemNumber:
-                state.currentProblemNumber < 10
+                state.currentProblemNumber < 9
                   ? state.currentProblemNumber + 1
-                  : 10,
+                  : -1,
+              memoryProblemStateData: state.memoryProblemStateData,
+            };
+          }),
+        setCurrentProblemIsWrong: () =>
+          set((state: MemoryProblemStoreState) => {
+            if (
+              state.memoryProblemStateData[state.currentProblemNumber]
+                .status !== undefined
+            ) {
+              state.memoryProblemStateData[state.currentProblemNumber].status =
+                'wrong';
+            }
+
+            if (state.currentProblemNumber < 9) {
+              state.memoryProblemStateData[
+                state.currentProblemNumber + 1
+              ].status = 'solving';
+            }
+            return {
+              currentProblemNumber:
+                state.currentProblemNumber < 9
+                  ? state.currentProblemNumber + 1
+                  : -1,
               memoryProblemStateData: state.memoryProblemStateData,
             };
           }),

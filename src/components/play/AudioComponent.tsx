@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
+import { ReactComponent as ListenIcon } from '../../assets/images/icons/icn-listen.svg';
 
 type AudioComponentProps = {
   src: string;
@@ -8,21 +9,32 @@ type AudioComponentProps = {
 };
 
 const ContainerStyle = styled.div`
-  width: 145px;
-  height: 56px;
-  background-color: #000;
+  width: 134px;
+  height: 48px;
+  background-color: #5f6164;
   border-radius: 12px;
-  color: #fff;
+  color: #5f6164;
   position: absolute;
   bottom: 28px;
   right: 28px;
 
   & button {
-    width: 100%;
+    //width: 100%;
     height: 100%;
     background-color: transparent;
     color: #fff;
     border: none;
+    font-size: 18px;
+  }
+
+  .button-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+  }
 `;
 
 const AudioComponent: React.FC<AudioComponentProps> = ({
@@ -71,7 +83,12 @@ const AudioComponent: React.FC<AudioComponentProps> = ({
   return (
     <ContainerStyle>
       <audio ref={audioRef} src={src} />
-      <button onClick={togglePlay}>{isPlaying ? '재생중' : '다시듣기'}</button>
+      <div className="button-wrapper">
+        <button onClick={togglePlay}>
+          {isPlaying ? '재생중' : '다시듣기'}
+        </button>
+        <ListenIcon width="24px" height="24px" />
+      </div>
     </ContainerStyle>
   );
 };
