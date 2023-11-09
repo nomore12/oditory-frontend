@@ -62,7 +62,6 @@ const RememberProblemPage: React.FC = () => {
   };
 
   const toTheNextProblem = () => {
-    console.log('toTheNextProblem');
     if (currentProblemNumber > 9) {
       setFinished(true);
       return;
@@ -72,17 +71,19 @@ const RememberProblemPage: React.FC = () => {
     const corrects = data[currentProblemNumber].answers.map(
       (item: any) => item.pk
     );
-    console.log(corrects);
     setCorrectAnswers(corrects);
     clearUserCheckedAnswers();
-    console.log(
-      'currentProblemNumber',
-      currentProblemNumber,
-      correctAnswers,
-      userCheckedAnswers
-    );
+
     overlayHandler();
   };
+
+  // useEffect(() => {
+  //   // 여기서 라우트 변경에 따른 사이드 이펙트를 처리합니다.
+  //   console.log('라우트가 변경되었습니다:', location.pathname);
+  //   if (confirm('정말로 이전 페이지로 돌아가시겠습니까?')) {
+  //     clearMemoryProblemStore();
+  //   }
+  // }, [location.key]); // location이 변경될 때마다 useEffect가 실행됩니다.
 
   useEffect(() => {
     clearMemoryProblemStore();
@@ -123,14 +124,6 @@ const RememberProblemPage: React.FC = () => {
     }
   }, [userCheckedAnswers.length]);
 
-  useEffect(() => {
-    console.log(
-      'currentLevelProblemData',
-      currentLevelProblemData,
-      currentProblemData
-    );
-  }, [currentLevelProblemData, currentProblemData]);
-
   return (
     <ContainerStyle>
       {currentProblemData && <ChoicesBoard itemArray={currentProblemData} />}
@@ -151,7 +144,17 @@ const RememberProblemPage: React.FC = () => {
         {isAdd && (
           <div>
             {finished ? (
-              <div>문제를 모두 마쳤어요.</div>
+              <>
+                <div>문제를 모두 마쳤어요.</div>
+                <button
+                  onClick={() => {
+                    clearMemoryProblemStore();
+                    overlayHandler();
+                  }}
+                >
+                  이전 페이지로 돌아가기.
+                </button>
+              </>
             ) : (
               <>
                 <h1>

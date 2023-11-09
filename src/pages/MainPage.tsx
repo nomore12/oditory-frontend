@@ -68,7 +68,6 @@ const StyledStar = styled(Star)`
 
 const MainPage: React.FC = () => {
   const { token, user } = useAuthStore();
-  console.log(user);
 
   return (
     <ContainerStyle>

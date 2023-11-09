@@ -4,6 +4,7 @@ import StarNumberIcon from '../components/commons/StarNumberIcon';
 import LockNumberIcon from '../components/commons/LockNumberIcon';
 import useGetHook from '../hooks/useGetHook';
 import type { MemoryProblemData, AnswerItem } from '../type';
+import { useMemoryProblemStore } from '../store/MemoryStore';
 
 const ContainerStyle = styled.div`
   display: flex;
@@ -43,9 +44,13 @@ for (let i = 0; i < 40; i++) {
 const PlayRememberPage: React.FC = () => {
   const { data, error, mutate } = useGetHook('problem/memory/');
   const [levelData, setLevelData] = useState<MemoryProblemData[][]>([]);
+  const { clearMemoryProblemStore } = useMemoryProblemStore();
 
   useEffect(() => {
-    console.log('data', data);
+    clearMemoryProblemStore();
+  }, []);
+
+  useEffect(() => {
     const groupAndSortByLevel = (
       data: MemoryProblemData[] = []
     ): MemoryProblemData[][] => {
@@ -64,9 +69,7 @@ const PlayRememberPage: React.FC = () => {
       return sortedLevels.map((level) => groupedByLevel[level]);
     };
 
-    // 사용 예시:
     const result = groupAndSortByLevel(data); // data는 MemoryProblemData 타입의 배열입니다.
-    console.log(result);
     setLevelData(result);
   }, [data]);
 

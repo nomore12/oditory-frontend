@@ -138,7 +138,6 @@ const MemoryProblemForm: React.FC<PropsType> = ({
   };
 
   const onSubmit = () => {
-    console.log('patch', currentProblemId, answerItems, itemArray);
     if (
       itemArray.length !== itemCount ||
       itemArray.length < 1 ||
@@ -149,7 +148,7 @@ const MemoryProblemForm: React.FC<PropsType> = ({
       alert('보기 개수와 정답 개수를 확인해주세요.');
       return;
     }
-    setTimeout(() => console.log('timeout'), 3000);
+
     executePatch({
       problem: {
         type: 'memory',
@@ -171,7 +170,6 @@ const MemoryProblemForm: React.FC<PropsType> = ({
   };
 
   useEffect(() => {
-    console.log(data);
     if (data) {
       setItemCount(data.choice_count || 0);
       setDelay(data.response_delay || 0);
@@ -215,7 +213,6 @@ const MemoryProblemForm: React.FC<PropsType> = ({
   }, [clickedItemId]);
 
   useEffect(() => {
-    console.log('answerId', answerId, answerItems);
     if (answerId !== null && answerId > 0) {
       setAnswerItems((prev) => [...prev, answerId]);
       setAnswerId(null);

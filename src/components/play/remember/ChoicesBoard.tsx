@@ -25,9 +25,9 @@ const ChoicesBoard: React.FC<PropsType> = ({ itemArray }) => {
       })
     : [];
 
-  useEffect(() => {
-    console.log('itemArray', itemArray);
-  }, [itemArray]);
+  // useEffect(() => {
+  //   console.log('itemArray', itemArray);
+  // }, [itemArray]);
 
   return <ContainerStyle>{choicesArray && choicesArray}</ContainerStyle>;
 };
