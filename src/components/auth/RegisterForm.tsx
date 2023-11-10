@@ -5,18 +5,74 @@ import { useNavigate } from 'react-router-dom';
 
 const ContainerStyle = styled.div`
   form {
-    width: 400px;
     display: flex;
     flex-direction: column;
+
+    label {
+      width: 320px;
+      font-size: 14px;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    input {
+      width: 320px;
+      height: 51px;
+      background-color: #f5f5f2 !important;
+      border-radius: 12px;
+      border: none;
+      outline: none;
+      padding: 0 16px;
+      font-size: 16px;
+      box-sizing: border-box;
+      margin-bottom: 20px;
+    }
+
+    input[type='checkbox'] {
+      width: 16px;
+      height: 16px;
+      background: #f5f5f2;
+      border: 1px solid #e2e0d9;
+      border-radius: 4px;
+      outline: none;
+      padding: 0;
+    }
+
+    button {
+      width: 320px;
+      height: 49px;
+      background: #000000;
+      border-radius: 12px;
+      color: #fff;
+    }
   }
 
   .nickname-wrapper {
-    width: 400px;
+    width: 320px;
   }
 
   .nickname-check-wrapper {
     width: 100%;
     display: flex;
+  }
+
+  .teacher-id-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #register_name_textfield {
+    width: 224px;
+  }
+
+  #register_name_btn {
+    width: 88px;
+    margin-left: 8px;
+  }
+
+  #register-submit {
+    background-color: #000 !important;
+    color: #fff;
   }
 `;
 
@@ -97,14 +153,16 @@ const RegisterForm: React.FC = () => {
 
   const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(certFile);
-    await executePost();
+    const response = await executePost();
 
-    if (data) {
-      console.log(data);
-      if (data.message === 'User created successfully') {
+    if (response) {
+      if (response.response.status === 400) {
+        alert(response.request.responseText);
+      } else if (response.response.status === 200) {
         alert('회원가입이 완료되었습니다.');
         navigate('/register-confirm');
+      } else {
+        alert('서버 오류가 발생하였습니다. 관리자에게 문의하세요.');
       }
     }
   };
@@ -132,7 +190,7 @@ const RegisterForm: React.FC = () => {
               value={name}
               onChange={onNameChangeHandler}
             />
-            <button>중복확인</button>
+            <button id="register_name_btn">중복확인</button>
           </div>
         </div>
         <div>
@@ -152,7 +210,7 @@ const RegisterForm: React.FC = () => {
           <label htmlFor="register_checkbox_teacher">선생님</label>
         </div>
         {isStudent ? (
-          <div>
+          <div className="teacher-id-wrapper">
             <label htmlFor="register_teacher_id_textfield">선생님 아이디</label>
             <input
               id="register_teacher_id_textfield"
@@ -162,7 +220,7 @@ const RegisterForm: React.FC = () => {
             />
           </div>
         ) : (
-          <div>
+          <div className="teacher-id-wrapper">
             <label htmlFor="register_teacher_cert">자격증 업로드</label>
             <input
               id="register_teacher_cert"
@@ -186,7 +244,7 @@ const RegisterForm: React.FC = () => {
           value={pwConfirm}
           onChange={onPwConfirmChangeHandler}
         />
-        <input type="submit" value="회원가입" />
+        <input id="register-submit" type="submit" value="회원가입" />
       </form>
     </ContainerStyle>
   );

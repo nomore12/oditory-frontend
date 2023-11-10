@@ -27,7 +27,7 @@ const routes: RouteItem[] = [
     needLogin: true,
   },
   {
-    path: '/login',
+    path: '/',
     element: <LoginPage />,
     exact: true,
   },

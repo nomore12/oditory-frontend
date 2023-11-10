@@ -33,7 +33,7 @@ const usePostData = (url: string, data: any, header: any) => {
       return response;
     } catch (error) {
       console.error('Error during POST request:', error);
-      return undefined;
+      return error;
     }
   };
 

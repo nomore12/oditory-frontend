@@ -14,6 +14,10 @@ const ContainerStyle = styled.div`
 
   .right-side {
     width: 50%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 `;
 

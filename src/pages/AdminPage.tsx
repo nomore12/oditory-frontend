@@ -15,13 +15,16 @@ import ProblemManagePage from '../components/admin/pages/problem/ProblemManagePa
 import ItemManagePage from '../components/admin/pages/ItemManager/ItemManagePage';
 import MemberManagePage from '../components/admin/pages/MemberManagePage';
 import DynamicBreadcrumbs from '../components/admin/DynamicBreadcrumbs';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import BigButton from '../components/admin/BigButton';
+import useAuthStore from '../store/AuthStore';
 
 const AdminPage: React.FC = () => {
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [isHome, setIsHome] = useState(true);
   const location = useLocation();
+  const { user } = useAuthStore();
+  const navigate = useNavigate();
 
   const onUserProfileClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -37,6 +40,13 @@ const AdminPage: React.FC = () => {
 
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
+
+  useEffect(() => {
+    if (!user?.user.is_staff) {
+      console.log('not staff');
+      navigate('/');
+    }
+  }, []);
 
   useEffect(() => {
     const newArray = location.pathname.split('/').filter((item) => item !== '');

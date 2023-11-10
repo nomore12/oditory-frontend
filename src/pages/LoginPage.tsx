@@ -17,7 +17,7 @@ const ContainerStyle = styled.div`
 
   .login-form__section {
     width: 50%;
-    padding: 100px;
+    //padding: 100px;
     display: flex;
     flex-direction: column;
   }

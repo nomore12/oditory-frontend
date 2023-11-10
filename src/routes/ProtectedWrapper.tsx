@@ -12,7 +12,7 @@ const ProtectedWrapper: React.FC<ProtectedWrapperProps> = ({ children }) => {
 
   useEffect(() => {
     if (!token) {
-      navigate('/login');
+      navigate('/');
     }
   }, []);
 
