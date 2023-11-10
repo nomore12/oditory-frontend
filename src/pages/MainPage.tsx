@@ -88,9 +88,9 @@ const MainPage: React.FC = () => {
             }}
           >
             <div className="paper-menu-image-wrapper">
-              <img src="/images/t-01.png" alt="기억력 향상" />
+              <img src="/images/t-01.png" alt="단어 기억하기" />
             </div>
-            <h3 className="paper-menu-title">기억력 향상</h3>
+            <h3 className="paper-menu-title">단어 기억하기</h3>
             <div className="star-problem-wrapper">
               <StyledStar />
               <div>6/39</div>

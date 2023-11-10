@@ -1,11 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { KeyboardEvent, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import {
-  useLocation,
-  matchPath,
-  useParams,
-  useNavigate,
-} from 'react-router-dom';
+import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import useSWR from 'swr';
 import { fetcher } from '../utils/fetcher';
 import { arraysMatch, shuffleArray } from '../utils/utils';
@@ -60,6 +55,7 @@ const RememberProblemPage: React.FC = () => {
   const [playSound, setPlaySound] = useState(false);
   const [finished, setFinished] = useState(false);
   const [isStart, setIsStart] = useState(false);
+  const [nextProblem, setNextProblem] = useState(0);
   const { isAdd, overlayHandler } = useOverlay();
   const {
     currentProblemNumber,
@@ -97,11 +93,27 @@ const RememberProblemPage: React.FC = () => {
   };
 
   useEffect(() => {
-    clearMemoryProblemStore();
-  }, []);
+    // clearMemoryProblemStore();
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Enter') {
+        setNextProblem(nextProblem + 1);
+      }
+    };
+
+    // 이벤트 핸들러를 EventListener 타입으로 캐스팅
+    const keyDownListener = handleKeyDown as unknown as EventListener;
+
+    window.addEventListener('keydown', keyDownListener);
+
+    return () => {
+      window.removeEventListener('keydown', keyDownListener);
+    };
+  }, [nextProblem, setNextProblem]);
 
   useEffect(() => {
     if (data) {
+      console.log('data', data);
       setInitialMemoryProblemStateData(data);
       setCurrentLevelProblemData(data);
       const problems = data[currentProblemNumber]?.choices;
@@ -118,22 +130,27 @@ const RememberProblemPage: React.FC = () => {
   }, [currentProblemNumber]);
 
   useEffect(() => {
-    if (
-      !isLoading &&
-      correctAnswers.length > 0 &&
-      arraysMatch(correctAnswers, userCheckedAnswers)
-    ) {
-      setCurrentProblemIsCorrect();
-      overlayHandler();
-    } else if (
-      !isLoading &&
-      correctAnswers.length > 0 &&
-      correctAnswers.length === userCheckedAnswers.length
-    ) {
-      setCurrentProblemIsWrong();
-      overlayHandler();
+    if (nextProblem !== 0) {
+      if (
+        !isLoading &&
+        correctAnswers.length > 0 &&
+        memoryProblemStateData.length === 10 &&
+        arraysMatch(correctAnswers, userCheckedAnswers)
+      ) {
+        setCurrentProblemIsCorrect();
+        overlayHandler();
+      } else if (
+        !isLoading &&
+        correctAnswers.length > 0 &&
+        memoryProblemStateData.length === 10
+        // &&
+        // correctAnswers.length === userCheckedAnswers.length
+      ) {
+        setCurrentProblemIsWrong();
+        overlayHandler();
+      }
     }
-  }, [userCheckedAnswers.length]);
+  }, [nextProblem]);
 
   return (
     <ContainerStyle>
@@ -150,6 +167,14 @@ const RememberProblemPage: React.FC = () => {
             }}
           >
             시작하기
+          </button>
+        )}
+        {isStart && !isAdd && (
+          <button
+            className="start-button"
+            onClick={() => setNextProblem(nextProblem + 1)}
+          >
+            정답 확인
           </button>
         )}
       </div>
@@ -200,7 +225,6 @@ const RememberProblemPage: React.FC = () => {
                     />
                   )}
                 </h1>
-                {/*<button onClick={toTheNextProblem}>다음</button>*/}
               </>
             )}
           </div>

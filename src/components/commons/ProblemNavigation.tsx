@@ -87,7 +87,7 @@ const ProblemNavigation: React.FC = () => {
 
   useEffect(() => {
     if (location.pathname.includes('play-remember')) {
-      setTitle('기억력 향상');
+      setTitle('단어 기억하기');
       const splits = location.pathname.split('/');
       const level = splits[splits.length - 1];
       if (Number(level)) {

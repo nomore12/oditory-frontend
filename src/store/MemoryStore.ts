@@ -57,11 +57,6 @@ const useMemoryProblemInternalStore = create(
           }),
         setCurrentProblemIsCorrect: () =>
           set((state: MemoryProblemStoreState) => {
-            console.log(
-              'state',
-              state.currentProblemNumber,
-              state.memoryProblemStateData
-            );
             if (
               state.currentProblemNumber === state.memoryProblemStateData.length
             ) {
@@ -73,6 +68,9 @@ const useMemoryProblemInternalStore = create(
               };
             }
             if (
+              state.currentProblemNumber >= 0 &&
+              state.currentProblemNumber <
+                state.memoryProblemStateData.length &&
               state.memoryProblemStateData[state.currentProblemNumber]
                 .status !== undefined
             ) {
@@ -94,7 +92,25 @@ const useMemoryProblemInternalStore = create(
           }),
         setCurrentProblemIsWrong: () =>
           set((state: MemoryProblemStoreState) => {
+            console.log(
+              state.currentProblemNumber,
+              state.memoryProblemStateData
+            );
+
             if (
+              state.currentProblemNumber === state.memoryProblemStateData.length
+            ) {
+              console.log('equal');
+
+              return {
+                currentProblemNumber: 10,
+                memoryProblemStateData: state.memoryProblemStateData,
+              };
+            }
+            if (
+              state.currentProblemNumber >= 0 &&
+              state.currentProblemNumber <
+                state.memoryProblemStateData.length &&
               state.memoryProblemStateData[state.currentProblemNumber]
                 .status !== undefined
             ) {

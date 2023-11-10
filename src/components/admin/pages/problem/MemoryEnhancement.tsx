@@ -40,7 +40,7 @@ const MemoryEnhancement: React.FC = () => {
 
   return (
     <Box sx={{ height: '100%' }}>
-      <Typography variant="h6">기억력 향상</Typography>
+      <Typography variant="h6">단어 기억하기</Typography>
 
       <Routes>
         <Route path="create" element={<MemoryProblemCreateForm />} />
