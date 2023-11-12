@@ -9,6 +9,7 @@ export type MemoryProblemStateData = {
 
 type MemoryProblemStoreState = {
   currentProblemNumber: number;
+  wrongCheck: boolean;
   memoryProblemStateData: MemoryProblemStateData[];
   userCheckedAnswers: number[];
   correctAnswers: number[];
@@ -19,6 +20,7 @@ type MemoryProblemStoreState = {
   setUserCheckedAnswers: (id: number, remove?: boolean) => void;
   clearUserCheckedAnswers: () => void;
   clearMemoryProblemStore: () => void;
+  setWrongCheck: () => void;
 };
 
 export const useAddItemStore = create(
@@ -39,6 +41,7 @@ const useMemoryProblemInternalStore = create(
           { problemNumber: 0, status: 'none' },
         ] as MemoryProblemStateData[],
         userCheckedAnswers: [] as number[],
+        wrongCheck: false,
         correctAnswers: [] as number[],
         setCorrectAnswers: (answers: number[]) =>
           set({ correctAnswers: answers }),
@@ -150,6 +153,10 @@ const useMemoryProblemInternalStore = create(
             userCheckedAnswers: [] as number[],
             correctAnswers: [] as number[],
           })),
+        setWrongCheck: () =>
+          set((state: MemoryProblemStoreState) => ({
+            wrongCheck: !state.wrongCheck,
+          })),
       }),
       {
         name: 'memory-problem-storage',
@@ -163,6 +170,7 @@ export const useMemoryProblemStore = (): MemoryProblemStoreState => {
   const state = useMemoryProblemInternalStore();
   return {
     currentProblemNumber: state.currentProblemNumber,
+    wrongCheck: state.wrongCheck,
     memoryProblemStateData: state.memoryProblemStateData,
     userCheckedAnswers: state.userCheckedAnswers,
     correctAnswers: state.correctAnswers,
@@ -173,5 +181,6 @@ export const useMemoryProblemStore = (): MemoryProblemStoreState => {
     setUserCheckedAnswers: state.setUserCheckedAnswers,
     clearUserCheckedAnswers: state.clearUserCheckedAnswers,
     clearMemoryProblemStore: state.clearMemoryProblemStore,
+    setWrongCheck: state.setWrongCheck,
   };
 };

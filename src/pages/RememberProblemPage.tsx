@@ -55,6 +55,7 @@ const RememberProblemPage: React.FC = () => {
   const [playSound, setPlaySound] = useState(false);
   const [finished, setFinished] = useState(false);
   const [isStart, setIsStart] = useState(false);
+  const [isWrong, setIsWrong] = useState(false);
   const [nextProblem, setNextProblem] = useState(0);
   const { isAdd, overlayHandler } = useOverlay();
   const {
@@ -68,6 +69,7 @@ const RememberProblemPage: React.FC = () => {
     setCurrentProblemIsWrong,
     clearUserCheckedAnswers,
     clearMemoryProblemStore,
+    setWrongCheck,
   } = useMemoryProblemStore();
 
   const playSoundHandler = () => {
@@ -88,7 +90,12 @@ const RememberProblemPage: React.FC = () => {
     setCorrectAnswers(corrects);
     clearUserCheckedAnswers();
 
-    overlayHandler();
+    if (!isWrong) {
+      overlayHandler();
+    } else {
+      setIsWrong(false);
+      setWrongCheck();
+    }
     setTimeout(() => setPlaySound(true), 500);
   };
 
@@ -147,7 +154,9 @@ const RememberProblemPage: React.FC = () => {
         // correctAnswers.length === userCheckedAnswers.length
       ) {
         setCurrentProblemIsWrong();
-        overlayHandler();
+        setIsWrong(true);
+        setWrongCheck();
+        // overlayHandler();
       }
     }
   }, [nextProblem]);
@@ -169,12 +178,17 @@ const RememberProblemPage: React.FC = () => {
             시작하기
           </button>
         )}
-        {isStart && !isAdd && (
+        {isStart && !isAdd && !isWrong && (
           <button
             className="start-button"
             onClick={() => setNextProblem(nextProblem + 1)}
           >
             정답 확인
+          </button>
+        )}
+        {isWrong && (
+          <button className="start-button" onClick={toTheNextProblem}>
+            다음 문제
           </button>
         )}
       </div>
