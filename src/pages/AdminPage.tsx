@@ -23,7 +23,7 @@ const AdminPage: React.FC = () => {
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [isHome, setIsHome] = useState(true);
   const location = useLocation();
-  const { user } = useAuthStore();
+  const { user, clearAuth } = useAuthStore();
   const navigate = useNavigate();
 
   const onUserProfileClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -91,7 +91,14 @@ const AdminPage: React.FC = () => {
             >
               <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                 <Button>마이 페이지</Button>
-                <Button>로그아웃</Button>
+                <Button
+                  onClick={() => {
+                    clearAuth();
+                    navigate('/');
+                  }}
+                >
+                  로그아웃
+                </Button>
               </Box>
             </Popover>
           </Box>

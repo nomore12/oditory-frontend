@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import useAuthStore from '../../store/AuthStore';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Box, Button, IconButton, Popover, Typography } from '@mui/material';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 const ContainerStyle = styled.div`
   width: 100vw;
@@ -25,9 +27,23 @@ const ContainerStyle = styled.div`
 `;
 
 const Navigation: React.FC = () => {
-  const { user } = useAuthStore();
+  const { user, clearAuth } = useAuthStore();
   const location = useLocation();
+  const navigate = useNavigate();
 
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
+    null
+  );
+
+  const onUserProfileClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
   return (
     <ContainerStyle>
       <div className="logo-wrapper">
@@ -38,7 +54,38 @@ const Navigation: React.FC = () => {
         <Link to="/admin">관리자 페이지 바로가기</Link>
       </div>
       <div>
-        <div>{user?.user.username}</div>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Typography variant="body1">
+            {user ? user?.user.username : ''}
+          </Typography>
+          <IconButton aria-label="user-menu" onClick={onUserProfileClick}>
+            <ArrowDropDownIcon />
+          </IconButton>
+        </Box>
+        <Popover
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handlePopoverClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+        >
+          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+            <Button
+              onClick={() => {
+                clearAuth();
+                navigate('/');
+              }}
+            >
+              로그아웃
+            </Button>
+          </Box>
+        </Popover>
       </div>
     </ContainerStyle>
   );
