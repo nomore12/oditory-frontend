@@ -8,15 +8,19 @@ const ContainerStyle = styled.div`
   background-color: #f2f2ec;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
 
   .bg-image {
     object-fit: cover;
     width: 50vw;
-    position: absolute;
-    bottom: 0;
-    left: 0;
+    max-width: 720px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    //position: absolute;
+    //bottom: 50%;
+    //left: 0;
   }
 
   .logo-image {
@@ -45,10 +49,11 @@ const ContainerStyle = styled.div`
 const MainImage: React.FC = () => {
   return (
     <ContainerStyle>
-      <img className="bg-image" src="/images/main_bg@2x.png" alt="main" />
-      <img className="logo-image" src="/images/logo@2x.png" alt="logo" />
-      <div className="title-text">오디토리에 오신 것을 환영합니다.</div>
-      <div className="under"></div>
+      <img className="bg-image" src="/images/landing_image.png" alt="main" />
+      {/*<img className="bg-image" src="/images/main_bg@2x.png" alt="main" />*/}
+      {/*<img className="logo-image" src="/images/logo@2x.png" alt="logo" />*/}
+      {/*<div className="title-text">오디토리에 오신 것을 환영합니다.</div>*/}
+      {/*<div className="under"></div>*/}
     </ContainerStyle>
   );
 };
