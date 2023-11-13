@@ -171,7 +171,6 @@ const MemoryProblemForm: React.FC<PropsType> = ({
 
   useEffect(() => {
     if (data) {
-      console.log('data', data);
       setItemCount(data.choice_count || 0);
       setDelay(data.response_delay || 0);
       setItems(data.choices.length);
@@ -208,6 +207,8 @@ const MemoryProblemForm: React.FC<PropsType> = ({
       setClickedItemId(null);
     } else if (clickedItemId < 0) {
       const deleteItemId = clickedItemId * -1;
+      const items = answerItems.filter((item) => item !== deleteItemId);
+      setAnswerItems([...items]);
       setItemArray(itemArray.filter((item: any) => item.pk !== deleteItemId));
       setClickedItemId(null);
     }
@@ -219,6 +220,7 @@ const MemoryProblemForm: React.FC<PropsType> = ({
       setAnswerId(null);
     } else if (answerId < 0) {
       const deletedId = answerId * -1;
+
       setAnswerItems((prev) => prev.filter((item) => item !== deletedId));
       setAnswerId(null);
     }

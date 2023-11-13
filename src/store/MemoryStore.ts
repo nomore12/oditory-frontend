@@ -24,12 +24,20 @@ type MemoryProblemStoreState = {
 };
 
 export const useAddItemStore = create(
-  devtools((set) => ({
-    clickedItemId: null,
-    answerId: null,
-    setClickedItemId: (id: number) => set({ clickedItemId: id }),
-    setAnswerId: (id: number) => set({ answerId: id }),
-  }))
+  devtools(
+    persist(
+      (set) => ({
+        clickedItemId: null,
+        answerId: null,
+        setClickedItemId: (id: number) => set({ clickedItemId: id }),
+        setAnswerId: (id: number) => set({ answerId: id }),
+      }),
+      {
+        name: 'add-item-storage',
+        storage: createJSONStorage(() => sessionStorage),
+      }
+    )
+  )
 );
 
 const useMemoryProblemInternalStore = create(
