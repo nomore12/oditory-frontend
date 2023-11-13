@@ -78,9 +78,7 @@ const CorrectPanel: React.FC<PropsType> = ({ isCorrect, onClick }) => {
       <div className="img-wrapper">
         <img src="/images/correctImg.png" alt="correct" />
       </div>
-      <div className="correct-text">
-        {isCorrect ? '정답이에요!' : '오답이에요!'}
-      </div>
+      <div className="correct-text">정답이에요!</div>
       <button className="next-button" onClick={onClick}>
         다음문제
       </button>

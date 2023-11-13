@@ -171,6 +171,7 @@ const MemoryProblemForm: React.FC<PropsType> = ({
 
   useEffect(() => {
     if (data) {
+      console.log('data', data);
       setItemCount(data.choice_count || 0);
       setDelay(data.response_delay || 0);
       setItems(data.choices.length);

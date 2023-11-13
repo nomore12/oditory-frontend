@@ -12,6 +12,7 @@ import { useOverlay } from '../hooks/useOverlay';
 import Overlay from '../components/commons/Overlay';
 import type { MemoryProblemStateData } from '../store/MemoryStore';
 import CorrectPanel from '../components/play/remember/CorrectPanel';
+import ClearPanel from '../components/play/remember/ClearPanel';
 
 const ContainerStyle = styled.div`
   display: flex;
@@ -72,14 +73,9 @@ const RememberProblemPage: React.FC = () => {
     setWrongCheck,
   } = useMemoryProblemStore();
 
-  const playSoundHandler = () => {
-    setPlaySound(true);
-  };
-
   const toTheNextProblem = () => {
     if (currentProblemNumber === -1) {
       setFinished(true);
-      clearMemoryProblemStore();
       return;
     }
     const problems = data[currentProblemNumber]?.choices;
@@ -100,8 +96,6 @@ const RememberProblemPage: React.FC = () => {
   };
 
   useEffect(() => {
-    // clearMemoryProblemStore();
-
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Enter') {
         setNextProblem(nextProblem + 1);
@@ -150,13 +144,10 @@ const RememberProblemPage: React.FC = () => {
         !isLoading &&
         correctAnswers.length > 0 &&
         memoryProblemStateData.length === 10
-        // &&
-        // correctAnswers.length === userCheckedAnswers.length
       ) {
         setCurrentProblemIsWrong();
         setIsWrong(true);
         setWrongCheck();
-        // overlayHandler();
       }
     }
   }, [nextProblem]);
@@ -208,37 +199,31 @@ const RememberProblemPage: React.FC = () => {
         {isAdd && (
           <div>
             {finished ? (
-              <>
-                <div>문제를 모두 마쳤어요.</div>
-                <button
-                  onClick={() => {
-                    clearMemoryProblemStore();
-                    overlayHandler();
-                    navigate('/play-remember');
-                  }}
-                >
-                  이전 페이지로 돌아가기.
-                </button>
-              </>
+              <ClearPanel
+                level={level ? Number(level) : 0}
+                correctCount={
+                  memoryProblemStateData
+                    ? memoryProblemStateData.filter(
+                        (item) => item.status === 'correct'
+                      ).length
+                    : 0
+                }
+                overlayHandler={overlayHandler}
+              />
             ) : (
               <>
-                <h1>
-                  {memoryProblemStateData.length > 0 &&
-                  currentProblemNumber !== 0 &&
-                  currentProblemNumber !== -1 &&
-                  memoryProblemStateData[
-                    currentProblemNumber === 9 || currentProblemNumber === -1
-                      ? memoryProblemStateData.length - 1
-                      : currentProblemNumber - 1
-                  ].status === 'correct' ? (
-                    <CorrectPanel isCorrect={true} onClick={toTheNextProblem} />
-                  ) : (
-                    <CorrectPanel
-                      isCorrect={false}
-                      onClick={toTheNextProblem}
-                    />
-                  )}
-                </h1>
+                {memoryProblemStateData.length > 0 &&
+                currentProblemNumber !== 0 &&
+                currentProblemNumber !== -1 &&
+                memoryProblemStateData[
+                  currentProblemNumber === 9 || currentProblemNumber === -1
+                    ? memoryProblemStateData.length - 1
+                    : currentProblemNumber - 1
+                ].status === 'correct' ? (
+                  <CorrectPanel isCorrect={true} onClick={toTheNextProblem} />
+                ) : (
+                  <CorrectPanel isCorrect={false} onClick={toTheNextProblem} />
+                )}
               </>
             )}
           </div>

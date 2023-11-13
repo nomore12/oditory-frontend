@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import useAuthStore from '../../store/AuthStore';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const ContainerStyle = styled.div`
   width: 100vw;
@@ -34,6 +34,9 @@ const Navigation: React.FC = () => {
         <img src="/images/logo.png" alt="logo" />
       </div>
 
+      <div>
+        <Link to="/admin">관리자 페이지 바로가기</Link>
+      </div>
       <div>
         <div>{user?.user.username}</div>
       </div>
