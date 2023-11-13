@@ -52,7 +52,7 @@ const useAuthStoreInternal = create(
         user: null,
         setAuth: (newToken: string, user: UserInfo) =>
           set({ token: newToken, user: user }),
-        clearAuth: () => set({ token: null }),
+        clearAuth: () => set({ token: null, user: null }),
       }),
       {
         name: 'auth-storage',

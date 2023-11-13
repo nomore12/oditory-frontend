@@ -60,6 +60,7 @@ const RememberProblemPage: React.FC = () => {
   const [nextProblem, setNextProblem] = useState(0);
   const { isAdd, overlayHandler } = useOverlay();
   const {
+    wrongCheck,
     currentProblemNumber,
     memoryProblemStateData,
     userCheckedAnswers,
@@ -76,6 +77,12 @@ const RememberProblemPage: React.FC = () => {
   const toTheNextProblem = () => {
     if (currentProblemNumber === -1) {
       setFinished(true);
+      if (
+        memoryProblemStateData[memoryProblemStateData.length - 1].status ===
+        'wrong'
+      ) {
+        overlayHandler();
+      }
       return;
     }
     const problems = data[currentProblemNumber]?.choices;
@@ -90,6 +97,20 @@ const RememberProblemPage: React.FC = () => {
       overlayHandler();
     } else {
       setIsWrong(false);
+      setWrongCheck();
+    }
+    setTimeout(() => setPlaySound(true), 500);
+  };
+
+  const onRetryhandler = () => {
+    setInitialMemoryProblemStateData(data);
+    setCurrentLevelProblemData(data);
+    const problems = data[0]?.choices;
+    setCurrentProblemData(problems);
+    const corrects = data[0].answers.map((item: any) => item.pk);
+    setCorrectAnswers(corrects);
+    setFinished(false);
+    if (wrongCheck) {
       setWrongCheck();
     }
     setTimeout(() => setPlaySound(true), 500);
@@ -148,6 +169,9 @@ const RememberProblemPage: React.FC = () => {
         setCurrentProblemIsWrong();
         setIsWrong(true);
         setWrongCheck();
+        // if (finished) {
+        //   overlayHandler();
+        // }
       }
     }
   }, [nextProblem]);
@@ -209,6 +233,7 @@ const RememberProblemPage: React.FC = () => {
                     : 0
                 }
                 overlayHandler={overlayHandler}
+                onRetryHandler={onRetryhandler}
               />
             ) : (
               <>

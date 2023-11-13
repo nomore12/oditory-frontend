@@ -99,12 +99,10 @@ const ChoiceItem: React.FC<PropsType> = ({ src, itemId }) => {
   useEffect(() => {
     setChecked(false);
     const num1 = correctAnswers.findIndex((item) => item === itemId) + 1;
-    console.log(num1);
     setCorrectNumber(num1);
   }, [currentProblemNumber, correctNumber, correctAnswers, wrongCheck]);
 
   useEffect(() => {
-    console.log(correctAnswers);
     const num = userCheckedAnswers.findIndex((item) => item === itemId) + 1;
     setNumbering(num);
   }, [checked, userCheckedAnswers.length, wrongCheck]);

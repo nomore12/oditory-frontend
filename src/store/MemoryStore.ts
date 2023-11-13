@@ -103,8 +103,6 @@ const useMemoryProblemInternalStore = create(
             if (
               state.currentProblemNumber === state.memoryProblemStateData.length
             ) {
-              console.log('equal');
-
               return {
                 currentProblemNumber: 10,
                 memoryProblemStateData: state.memoryProblemStateData,

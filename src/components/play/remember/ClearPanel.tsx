@@ -7,6 +7,7 @@ interface PropsType {
   level: number;
   correctCount: number;
   overlayHandler: () => void;
+  onRetryHandler: () => void;
 }
 
 const ContainerStyle = styled.div`
@@ -46,6 +47,7 @@ const ClearPanel: React.FC<PropsType> = ({
   level,
   correctCount,
   overlayHandler,
+  onRetryHandler,
 }) => {
   const navigate = useNavigate();
   const { clearMemoryProblemStore } = useMemoryProblemStore();
@@ -59,13 +61,18 @@ const ClearPanel: React.FC<PropsType> = ({
   const onRetry = () => {
     clearMemoryProblemStore();
     overlayHandler();
+    onRetryHandler();
   };
 
   return (
     <ContainerStyle>
-      <div className="panel-title">{level} 레벨 성공!</div>
+      <div className="panel-title">
+        {correctCount > 7 ? `${level}레벨 성공!` : `아쉽지만 실패했어요.`}
+      </div>
       <div className="panel-subtitle">
-        멋져요. 총 {correctCount}개 문제를 맞췄어요.
+        {correctCount > 7
+          ? `멋져요. 총 ${correctCount}개 문제를 맞췄어요.`
+          : `다음에는 꼭 성공해봐요.`}
       </div>
       <div className="panel-score">
         <span>{correctCount * 10}</span>
