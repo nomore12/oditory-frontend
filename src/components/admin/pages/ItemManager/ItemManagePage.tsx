@@ -20,14 +20,13 @@ const ItemManagePage: React.FC = () => {
 
   return (
     <Box sx={{ height: '100%' }}>
-      <div>아이템 관리</div>
       {menuScreen && (
         <Box
           sx={{
             width: '100%',
-            height: '100%',
+            height: 'calc(100vh - 80px)',
             display: 'flex',
-            gap: '1rem',
+            gap: 4,
             justifyContent: 'center',
             alignItems: 'center',
           }}

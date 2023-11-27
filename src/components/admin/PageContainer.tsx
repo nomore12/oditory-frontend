@@ -6,7 +6,7 @@ interface PropsType {
 }
 
 const AdminPageContainer: React.FC<PropsType> = ({ children }) => {
-  return <Box sx={{ width: '100%', height: '100%' }}>{children}</Box>;
+  return <Box sx={{ width: '100%' }}>{children}</Box>;
 };
 
 export default AdminPageContainer;

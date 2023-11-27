@@ -24,9 +24,9 @@ const ProblemManagePage: React.FC = () => {
         <Box
           sx={{
             width: '100%',
-            height: '100%',
+            height: 'calc(100vh - 80px)',
             display: 'flex',
-            gap: '1rem',
+            gap: 4,
             justifyContent: 'center',
             alignItems: 'center',
           }}

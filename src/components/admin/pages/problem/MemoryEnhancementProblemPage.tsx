@@ -39,7 +39,7 @@ const MemoryEnhancementProblemPage: React.FC = () => {
   }, [location.pathname]);
 
   return (
-    <Box sx={{ height: '100%' }}>
+    <Box sx={{ height: '100%', padding: 2 }}>
       <Typography variant="h6" sx={{ marginTop: 2 }}>
         단어 기억하기
       </Typography>

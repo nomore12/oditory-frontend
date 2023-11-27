@@ -56,84 +56,86 @@ const AdminPage: React.FC = () => {
   }, [location.pathname]);
 
   return (
-    <Box>
+    <Box sx={{ height: '100vh', backgroundColor: '#e5e5e5' }}>
       <Container maxWidth="lg">
-        <Box
-          sx={{
-            width: '100%',
-            height: 60,
-            display: 'flex',
-            justifyContent: 'space-between',
-            paddingTop: 2,
-          }}
-        >
-          <Box>
-            <DynamicBreadcrumbs />
-          </Box>
-          <Box>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Typography variant="body1">user</Typography>
-              <IconButton aria-label="user-menu" onClick={onUserProfileClick}>
-                <ArrowDropDownIcon />
-              </IconButton>
+        <Box sx={{ backgroundColor: 'white', height: '100vh' }}>
+          <Box
+            sx={{
+              width: '100%',
+              height: 60,
+              display: 'flex',
+              justifyContent: 'space-between',
+              paddingTop: 2,
+            }}
+          >
+            <Box sx={{ paddingLeft: 2 }}>
+              <DynamicBreadcrumbs />
             </Box>
-            <Popover
-              open={open}
-              anchorEl={anchorEl}
-              onClose={handlePopoverClose}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'right',
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-            >
-              <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                <Button>마이 페이지</Button>
-                <Button
-                  onClick={() => {
-                    clearAuth();
-                    navigate('/');
-                  }}
-                >
-                  로그아웃
-                </Button>
+            <Box>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Typography variant="body1">user</Typography>
+                <IconButton aria-label="user-menu" onClick={onUserProfileClick}>
+                  <ArrowDropDownIcon />
+                </IconButton>
               </Box>
-            </Popover>
-          </Box>
-        </Box>
-        <Divider />
-        <Box
-          sx={{
-            width: '100%',
-            height: 'calc(100vh - 60px)',
-          }}
-        >
-          {isHome && (
-            <Box
-              sx={{
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                gap: 4,
-              }}
-            >
-              <BigButton to="/admin/problem" text="문제 관리" />
-              <BigButton to="/admin/item" text="아이템 관리" />
-              <BigButton to="/admin/members" text="회원 관리" />
+              <Popover
+                open={open}
+                anchorEl={anchorEl}
+                onClose={handlePopoverClose}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'right',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+              >
+                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                  <Button>마이 페이지</Button>
+                  <Button
+                    onClick={() => {
+                      clearAuth();
+                      navigate('/');
+                    }}
+                  >
+                    로그아웃
+                  </Button>
+                </Box>
+              </Popover>
             </Box>
-          )}
-          <PageContainer>
-            <Routes>
-              <Route path="problem/*" element={<ProblemManagePage />} />
-              <Route path="item/*" element={<ItemManagePage />} />
-              <Route path="members/*" element={<MemberManagePage />} />
-            </Routes>
-          </PageContainer>
+          </Box>
+          <Divider />
+          <Box
+            sx={{
+              width: '100%',
+              height: 'calc(100vh - 80px)',
+            }}
+          >
+            {isHome && (
+              <Box
+                sx={{
+                  width: '100%',
+                  height: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  gap: 4,
+                }}
+              >
+                <BigButton to="/admin/problem" text="문제 관리" />
+                <BigButton to="/admin/item" text="아이템 관리" />
+                <BigButton to="/admin/members" text="회원 관리" />
+              </Box>
+            )}
+            <PageContainer>
+              <Routes>
+                <Route path="problem/*" element={<ProblemManagePage />} />
+                <Route path="item/*" element={<ItemManagePage />} />
+                <Route path="members/*" element={<MemberManagePage />} />
+              </Routes>
+            </PageContainer>
+          </Box>
         </Box>
       </Container>
     </Box>

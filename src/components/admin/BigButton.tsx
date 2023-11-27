@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, styled } from '@mui/material';
+import { Box, styled, Paper } from '@mui/material';
 import { Link } from 'react-router-dom';
 
 interface PropsType {
@@ -7,11 +7,15 @@ interface PropsType {
   text: string;
 }
 
-const BigButtonStyle = styled(Box)({
+const BigButtonStyle = styled(Paper)({
   width: 200,
   height: 200,
-  border: '1px solid black',
+  // border: '1px solid #c5c5c5',
   borderRadius: 10,
+  a: {
+    textDecoration: 'none',
+    color: '#757575',
+  },
 });
 
 const LinkStyle = styled(Link)({
@@ -25,7 +29,7 @@ const LinkStyle = styled(Link)({
 
 const BigButton: React.FC<PropsType> = ({ to, text }) => {
   return (
-    <BigButtonStyle>
+    <BigButtonStyle elevation={6}>
       <LinkStyle to={to}>{text}</LinkStyle>
     </BigButtonStyle>
   );
