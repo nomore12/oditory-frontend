@@ -1,23 +1,24 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   Box,
-  Breadcrumbs,
   Button,
   Container,
   IconButton,
   Popover,
   Typography,
+  Divider,
 } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import PageContainer from '../components/admin/PageContainer';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import ProblemManagePage from '../components/admin/pages/problem/ProblemManagePage';
-import ItemManagePage from '../components/admin/pages/ItemManager/ItemManagePage';
+import MemoryItemManagement from '../components/admin/pages/ItemManager/MemoryItemManagement';
 import MemberManagePage from '../components/admin/pages/MemberManagePage';
 import DynamicBreadcrumbs from '../components/admin/DynamicBreadcrumbs';
 import { useNavigate } from 'react-router-dom';
 import BigButton from '../components/admin/BigButton';
 import useAuthStore from '../store/AuthStore';
+import ItemManagePage from '../components/admin/pages/ItemManager/ItemManagePage';
 
 const AdminPage: React.FC = () => {
   const [popoverOpen, setPopoverOpen] = useState(false);
@@ -59,11 +60,11 @@ const AdminPage: React.FC = () => {
       <Container maxWidth="lg">
         <Box
           sx={{
-            border: '1px solid black',
             width: '100%',
             height: 60,
             display: 'flex',
             justifyContent: 'space-between',
+            paddingTop: 2,
           }}
         >
           <Box>
@@ -103,9 +104,9 @@ const AdminPage: React.FC = () => {
             </Popover>
           </Box>
         </Box>
+        <Divider />
         <Box
           sx={{
-            border: '1px solid black',
             width: '100%',
             height: 'calc(100vh - 60px)',
           }}

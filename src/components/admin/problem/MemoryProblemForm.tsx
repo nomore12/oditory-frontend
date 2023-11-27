@@ -24,11 +24,12 @@ const GridContainer = styled(Box)(({ theme }) => ({
   gridTemplateColumns: 'repeat(5, minmax(80px, 240px))',
   justifyContent: 'space-between',
   gap: 16,
-  border: '1px solid black',
+  border: '1px solid rgb(200, 200, 200)',
   width: 760,
   height: 420,
   overflowY: 'auto',
   padding: 16,
+  borderRadius: 4,
 }));
 
 const ContainerStyle = styled(Box)({
@@ -49,7 +50,7 @@ const BlockStyle = styled(Box)(({ height }: { height?: string }) => ({
   },
 
   '& > .rhap_container': {
-    width: '620px',
+    width: '760px',
   },
 
   '& > .rhap_main': {
@@ -240,9 +241,9 @@ const MemoryProblemForm: React.FC<PropsType> = ({
         <Box>기억력 향상 폼 레벨. {currentLevel}</Box>
         <BlockStyle>
           <Typography>문제</Typography>
-          <TextField value={problem} sx={{ width: 620 }} size="small" />
+          <TextField value={problem} sx={{ width: 760 }} size="small" />
         </BlockStyle>
-        <BlockStyle height={'130px'}>
+        <BlockStyle height={'180px'}>
           <Typography>음성</Typography>
           <AudioPlayer
             autoPlay
@@ -255,7 +256,7 @@ const MemoryProblemForm: React.FC<PropsType> = ({
           <TextField
             value={delay}
             type="number"
-            sx={{ width: 620 }}
+            sx={{ width: 760 }}
             size="small"
             onChange={onDelayChange}
           />
@@ -265,7 +266,7 @@ const MemoryProblemForm: React.FC<PropsType> = ({
           <TextField
             value={level}
             type="number"
-            sx={{ width: 620 }}
+            sx={{ width: 760 }}
             size="small"
             onChange={onLevelChange}
           />
@@ -275,7 +276,7 @@ const MemoryProblemForm: React.FC<PropsType> = ({
           <TextField
             value={problemNumber}
             type="number"
-            sx={{ width: 620 }}
+            sx={{ width: 760 }}
             size="small"
             onChange={onProblemNumberChange}
           />
@@ -285,7 +286,7 @@ const MemoryProblemForm: React.FC<PropsType> = ({
           <TextField
             value={itemCount}
             type="number"
-            sx={{ width: 620 }}
+            sx={{ width: 760 }}
             size="small"
             onChange={onCountChange}
           />

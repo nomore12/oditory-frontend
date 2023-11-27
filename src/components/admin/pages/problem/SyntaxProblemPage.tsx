@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box } from '@mui/material';
 
-const UnderstandSentences: React.FC = () => {
+const SyntaxProblemPage: React.FC = () => {
   return (
     <Box>
       <Box>구문 이해</Box>
@@ -9,4 +9,4 @@ const UnderstandSentences: React.FC = () => {
   );
 };
 
-export default UnderstandSentences;
+export default SyntaxProblemPage;

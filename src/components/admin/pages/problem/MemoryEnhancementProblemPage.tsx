@@ -8,7 +8,7 @@ import { fetcher } from '../../../../utils/fetcher';
 import useSWR from 'swr';
 import MemoryProblemCreateForm from '../../problem/MemoryProblemCreateForm';
 
-const MemoryEnhancement: React.FC = () => {
+const MemoryEnhancementProblemPage: React.FC = () => {
   const [currentLevel, setCurrentLevel] = useState('1');
   const [currentProblemNumber, setCurrentProblemNumber] = useState('');
   const [currentLocation, setCurrentLocation] = useState('');
@@ -40,7 +40,9 @@ const MemoryEnhancement: React.FC = () => {
 
   return (
     <Box sx={{ height: '100%' }}>
-      <Typography variant="h6">단어 기억하기</Typography>
+      <Typography variant="h6" sx={{ marginTop: 2 }}>
+        단어 기억하기
+      </Typography>
 
       <Routes>
         <Route path="create" element={<MemoryProblemCreateForm />} />
@@ -61,6 +63,7 @@ const MemoryEnhancement: React.FC = () => {
               width: '100%',
               display: 'flex',
               justifyContent: 'space-between',
+              margin: '30px 0',
             }}
           >
             <LevelSelect
@@ -83,4 +86,4 @@ const MemoryEnhancement: React.FC = () => {
   );
 };
 
-export default MemoryEnhancement;
+export default MemoryEnhancementProblemPage;

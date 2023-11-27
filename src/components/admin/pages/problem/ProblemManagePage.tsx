@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Box } from '@mui/material';
 import { Link, Route, Routes, useLocation } from 'react-router-dom';
-import MemoryEnhancement from './MemoryEnhancement';
-import FollowInstructions from './FollowInstructions';
-import UnderstandSentences from './UnderstandSentences';
+import MemoryEnhancementProblemPage from './MemoryEnhancementProblemPage';
+import OrderProblemPage from './OrderProblemPage';
+import SyntaxProblemPage from './SyntaxProblemPage';
 import PageContainer from '../../PageContainer';
 import BigButton from '../../BigButton';
 
@@ -41,9 +41,9 @@ const ProblemManagePage: React.FC = () => {
       )}
       <PageContainer>
         <Routes>
-          <Route path="memory/*" element={<MemoryEnhancement />} />
-          <Route path="follow/*" element={<FollowInstructions />} />
-          <Route path="understand/*" element={<UnderstandSentences />} />
+          <Route path="memory/*" element={<MemoryEnhancementProblemPage />} />
+          <Route path="follow/*" element={<OrderProblemPage />} />
+          <Route path="understand/*" element={<SyntaxProblemPage />} />
         </Routes>
       </PageContainer>
     </Box>
