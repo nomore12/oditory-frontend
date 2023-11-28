@@ -13,9 +13,18 @@ import Overlay from '../../../commons/Overlay';
 interface PropsType {
   url: string;
   id: number;
+  openHandler: () => void;
+  setModify: (modify: boolean) => void;
+  setCurrentId: (id: number) => void;
 }
 
-const GeneralImageItemCard: React.FC<PropsType> = ({ url, id }) => {
+const GeneralImageItemCard: React.FC<PropsType> = ({
+  url,
+  id,
+  openHandler,
+  setModify,
+  setCurrentId,
+}) => {
   const [preview, setPreview] = useState<boolean>(false);
 
   const onPreviewHandler = () => {
@@ -37,15 +46,30 @@ const GeneralImageItemCard: React.FC<PropsType> = ({ url, id }) => {
             padding: 2,
           }}
         >
-          <img
-            style={{ width: '170px', maxHeight: '108px', objectFit: 'contain' }}
-            src={url}
-            alt="item image"
-            loading="lazy"
-            onClick={onPreviewHandler}
-          />
+          <Box onClick={onPreviewHandler}>
+            <img
+              style={{
+                width: '170px',
+                maxHeight: '108px',
+                objectFit: 'contain',
+              }}
+              src={url}
+              alt="item image"
+              loading="lazy"
+            />
+          </Box>
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <Button variant="outlined">수정하기</Button>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                setModify(true);
+                setCurrentId(id);
+                console.log('curr', id);
+                openHandler();
+              }}
+            >
+              수정하기
+            </Button>
             <Button variant="outlined">삭제하기</Button>
           </Box>
         </Box>

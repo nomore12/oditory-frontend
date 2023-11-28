@@ -9,12 +9,14 @@ import { fetcher } from '../../../../utils/fetcher';
 import usePatchHook from '../../../../hooks/usePatchHook';
 import useSWR, { mutate } from 'swr';
 import type { KeyedMutator } from 'swr';
+import * as process from 'process';
 
 interface PropsType {
   openHandler: () => void;
   id?: number;
   mutate: KeyedMutator<any>;
   type: string;
+  setModify: (modify: boolean) => void;
 }
 
 const BlockStyle = styled(Box)(({ theme }) => ({
@@ -33,10 +35,12 @@ const AddGeneralImageItemForm: React.FC<PropsType> = ({
   id,
   mutate,
   type,
+  setModify,
 }) => {
   const [file, setFile] = useState<File | null>(null); // [1]
   const [filePreviewUrl, setFilePreviewUrl] = useState<string>(''); // [2
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [itemUrl, setItemUrl] = useState<string>('');
   const postData = {
     image: file,
     type: type,
@@ -51,11 +55,11 @@ const AddGeneralImageItemForm: React.FC<PropsType> = ({
     data: puData,
     error: putError,
     executePatch,
-  } = usePatchHook(`item/images/${id}/`, postData, {
+  } = usePatchHook(`item/general-image-items/${id}/`, postData, {
     'Content-Type': 'multipart/form-data',
   });
 
-  const fetchUrl = `item/images/${id}/`;
+  const fetchUrl = `item/general-image-items/${id}/`;
   const {
     data: getData,
     error: getError,
@@ -88,6 +92,35 @@ const AddGeneralImageItemForm: React.FC<PropsType> = ({
       openHandler();
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (id !== undefined) setModify(false);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (id !== undefined) {
+      const fetchData = async () => {
+        if (id !== undefined) {
+          try {
+            const response = await fetch(
+              `${process.env.REACT_APP_BACKEND_HOST}item/general-image-items/${id}/`
+            );
+            const data = await response.json();
+            setFilePreviewUrl(data.image);
+            console.log('fetch', data);
+            // 데이터 처리 로직
+          } catch (error) {
+            console.error('Fetch error: ', error);
+          }
+        }
+      };
+
+      fetchData();
+    }
+  }, [id]);
+
   return (
     <Box
       onClick={openHandler}
@@ -120,8 +153,8 @@ const AddGeneralImageItemForm: React.FC<PropsType> = ({
         <BlockStyle>
           <Typography variant="h4">
             {type === 'syntax'
-              ? '구문이해 아이템 추가'
-              : '지시따르기 아이템 추가'}
+              ? `구문이해 아이템 ${id !== undefined ? '수정' : '추가'}`
+              : `지시따르기 아이템 ${id !== undefined ? '수정' : '추가'}`}
           </Typography>
         </BlockStyle>
         <BlockStyle>

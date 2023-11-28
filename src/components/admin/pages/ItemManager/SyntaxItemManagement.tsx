@@ -14,6 +14,8 @@ const SyntaxItemManagement: React.FC = () => {
     { id: number; image: string; others: string; type: string }[]
   >([]);
   const { isAdd, overlayHandler } = useOverlay();
+  const [isModify, setModify] = useState(false);
+  const [currentId, setCurrentId] = useState<number | undefined>(undefined);
 
   const { data, error, isLoading, mutate } = useSWR(
     'item/general-image-items/?type=syntax',
@@ -31,6 +33,15 @@ const SyntaxItemManagement: React.FC = () => {
       console.log(data);
     }
   }, [isLoading]);
+
+  useEffect(() => {
+    console.log('modify', isModify);
+    // setCurrentId(data ? data[0].id : undefined);
+  }, [isModify]);
+
+  useEffect(() => {
+    console.log('currentId', currentId);
+  }, [currentId]);
 
   return (
     <Box>
@@ -69,8 +80,14 @@ const SyntaxItemManagement: React.FC = () => {
           >
             {data
               ? data.map((item: any) => (
-                  <div key={item.pk}>
-                    <GeneralImageItemCard url={item.image} id={item.pk} />
+                  <div key={item.id}>
+                    <GeneralImageItemCard
+                      url={item.image}
+                      id={item.id}
+                      openHandler={onItemAddHandler}
+                      setModify={setModify}
+                      setCurrentId={setCurrentId}
+                    />
                   </div>
                 ))
               : null}
@@ -78,11 +95,15 @@ const SyntaxItemManagement: React.FC = () => {
         </Box>
       </Box>
       <Overlay>
-        <AddGeneralImageItemForm
-          openHandler={onItemAddHandler}
-          mutate={mutate}
-          type="syntax"
-        />
+        {
+          <AddGeneralImageItemForm
+            openHandler={onItemAddHandler}
+            mutate={mutate}
+            type="syntax"
+            id={isModify ? currentId : undefined}
+            setModify={setModify}
+          />
+        }
       </Overlay>
     </Box>
   );

@@ -14,6 +14,8 @@ const OrderItemManagement: React.FC = () => {
     { id: number; image: string; others: string; type: string }[]
   >([]);
   const { isAdd, overlayHandler } = useOverlay();
+  const [isModify, setModify] = useState(false);
+  const [currentId, setCurrentId] = useState<number | undefined>(undefined);
 
   const { data, error, isLoading, mutate } = useSWR(
     'item/general-image-items/?type=order',
@@ -70,7 +72,13 @@ const OrderItemManagement: React.FC = () => {
             {data
               ? data.map((item: any) => (
                   <div key={item.pk}>
-                    <GeneralImageItemCard url={item.image} id={item.pk} />
+                    <GeneralImageItemCard
+                      url={item.image}
+                      id={item.pk}
+                      openHandler={onItemAddHandler}
+                      setModify={setModify}
+                      setCurrentId={setCurrentId}
+                    />
                   </div>
                 ))
               : null}
@@ -82,6 +90,8 @@ const OrderItemManagement: React.FC = () => {
           openHandler={onItemAddHandler}
           mutate={mutate}
           type="order"
+          id={isModify ? images[0].id : undefined}
+          setModify={setModify}
         />
       </Overlay>
     </Box>
