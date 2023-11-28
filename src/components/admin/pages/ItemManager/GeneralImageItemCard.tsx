@@ -9,6 +9,8 @@ import {
 } from '@mui/material';
 import { useOverlay } from '../../../../hooks/useOverlay';
 import Overlay from '../../../commons/Overlay';
+import useDeleteHook from '../../../../hooks/useDeleteHook';
+import type { KeyedMutator } from 'swr';
 
 interface PropsType {
   url: string;
@@ -16,6 +18,7 @@ interface PropsType {
   openHandler: () => void;
   setModify: (modify: boolean) => void;
   setCurrentId: (id: number) => void;
+  mutate: KeyedMutator<any>;
 }
 
 const GeneralImageItemCard: React.FC<PropsType> = ({
@@ -24,11 +27,24 @@ const GeneralImageItemCard: React.FC<PropsType> = ({
   openHandler,
   setModify,
   setCurrentId,
+  mutate,
 }) => {
   const [preview, setPreview] = useState<boolean>(false);
 
   const onPreviewHandler = () => {
     setPreview(!preview);
+  };
+
+  const { executeDelete } = useDeleteHook(`item/general-image-items/${id}/`);
+
+  const onDelete = async () => {
+    const isSuccess = await executeDelete();
+    if (isSuccess) {
+      alert('삭제되었습니다.');
+      mutate();
+    } else {
+      alert('삭제에 실패하였습니다.');
+    }
   };
 
   return (
@@ -70,7 +86,9 @@ const GeneralImageItemCard: React.FC<PropsType> = ({
             >
               수정하기
             </Button>
-            <Button variant="outlined">삭제하기</Button>
+            <Button variant="outlined" onClick={onDelete}>
+              삭제하기
+            </Button>
           </Box>
         </Box>
       </Paper>

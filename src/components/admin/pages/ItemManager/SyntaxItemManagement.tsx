@@ -55,7 +55,13 @@ const SyntaxItemManagement: React.FC = () => {
       >
         <Typography>구문이해 아이템 관리</Typography>
         <Box>
-          <Button variant="outlined" onClick={onItemAddHandler}>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              setCurrentId(undefined);
+              onItemAddHandler();
+            }}
+          >
             아이템 추가
           </Button>
         </Box>
@@ -78,7 +84,7 @@ const SyntaxItemManagement: React.FC = () => {
             cols={4}
             rowHeight={200}
           >
-            {data
+            {!isLoading
               ? data.map((item: any) => (
                   <div key={item.id}>
                     <GeneralImageItemCard
@@ -87,6 +93,7 @@ const SyntaxItemManagement: React.FC = () => {
                       openHandler={onItemAddHandler}
                       setModify={setModify}
                       setCurrentId={setCurrentId}
+                      mutate={mutate}
                     />
                   </div>
                 ))
@@ -100,7 +107,7 @@ const SyntaxItemManagement: React.FC = () => {
             openHandler={onItemAddHandler}
             mutate={mutate}
             type="syntax"
-            id={isModify ? currentId : undefined}
+            id={currentId}
             setModify={setModify}
           />
         }

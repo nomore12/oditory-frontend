@@ -46,7 +46,13 @@ const OrderItemManagement: React.FC = () => {
       >
         <Typography>구문이해 아이템 관리</Typography>
         <Box>
-          <Button variant="outlined" onClick={onItemAddHandler}>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              setCurrentId(undefined);
+              onItemAddHandler();
+            }}
+          >
             아이템 추가
           </Button>
         </Box>
@@ -71,13 +77,14 @@ const OrderItemManagement: React.FC = () => {
           >
             {data
               ? data.map((item: any) => (
-                  <div key={item.pk}>
+                  <div key={item.id}>
                     <GeneralImageItemCard
                       url={item.image}
-                      id={item.pk}
+                      id={item.id}
                       openHandler={onItemAddHandler}
                       setModify={setModify}
                       setCurrentId={setCurrentId}
+                      mutate={mutate}
                     />
                   </div>
                 ))
@@ -86,13 +93,15 @@ const OrderItemManagement: React.FC = () => {
         </Box>
       </Box>
       <Overlay>
-        <AddGeneralImageItemForm
-          openHandler={onItemAddHandler}
-          mutate={mutate}
-          type="order"
-          id={isModify ? images[0].id : undefined}
-          setModify={setModify}
-        />
+        {
+          <AddGeneralImageItemForm
+            openHandler={onItemAddHandler}
+            mutate={mutate}
+            type="order"
+            id={currentId}
+            setModify={setModify}
+          />
+        }
       </Overlay>
     </Box>
   );

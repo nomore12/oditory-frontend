@@ -7,6 +7,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import usePostData from '../../../../hooks/usePostHook';
 import { fetcher } from '../../../../utils/fetcher';
 import usePatchHook from '../../../../hooks/usePatchHook';
+import useDeleteHook from '../../../../hooks/useDeleteHook';
 import useSWR, { mutate } from 'swr';
 import type { KeyedMutator } from 'swr';
 import * as process from 'process';
@@ -40,7 +41,6 @@ const AddGeneralImageItemForm: React.FC<PropsType> = ({
   const [file, setFile] = useState<File | null>(null); // [1]
   const [filePreviewUrl, setFilePreviewUrl] = useState<string>(''); // [2
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [itemUrl, setItemUrl] = useState<string>('');
   const postData = {
     image: file,
     type: type,
@@ -59,13 +59,6 @@ const AddGeneralImageItemForm: React.FC<PropsType> = ({
     'Content-Type': 'multipart/form-data',
   });
 
-  const fetchUrl = `item/general-image-items/${id}/`;
-  const {
-    data: getData,
-    error: getError,
-    isLoading,
-  } = useSWR(fetchUrl, (url) => fetcher({ url }));
-
   const handleButtonClick = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
@@ -82,20 +75,34 @@ const AddGeneralImageItemForm: React.FC<PropsType> = ({
   };
 
   const onSubmit = async () => {
-    const isSuccess = await executePost();
-    if (isSuccess) {
-      alert('아이템 추가가 완료되었습니다.');
-      openHandler();
-      mutate();
+    if (id === undefined) {
+      const isSuccess = await executePost();
+      if (isSuccess) {
+        alert('아이템 추가가 완료되었습니다.');
+        openHandler();
+        mutate();
+      } else {
+        alert('아이템 추가 중 오류가 발생했습니다.');
+        openHandler();
+      }
+    } else if (file) {
+      const isSuccess = await executePatch({ type: type, image: file });
+      if (isSuccess) {
+        alert('아이템 수정이 완료되었습니다.');
+        openHandler();
+        mutate();
+      } else {
+        alert('아이템 수정 중 오류가 발생했습니다.');
+        openHandler();
+      }
     } else {
-      alert('아이템 추가 중 오류가 발생했습니다.');
-      openHandler();
+      console.log('nothing happen');
     }
   };
 
   useEffect(() => {
     return () => {
-      if (id !== undefined) setModify(false);
+      setModify(false);
     };
   }, []);
 
