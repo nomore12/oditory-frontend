@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, ImageList, Typography } from '@mui/material';
-import SyntaxItemCard from './SyntaxItemCard';
+import GeneralImageItemCard from './GeneralImageItemCard';
 import usePostHook from '../../../../hooks/usePostHook';
 import { useOverlay } from '../../../../hooks/useOverlay';
 import Overlay from '../../../commons/Overlay';
-import AddSyntaxItemForm from './AddSyntaxItemForm';
+import AddGeneralImageItemForm from './AddGeneralImageItemForm';
 import { fetcher } from '../../../../utils/fetcher';
 import useSWR from 'swr';
 import usePostData from '../../../../hooks/usePostHook';
 
 const SyntaxItemManagement: React.FC = () => {
-  const [images, setImages] = useState([]);
+  const [images, setImages] = useState<
+    { id: number; image: string; others: string; type: string }[]
+  >([]);
   const { isAdd, overlayHandler } = useOverlay();
 
   const { data, error, isLoading, mutate } = useSWR(
@@ -26,6 +28,7 @@ const SyntaxItemManagement: React.FC = () => {
     console.log('loading', isLoading);
     if (!isLoading) {
       setImages(data);
+      console.log(data);
     }
   }, [isLoading]);
 
@@ -67,7 +70,7 @@ const SyntaxItemManagement: React.FC = () => {
             {data
               ? data.map((item: any) => (
                   <div key={item.pk}>
-                    <SyntaxItemCard url={item.image} id={item.pk} />
+                    <GeneralImageItemCard url={item.image} id={item.pk} />
                   </div>
                 ))
               : null}
@@ -75,7 +78,11 @@ const SyntaxItemManagement: React.FC = () => {
         </Box>
       </Box>
       <Overlay>
-        <AddSyntaxItemForm openHandler={onItemAddHandler} mutate={mutate} />
+        <AddGeneralImageItemForm
+          openHandler={onItemAddHandler}
+          mutate={mutate}
+          type="syntax"
+        />
       </Overlay>
     </Box>
   );

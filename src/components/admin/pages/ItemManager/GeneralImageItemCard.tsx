@@ -15,7 +15,7 @@ interface PropsType {
   id: number;
 }
 
-const SyntaxItemCard: React.FC<PropsType> = ({ url, id }) => {
+const GeneralImageItemCard: React.FC<PropsType> = ({ url, id }) => {
   const [preview, setPreview] = useState<boolean>(false);
 
   const onPreviewHandler = () => {
@@ -31,6 +31,7 @@ const SyntaxItemCard: React.FC<PropsType> = ({ url, id }) => {
             height: '190px',
             display: 'flex',
             flexDirection: 'column',
+            justifyContent: 'space-between',
             alignItems: 'center',
             gap: 2,
             padding: 2,
@@ -84,4 +85,4 @@ const SyntaxItemCard: React.FC<PropsType> = ({ url, id }) => {
   );
 };
 
-export default SyntaxItemCard;
+export default GeneralImageItemCard;

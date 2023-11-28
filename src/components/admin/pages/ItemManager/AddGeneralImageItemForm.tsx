@@ -14,6 +14,7 @@ interface PropsType {
   openHandler: () => void;
   id?: number;
   mutate: KeyedMutator<any>;
+  type: string;
 }
 
 const BlockStyle = styled(Box)(({ theme }) => ({
@@ -27,21 +28,22 @@ const BlockStyle = styled(Box)(({ theme }) => ({
   },
 }));
 
-const AddSyntaxItemForm: React.FC<PropsType> = ({
+const AddGeneralImageItemForm: React.FC<PropsType> = ({
   openHandler,
   id,
   mutate,
+  type,
 }) => {
   const [file, setFile] = useState<File | null>(null); // [1]
   const [filePreviewUrl, setFilePreviewUrl] = useState<string>(''); // [2
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const postData = {
     image: file,
-    type: 'syntax',
+    type: type,
     others: '',
   };
 
-  const { executePost } = usePostData('item/general-image-items/', postData, {
+  const { executePost } = usePostData(`item/general-image-items/`, postData, {
     'Content-Type': 'multipart/form-data',
   });
 
@@ -116,7 +118,11 @@ const AddSyntaxItemForm: React.FC<PropsType> = ({
         }}
       >
         <BlockStyle>
-          <Typography variant="h4">구문이해 아이템</Typography>
+          <Typography variant="h4">
+            {type === 'syntax'
+              ? '구문이해 아이템 추가'
+              : '지시따르기 아이템 추가'}
+          </Typography>
         </BlockStyle>
         <BlockStyle>
           {filePreviewUrl ? (
@@ -162,4 +168,4 @@ const AddSyntaxItemForm: React.FC<PropsType> = ({
   );
 };
 
-export default AddSyntaxItemForm;
+export default AddGeneralImageItemForm;
