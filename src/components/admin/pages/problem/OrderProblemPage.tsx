@@ -28,6 +28,10 @@ const OrderProblemPage: React.FC = () => {
     setCurrentLocation(paths[paths.length - 1]);
   }, [location.pathname]);
 
+  useEffect(() => {
+    console.log(value);
+  }, [value]);
+
   return (
     <Box sx={{ width: '100%' }}>
       <Typography
@@ -41,15 +45,15 @@ const OrderProblemPage: React.FC = () => {
       <Divider />
       <Routes>
         <Route path="/create" element={<OrderProblemForm />} />
-        <Route
-          path={'255'}
-          element={
-            <MemoryProblemForm
-              currentLevel={Number(1)}
-              currentProblemId={Number(255)}
-            />
-          }
-        />
+        {/*<Route*/}
+        {/*  path={'255'}*/}
+        {/*  element={*/}
+        {/*    <MemoryProblemForm*/}
+        {/*      currentLevel={Number(1)}*/}
+        {/*      currentProblemId={Number(255)}*/}
+        {/*    />*/}
+        {/*  }*/}
+        {/*/>*/}
       </Routes>
       {currentLocation === 'order' ? (
         <>

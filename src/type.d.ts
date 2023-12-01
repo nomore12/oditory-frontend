@@ -29,3 +29,10 @@ export type AnswerItem = {
   syllable_count: number;
   category: string;
 };
+
+export type OrderProblemAdminData = {
+  type: 'basic' | 'time' | 'quantity' | 'location';
+  level: number;
+  problemNumber: number;
+  problemId?: number;
+};
