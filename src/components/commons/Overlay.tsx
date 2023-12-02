@@ -21,6 +21,7 @@ const Overlay: React.FC<PropsType> = ({ children, blockBackground }) => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        zIndex: 10,
       }}
       onClick={blockBackground ? undefined : overlayHandler}
     >

@@ -43,18 +43,24 @@ const OrderProblemPage: React.FC = () => {
         지시 따르기
       </Typography>
       <Divider />
-      <Routes>
-        <Route path="/create" element={<OrderProblemForm />} />
-        {/*<Route*/}
-        {/*  path={'255'}*/}
-        {/*  element={*/}
-        {/*    <MemoryProblemForm*/}
-        {/*      currentLevel={Number(1)}*/}
-        {/*      currentProblemId={Number(255)}*/}
-        {/*    />*/}
-        {/*  }*/}
-        {/*/>*/}
-      </Routes>
+      <Box
+        sx={{
+          height: currentLocation === 'order' ? '100%' : 'calc(100vh - 118px)',
+        }}
+      >
+        <Routes>
+          <Route path="/create" element={<OrderProblemForm />} />
+          {/*<Route*/}
+          {/*  path={'255'}*/}
+          {/*  element={*/}
+          {/*    <MemoryProblemForm*/}
+          {/*      currentLevel={Number(1)}*/}
+          {/*      currentProblemId={Number(255)}*/}
+          {/*    />*/}
+          {/*  }*/}
+          {/*/>*/}
+        </Routes>
+      </Box>
       {currentLocation === 'order' ? (
         <>
           <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
