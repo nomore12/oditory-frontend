@@ -236,7 +236,9 @@ const MemoryProblemCreateForm: React.FC = () => {
         </BlockStyle>
         <BlockStyle>
           <Typography>보기</Typography>
-          <GridContainer>
+          <GridContainer
+            sx={{ backgroundColor: '#ececec', border: 'none', borderRadius: 1 }}
+          >
             {itemArray.map((item: any) => (
               <ItemButton
                 key={item.pk}

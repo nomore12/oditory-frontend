@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, styled, Typography } from '@mui/material';
+import { Box, Button, styled, Typography, Paper } from '@mui/material';
 import useDeleteHook from '../../../../hooks/useDeleteHook';
 
 interface PropsType {
@@ -13,9 +13,9 @@ interface PropsType {
   mutateData: (url: string) => void;
 }
 
-const ItemStyle = styled(Box)(({ theme }) => ({
+const ItemStyle = styled(Paper)(({ theme }) => ({
   height: 200,
-  border: '1px solid black',
+  borderRadius: 5,
   padding: 12,
   display: 'flex',
   flexDirection: 'column',
@@ -45,7 +45,7 @@ const ItemListItem: React.FC<PropsType> = ({
   };
 
   return (
-    <ItemStyle>
+    <ItemStyle elevation={4}>
       <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
         <img style={{ width: '64px' }} src={image} alt="상품 이미지" />
       </Box>

@@ -1,7 +1,7 @@
 import {
   Box,
   Button,
-  Grid,
+  Paper,
   Typography,
   Checkbox,
   FormGroup,
@@ -42,9 +42,10 @@ const ItemButton: React.FC<PropsType> = ({
   }, [answer, isAnswer]);
 
   return (
-    <Box
+    <Paper
+      elevation={4}
       sx={{
-        border: '1px solid black',
+        backgroundColor: 'white',
         height: 240,
         padding: 1,
         display: 'flex',
@@ -91,7 +92,7 @@ const ItemButton: React.FC<PropsType> = ({
           {isAdd ? '추가' : '삭제'}
         </Button>
       </Box>
-    </Box>
+    </Paper>
   );
 };
 

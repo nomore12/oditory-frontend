@@ -293,7 +293,7 @@ const MemoryProblemForm: React.FC<PropsType> = ({
         </BlockStyle>
         <BlockStyle>
           <Typography>보기</Typography>
-          <GridContainer>
+          <GridContainer sx={{ backgroundColor: '#ececec' }}>
             {itemArray.map((item: any) => (
               <ItemButton
                 key={item.pk}

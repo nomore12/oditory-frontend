@@ -8,11 +8,13 @@ import { fetcher } from '../../../../utils/fetcher';
 import useSWR, { mutate } from 'swr';
 
 const GridContainer = styled(Box)(({ theme }) => ({
+  marginTop: 16,
   display: 'grid',
+  backgroundColor: '#ececec',
+  borderRadius: 1,
   gridTemplateColumns: 'repeat(5, minmax(80px, 240px))',
   justifyContent: 'space-between',
   gap: 16,
-  border: '1px solid black',
   width: '100%',
   height: 640,
   overflowY: 'auto',
@@ -49,7 +51,7 @@ const MemoryItemManagement: React.FC = () => {
     .map((_, idx) => <div key={`empty-${idx}`} className="empty-item"></div>);
 
   return (
-    <Box>
+    <Box sx={{ padding: 2 }}>
       <Box sx={{ padding: '16px 0' }}>
         <Typography>아이템 관리</Typography>
       </Box>
@@ -73,7 +75,14 @@ const MemoryItemManagement: React.FC = () => {
           {emptyItems}
         </GridContainer>
       </Box>
-      <Box sx={{ width: '100%', display: 'flex', justifyContent: 'flex-end' }}>
+      <Box
+        sx={{
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'flex-end',
+          marginTop: 2,
+        }}
+      >
         <Button variant="outlined" onClick={addItemHandler}>
           아이템 추가
         </Button>

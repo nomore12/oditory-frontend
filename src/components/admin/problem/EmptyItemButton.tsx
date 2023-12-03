@@ -1,4 +1,4 @@
-import { Box, IconButton } from '@mui/material';
+import { Box, IconButton, Paper } from '@mui/material';
 import React from 'react';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { useOverlay } from '../../../hooks/useOverlay';
@@ -7,9 +7,10 @@ const ItemButton: React.FC = () => {
   const { overlayHandler } = useOverlay();
 
   return (
-    <Box
+    <Paper
+      elevation={4}
       sx={{
-        border: '1px solid black',
+        backgroundColor: 'white',
         height: 240,
         padding: 1,
         display: 'flex',
@@ -26,7 +27,7 @@ const ItemButton: React.FC = () => {
       >
         <AddCircleOutlineIcon sx={{ fontSize: 80 }} />
       </IconButton>
-    </Box>
+    </Paper>
   );
 };
 
