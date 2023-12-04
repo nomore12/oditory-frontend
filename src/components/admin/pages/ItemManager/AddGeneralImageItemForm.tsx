@@ -40,11 +40,13 @@ const AddGeneralImageItemForm: React.FC<PropsType> = ({
 }) => {
   const [file, setFile] = useState<File | null>(null); // [1]
   const [filePreviewUrl, setFilePreviewUrl] = useState<string>(''); // [2
+  const [title, setTitle] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const postData = {
     image: file,
     type: type,
     others: '',
+    title: title,
   };
 
   const { executePost } = usePostData(`item/general-image-items/`, postData, {
@@ -63,6 +65,10 @@ const AddGeneralImageItemForm: React.FC<PropsType> = ({
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
+  };
+
+  const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(event.target.value);
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,8 +91,13 @@ const AddGeneralImageItemForm: React.FC<PropsType> = ({
         alert('아이템 추가 중 오류가 발생했습니다.');
         openHandler();
       }
-    } else if (file) {
-      const isSuccess = await executePatch({ type: type, image: file });
+    } else if (file || title) {
+      const isSuccess = await executePatch({
+        type: type,
+        image: file,
+        title: title,
+      });
+
       if (isSuccess) {
         alert('아이템 수정이 완료되었습니다.');
         openHandler();
@@ -99,6 +110,10 @@ const AddGeneralImageItemForm: React.FC<PropsType> = ({
       console.log('nothing happen');
     }
   };
+
+  useEffect(() => {
+    console.log('title', title);
+  }, [title]);
 
   useEffect(() => {
     return () => {
@@ -116,6 +131,7 @@ const AddGeneralImageItemForm: React.FC<PropsType> = ({
             );
             const data = await response.json();
             setFilePreviewUrl(data.image);
+            setTitle(data.title);
             console.log('fetch', data);
             // 데이터 처리 로직
           } catch (error) {
@@ -147,7 +163,7 @@ const AddGeneralImageItemForm: React.FC<PropsType> = ({
         onClick={(e) => e.stopPropagation()}
         sx={{
           width: 480,
-          height: 420,
+          height: 480,
           backgroundColor: 'white',
           zIndex: 1,
           display: 'flex',
@@ -179,6 +195,14 @@ const AddGeneralImageItemForm: React.FC<PropsType> = ({
           ) : null}
         </BlockStyle>
         <Box sx={{ marginTop: 'auto' }}>
+          <TextField
+            size="small"
+            label="제목"
+            fullWidth
+            onChange={handleTitleChange}
+            value={title}
+            sx={{ marginTop: 1, marginBottom: 1 }}
+          />
           <BlockStyle>
             <div>
               <input

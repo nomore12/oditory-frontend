@@ -82,7 +82,7 @@ const SyntaxItemManagement: React.FC = () => {
               overflowY: 'auto',
             }}
             cols={4}
-            rowHeight={200}
+            rowHeight={230}
           >
             {!isLoading
               ? data.map((item: any) => (
@@ -90,6 +90,7 @@ const SyntaxItemManagement: React.FC = () => {
                     <GeneralImageItemCard
                       url={item.image}
                       id={item.id}
+                      title={item.title}
                       openHandler={onItemAddHandler}
                       setModify={setModify}
                       setCurrentId={setCurrentId}

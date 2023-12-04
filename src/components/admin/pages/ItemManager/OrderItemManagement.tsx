@@ -44,7 +44,7 @@ const OrderItemManagement: React.FC = () => {
           gap: 2,
         }}
       >
-        <Typography>구문이해 아이템 관리</Typography>
+        <Typography>지시따르기 아이템 관리</Typography>
         <Box>
           <Button
             variant="outlined"
@@ -73,7 +73,7 @@ const OrderItemManagement: React.FC = () => {
               overflowY: 'auto',
             }}
             cols={4}
-            rowHeight={200}
+            rowHeight={230}
           >
             {data
               ? data.map((item: any) => (
@@ -81,6 +81,7 @@ const OrderItemManagement: React.FC = () => {
                     <GeneralImageItemCard
                       url={item.image}
                       id={item.id}
+                      title={item.title}
                       openHandler={onItemAddHandler}
                       setModify={setModify}
                       setCurrentId={setCurrentId}

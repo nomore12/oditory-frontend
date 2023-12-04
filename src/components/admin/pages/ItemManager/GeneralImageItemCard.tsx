@@ -15,6 +15,7 @@ import type { KeyedMutator } from 'swr';
 interface PropsType {
   url: string;
   id: number;
+  title: string;
   openHandler: () => void;
   setModify: (modify: boolean) => void;
   setCurrentId: (id: number) => void;
@@ -24,6 +25,7 @@ interface PropsType {
 const GeneralImageItemCard: React.FC<PropsType> = ({
   url,
   id,
+  title,
   openHandler,
   setModify,
   setCurrentId,
@@ -53,12 +55,12 @@ const GeneralImageItemCard: React.FC<PropsType> = ({
         <Box
           sx={{
             width: '100%',
-            height: '190px',
+            height: '220px',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
             alignItems: 'center',
-            gap: 2,
+            gap: 1,
             padding: 2,
           }}
         >
@@ -74,7 +76,13 @@ const GeneralImageItemCard: React.FC<PropsType> = ({
               loading="lazy"
             />
           </Box>
-          <Box sx={{ display: 'flex', gap: 1 }}>
+          <Typography sx={{ marginTop: 'auto' }}>{title}</Typography>
+          <Box
+            sx={{
+              display: 'flex',
+              gap: 1,
+            }}
+          >
             <Button
               variant="outlined"
               onClick={() => {
