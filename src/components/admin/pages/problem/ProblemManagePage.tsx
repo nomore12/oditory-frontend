@@ -33,17 +33,14 @@ const ProblemManagePage: React.FC = () => {
         >
           <BigButton to="/admin/problem/memory" text="기억력 향상"></BigButton>
           <BigButton to="/admin/problem/order" text="지시 따르기"></BigButton>
-          <BigButton
-            to="/admin/problem/understand"
-            text="구문 이해"
-          ></BigButton>
+          <BigButton to="/admin/problem/syntax" text="구문 이해"></BigButton>
         </Box>
       )}
       <PageContainer>
         <Routes>
           <Route path="memory/*" element={<MemoryEnhancementProblemPage />} />
           <Route path="order/*" element={<OrderProblemPage />} />
-          <Route path="understand/*" element={<SyntaxProblemPage />} />
+          <Route path="syntax/*" element={<SyntaxProblemPage />} />
         </Routes>
       </PageContainer>
     </Box>
