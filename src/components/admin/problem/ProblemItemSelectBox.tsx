@@ -64,8 +64,9 @@ const ProblemItemSelectBox: React.FC<PropsType> = ({ row, col }) => {
     (url) => fetcher({ url })
   );
 
-  const handleItemClicked = (id: number) => {
-    setClickedItem(id);
+  const handleItemClicked = (index: number, id: number) => {
+    overlayHandler();
+    setClickedItem(index);
   };
 
   useEffect(() => {
@@ -78,18 +79,21 @@ const ProblemItemSelectBox: React.FC<PropsType> = ({ row, col }) => {
     setListItem(Array.from({ length: 3 * col }, (_) => -10));
     setClickedItem(undefined);
     setSelectedImageItemId(-1);
-    setAnswers([]);
+    const arr = Array.from({ length: 3 * col }, (_) => -1);
+    setAnswers([...arr]);
   }, [col]);
 
   useEffect(() => {
     if (clickedItem !== undefined && clickedItem > -1) {
-      console.log(clickedItem, selectedImageItemId);
       const newArr = [...listItem];
       newArr[clickedItem] = selectedImageItemId;
       setListItem(newArr);
-      console.log(newArr);
     }
   }, [selectedImageItemId]);
+
+  useEffect(() => {
+    console.log(listItem);
+  }, [listItem]);
 
   return (
     <Box
@@ -115,12 +119,12 @@ const ProblemItemSelectBox: React.FC<PropsType> = ({ row, col }) => {
                     component="div"
                     elevation={4}
                     onClick={() => {
-                      overlayHandler();
-                      setClickedItem(index);
+                      handleItemClicked(index, id);
                     }}
                   >
                     <img
                       src={data.find((item: any) => item.id === id)?.image}
+                      alt={data.find((item: any) => item.id === id)?.title}
                       style={{
                         objectFit: 'contain',
                         height: '100%',
@@ -134,7 +138,6 @@ const ProblemItemSelectBox: React.FC<PropsType> = ({ row, col }) => {
                     />
                     <Box
                       sx={{
-                        // height: '3rem',
                         position: 'absolute',
                         left: 16,
                         bottom: 16,
@@ -147,6 +150,10 @@ const ProblemItemSelectBox: React.FC<PropsType> = ({ row, col }) => {
                         control={<Checkbox />}
                         label="정답:"
                         labelPlacement="start"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          console.log('clicked', id, index);
+                        }}
                       />
                     </Box>
                   </Paper>
@@ -198,6 +205,7 @@ const ProblemItemSelectBox: React.FC<PropsType> = ({ row, col }) => {
                   <SelectGeneralItem
                     id={item.id}
                     url={item.image}
+                    title={item.title}
                     overlayHandler={overlayHandler}
                     handleItemClicked={setSelectedImageItemId}
                   />

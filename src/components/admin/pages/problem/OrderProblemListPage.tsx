@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Box,
   Button,
@@ -17,7 +17,7 @@ import {
   TableRow,
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material/Select';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 interface PropsType {
   type: 'basic' | 'time' | 'quantity' | 'location';
@@ -109,10 +109,23 @@ const dummyData = [
 
 const OrderProblemListPage: React.FC<PropsType> = ({ type }) => {
   const [level, setLevel] = React.useState('1');
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const handleChange = (event: SelectChangeEvent) => {
     setLevel(event.target.value as string);
+    const params: any = {};
+    searchParams.forEach((value, key) => {
+      params[key] = value;
+    });
+    params.level = event.target.value as string;
+    setSearchParams({ ...params });
   };
+
+  useEffect(() => {
+    if (searchParams.get('level')) {
+      setLevel(searchParams.get('level') as string);
+    }
+  }, [searchParams]);
 
   return (
     <Box>
@@ -142,7 +155,17 @@ const OrderProblemListPage: React.FC<PropsType> = ({ type }) => {
           </Select>
         </FormControl>
         <StyledBox>
-          <Link to="/admin/problem/order/create">문제 만들기</Link>
+          <Link
+            to={`/admin/problem/order/create?${
+              searchParams.get('type') ? `type=${searchParams.get('type')}` : ''
+            }${
+              searchParams.get('level')
+                ? `&level=${searchParams.get('level')}`
+                : ''
+            }`}
+          >
+            문제 만들기
+          </Link>
         </StyledBox>
       </Box>
       <Divider />

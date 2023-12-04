@@ -9,9 +9,39 @@ import {
   Typography,
   Checkbox,
   Button,
+  TextField,
 } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import ProblemItemSelectBox from './ProblemItemSelectBox';
+import { useSearchParams } from 'react-router-dom';
+
+function getOrderQueryParams(type: string) {
+  if (type === 'basic') {
+    return 0;
+  } else if (type === 'time') {
+    return 1;
+  } else if (type === 'quantity') {
+    return 2;
+  } else if (type === 'location') {
+    return 3;
+  } else {
+    return 0;
+  }
+}
+
+function getOrderType(value: number) {
+  if (value === 0) {
+    return 'basic';
+  } else if (value === 1) {
+    return 'time';
+  } else if (value === 2) {
+    return 'quantity';
+  } else if (value === 3) {
+    return 'location';
+  } else {
+    return 'basic';
+  }
+}
 
 const OrderProblemForm: React.FC = () => {
   const [level, setLevel] = useState('1');
@@ -20,13 +50,27 @@ const OrderProblemForm: React.FC = () => {
   const [sizeEnable, setSizeEnable] = useState(false);
   const [answerSequential, setAnswerSequential] = useState(false);
   const [colCount, setColCount] = useState(4);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const handleLevelChange = (event: SelectChangeEvent) => {
     setLevel(event.target.value as string);
+    const params: any = {};
+    searchParams.forEach((value, key) => {
+      params[key] = value;
+    });
+    setSearchParams({ ...params, level: event.target.value as string });
   };
 
   const handleTypeChange = (event: SelectChangeEvent) => {
     setTypeSelect(event.target.value as string);
+    const params: any = {};
+    searchParams.forEach((value, key) => {
+      params[key] = value;
+    });
+    setSearchParams({
+      ...params,
+      type: getOrderType(Number(event.target.value as string) - 1),
+    });
   };
 
   const handleAnswerCountChange = (event: SelectChangeEvent) => {
@@ -55,6 +99,19 @@ const OrderProblemForm: React.FC = () => {
     }
   }, [answerCount]);
 
+  useEffect(() => {
+    if (searchParams.get('level')) {
+      setLevel(searchParams.get('level') as string);
+    }
+
+    if (searchParams.get('type')) {
+      console.log(searchParams.get('type'));
+      setTypeSelect(
+        String(getOrderQueryParams(searchParams.get('type') as string) + 1)
+      );
+    }
+  }, [searchParams]);
+
   return (
     <Box
       sx={{
@@ -65,6 +122,7 @@ const OrderProblemForm: React.FC = () => {
       }}
     >
       <Typography variant="h6">문제 만들기</Typography>
+      <TextField size="small" label="문제" fullWidth sx={{ marginTop: 2 }} />
       <Box sx={{ marginTop: 2, display: 'flex', gap: 2, alignItems: 'center' }}>
         <FormControl>
           <InputLabel id="demo-simple-select-label">레벨</InputLabel>
@@ -123,7 +181,7 @@ const OrderProblemForm: React.FC = () => {
           control={
             <Checkbox checked={sizeEnable} onChange={handleSizeEnableChange} />
           }
-          label="크기 적용:"
+          label="또는:"
           labelPlacement="start"
         />
         <FormControlLabel
