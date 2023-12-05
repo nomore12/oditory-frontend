@@ -19,7 +19,6 @@ const usePostData = (url: string, data: any, header: any) => {
 
   // Manually trigger the POST request with this function
   const executePost = async () => {
-    console.log('executePost', data);
     try {
       const response = await fetcher({
         url,

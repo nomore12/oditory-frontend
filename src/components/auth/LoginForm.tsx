@@ -131,7 +131,6 @@ const LoginForm: React.FC = () => {
     const data = await executePost();
 
     if (data && data.token && data.user) {
-      delete data.user.user.password;
       setAuth(data.token, data.user);
       navigate('/main');
     }
