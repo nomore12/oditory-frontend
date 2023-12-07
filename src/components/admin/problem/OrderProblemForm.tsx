@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Box,
   FormControl,
@@ -51,6 +51,9 @@ const OrderProblemForm: React.FC = () => {
   const [answerSequential, setAnswerSequential] = useState(false);
   const [colCount, setColCount] = useState(4);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [file, setFile] = useState<File | null>(null); // [1]
+  const [filePreviewUrl, setFilePreviewUrl] = useState<string>(''); // [2
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleLevelChange = (event: SelectChangeEvent) => {
     setLevel(event.target.value as string);
@@ -87,6 +90,22 @@ const OrderProblemForm: React.FC = () => {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setAnswerSequential(event.target.checked);
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files ? event.target.files[0] : null;
+    console.log(file, file?.name);
+    if (file) {
+      setFile(file);
+      const url = URL.createObjectURL(file);
+      setFilePreviewUrl(url);
+    }
+  };
+
+  const handleButtonClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   };
 
   useEffect(() => {
@@ -194,6 +213,19 @@ const OrderProblemForm: React.FC = () => {
           label="순차 답변:"
           labelPlacement="start"
         />
+        <Box>
+          <div>
+            <input
+              type="file"
+              ref={fileInputRef}
+              style={{ display: 'none' }}
+              onChange={handleFileChange}
+            />
+            <Button variant="outlined" onClick={handleButtonClick}>
+              {file ? file?.name : 'Upload File'}
+            </Button>
+          </div>
+        </Box>
       </Box>
       <ProblemItemSelectBox row={3} col={colCount} />
       <Box
