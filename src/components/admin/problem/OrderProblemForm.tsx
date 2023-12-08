@@ -14,6 +14,7 @@ import {
 import { SelectChangeEvent } from '@mui/material/Select';
 import ProblemItemSelectBox from './ProblemItemSelectBox';
 import { useSearchParams } from 'react-router-dom';
+import usePostHook from '../../../hooks/usePostHook';
 
 function getOrderQueryParams(type: string) {
   if (type === 'basic') {
@@ -43,19 +44,52 @@ function getOrderType(value: number) {
   }
 }
 
+function getAnswerType(value: string) {
+  if (value === '1') {
+    return 'sequence';
+  } else if (value === '2') {
+    return 'and';
+  } else if (value === '3') {
+    return 'or';
+  } else {
+    return 'sequence';
+  }
+}
+
 const OrderProblemForm: React.FC = () => {
   const [level, setLevel] = useState('1');
   const [typeSelect, setTypeSelect] = useState('1');
   const [answerCount, setAnswerCount] = useState('1');
-  const [sizeEnable, setSizeEnable] = useState(false);
+  const [answers, setAnswers] = useState<number[]>([]);
   const [itemList, setItemList] = useState<number[]>([]);
-  const [answerSequential, setAnswerSequential] = useState(false);
+  const [answerType, setAnswerType] = useState('1');
   const [colCount, setColCount] = useState(4);
   const [searchParams, setSearchParams] = useSearchParams();
   const [file, setFile] = useState<File | null>(null);
   const [filePreviewUrl, setFilePreviewUrl] = useState<string>('');
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const {
+    data: responseData,
+    error,
+    isValidating,
+    executePost,
+  } = usePostHook(
+    'problem/order/',
+    {
+      choices: itemList,
+      answers: answers,
+      category: getOrderType(Number(typeSelect)),
+      visual_hint: false,
+      sound_file: file,
+      problem_type: 'order',
+      problem_level: Number(level),
+      problem_question_number: 1,
+    },
+    { 'Content-Type': 'multipart/form-data' }
+  );
 
   const handleLevelChange = (event: SelectChangeEvent) => {
     setLevel(event.target.value as string);
@@ -82,21 +116,12 @@ const OrderProblemForm: React.FC = () => {
     setAnswerCount(event.target.value as string);
   };
 
-  const handleSizeEnableChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setSizeEnable(event.target.checked);
-  };
-
-  const handleAnswerSequentialChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setAnswerSequential(event.target.checked);
+  const handleAnswerTypeChange = (event: SelectChangeEvent) => {
+    setAnswerType(event.target.value as string);
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files ? event.target.files[0] : null;
-    console.log(file, file?.name);
     if (file) {
       setFile(file);
       const url = URL.createObjectURL(file);
@@ -110,21 +135,48 @@ const OrderProblemForm: React.FC = () => {
     }
   };
 
+  const handlePlaySound = () => {
+    if (!isPlaying) {
+      audioRef.current?.play();
+      setIsPlaying(true);
+    } else {
+      audioRef.current?.pause();
+      setIsPlaying(false);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!file) {
+      alert('음성 파일을 업로드해주세요.');
+      return;
+    }
+
+    await executePost();
+  };
+
   useEffect(() => {
     if (String(answerCount) === '1') {
       setColCount(4);
       const arr = Array.from({ length: 3 * 4 }, (_) => -1);
       setItemList([...arr]);
+      setAnswers([]);
     } else if (String(answerCount) === '2') {
       setColCount(5);
       const arr = Array.from({ length: 3 * 5 }, (_) => -1);
       setItemList([...arr]);
+      setAnswers([]);
     } else if (String(answerCount) === '3') {
       setColCount(6);
       const arr = Array.from({ length: 3 * 6 }, (_) => -1);
       setItemList([...arr]);
+      setAnswers([]);
     }
   }, [answerCount]);
+
+  useEffect(() => {
+    setItemList(Array.from({ length: 3 * colCount }, (_) => -1));
+    setAnswers([]);
+  }, [answerType]);
 
   useEffect(() => {
     if (searchParams.get('level')) {
@@ -132,12 +184,39 @@ const OrderProblemForm: React.FC = () => {
     }
 
     if (searchParams.get('type')) {
-      console.log(searchParams.get('type'));
       setTypeSelect(
         String(getOrderQueryParams(searchParams.get('type') as string) + 1)
       );
     }
   }, [searchParams]);
+
+  useEffect(() => {
+    console.log('isPlaying', isPlaying);
+    if (audioRef.current) {
+      if (isPlaying) {
+        // audioRef.current.play();
+        console.log('audio', audioRef.current?.onplaying);
+
+        setTimeout(
+          () => setIsPlaying(false),
+          audioRef.current?.duration * 1000 + 500
+        );
+        console.log('audio', audioRef.current?.onplaying);
+        setTimeout(
+          () =>
+            console.log(
+              audioRef.current?.currentTime,
+              audioRef.current?.currentSrc,
+              audioRef.current?.duration
+            ),
+          5000
+        );
+      } else {
+        audioRef.current.pause();
+        // setPlaySound && setPlaySound(false);
+      }
+    }
+  }, [isPlaying]);
 
   useEffect(() => {
     setItemList(Array.from({ length: 3 * colCount }, (_) => -1));
@@ -208,23 +287,21 @@ const OrderProblemForm: React.FC = () => {
             <MenuItem value={3}>3 x 6</MenuItem>
           </Select>
         </FormControl>
-        <FormControlLabel
-          control={
-            <Checkbox checked={sizeEnable} onChange={handleSizeEnableChange} />
-          }
-          label="또는:"
-          labelPlacement="start"
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={answerSequential}
-              onChange={handleAnswerSequentialChange}
-            />
-          }
-          label="순차 답변:"
-          labelPlacement="start"
-        />
+        <FormControl>
+          <InputLabel id="demo-condition-select-label">보기 개수</InputLabel>
+          <Select
+            labelId="demo-condition-select-label"
+            id="demo-condition-select"
+            value={answerType}
+            label="답변 방식"
+            size="small"
+            onChange={handleAnswerTypeChange}
+          >
+            <MenuItem value={1}>순차 답변</MenuItem>
+            <MenuItem value={2}>AND 조건</MenuItem>
+            <MenuItem value={3}>OR 조건</MenuItem>
+          </Select>
+        </FormControl>
         <Box sx={{ marginLeft: 'auto', display: 'flex', gap: 2 }}>
           <Box>
             <div>
@@ -240,14 +317,27 @@ const OrderProblemForm: React.FC = () => {
               </Button>
             </div>
           </Box>
+          <audio ref={audioRef} src={filePreviewUrl} />
           <Box>
-            <Button variant="outlined" disabled={file ? false : true}>
+            <Button
+              variant="outlined"
+              disabled={file ? false : true}
+              onClick={handlePlaySound}
+            >
               {!file ? '재생' : isPlaying ? '정지' : '재생'}
             </Button>
           </Box>
         </Box>
       </Box>
-      <ProblemItemSelectBox row={3} col={colCount} />
+      <ProblemItemSelectBox
+        row={3}
+        col={colCount}
+        answers={answers}
+        itemList={itemList}
+        setItemList={setItemList}
+        setAnswers={setAnswers}
+        sequential={answerType}
+      />
       <Box
         sx={{
           width: '100%',
@@ -258,7 +348,9 @@ const OrderProblemForm: React.FC = () => {
         }}
       >
         <Button variant="outlined">취소</Button>
-        <Button variant="contained">저장</Button>
+        <Button variant="contained" onClick={handleSubmit}>
+          저장
+        </Button>
       </Box>
     </Box>
   );

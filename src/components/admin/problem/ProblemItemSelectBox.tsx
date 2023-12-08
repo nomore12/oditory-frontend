@@ -19,6 +19,11 @@ import SelectGeneralItem from './SelectGeneralItem';
 interface PropsType {
   row: number;
   col: number;
+  answers: number[];
+  itemList: number[];
+  setItemList: (itemList: number[]) => void;
+  setAnswers: (answers: number[]) => void;
+  sequential: string;
 }
 
 const StyledGridItem = styled(Grid)`
@@ -51,12 +56,18 @@ const StyledGridItem = styled(Grid)`
   }
 `;
 
-const ProblemItemSelectBox: React.FC<PropsType> = ({ row, col }) => {
-  const [listItem, setListItem] = useState<number[]>([]);
+const ProblemItemSelectBox: React.FC<PropsType> = ({
+  row,
+  col,
+  answers,
+  itemList,
+  setItemList,
+  setAnswers,
+  sequential,
+}) => {
+  // const [listItem, setListItem] = useState<number[]>([]);
   const [clickedItem, setClickedItem] = useState<number | undefined>(undefined);
   const [selectedImageItemId, setSelectedImageItemId] = useState<number>(-1);
-  const [answers, setAnswers] = useState<number[]>([]);
-
   const { overlayHandler } = useOverlay();
 
   const { data, error, isLoading, mutate } = useSWR(
@@ -69,31 +80,60 @@ const ProblemItemSelectBox: React.FC<PropsType> = ({ row, col }) => {
     setClickedItem(index);
   };
 
+  const handleAnswerItemClicked = (
+    e: React.MouseEvent,
+    index: number,
+    id: number
+  ) => {
+    e.stopPropagation();
+    const target = e.target as HTMLInputElement;
+    if (target.checked) {
+      const newArr = answers ? [...answers] : [];
+      newArr.push(id);
+      setAnswers([...newArr]);
+      console.log(newArr);
+    } else {
+      const newArr = answers ? [...answers] : [];
+      const index = newArr.findIndex((item) => item === id);
+      newArr.splice(index, 1);
+      setAnswers([...newArr]);
+    }
+  };
+
   useEffect(() => {
     if (!isLoading) {
-      setListItem(Array.from({ length: 3 * col }, (_) => -10));
+      setItemList(Array.from({ length: 3 * col }, (_) => -10));
     }
   }, [isLoading]);
 
   useEffect(() => {
-    setListItem(Array.from({ length: 3 * col }, (_) => -10));
+    setItemList(Array.from({ length: 3 * col }, (_) => -10));
     setClickedItem(undefined);
     setSelectedImageItemId(-1);
-    const arr = Array.from({ length: 3 * col }, (_) => -1);
-    setAnswers([...arr]);
   }, [col]);
 
   useEffect(() => {
     if (clickedItem !== undefined && clickedItem > -1) {
-      const newArr = [...listItem];
+      const newArr = [...itemList];
       newArr[clickedItem] = selectedImageItemId;
-      setListItem(newArr);
+      if (itemList.find((item) => item === selectedImageItemId) !== undefined) {
+        alert('중복된 이미지를 선택할 수 없습니다.');
+        return;
+      }
+
+      setItemList(newArr);
+      setItemList(newArr);
     }
   }, [selectedImageItemId]);
 
   useEffect(() => {
-    console.log(listItem);
-  }, [listItem]);
+    console.log('initial', answers, sequential);
+  }, []);
+
+  useEffect(() => {
+    console.log('sequential', sequential);
+    // setItemList([...itemList]);
+  }, [sequential]);
 
   return (
     <Box
@@ -110,12 +150,13 @@ const ProblemItemSelectBox: React.FC<PropsType> = ({ row, col }) => {
       }}
     >
       <Grid container>
-        {listItem &&
-          listItem.map((id, index) =>
+        {itemList &&
+          itemList.map((id, index) =>
             id > -1 ? (
               <StyledGridItem key={index} item xs={12 / col}>
                 <div>
                   <Paper
+                    sx={{ position: 'relative' }}
                     component="div"
                     elevation={4}
                     onClick={() => {
@@ -136,11 +177,45 @@ const ProblemItemSelectBox: React.FC<PropsType> = ({ row, col }) => {
                         alignItems: 'center',
                       }}
                     />
+                    <Typography
+                      sx={{ position: 'absolute', top: 10, left: 10 }}
+                    >
+                      {data.find((item: any) => item.id === id)?.title}
+                    </Typography>
+                    <Box>
+                      {
+                        sequential === '1' && 'asdfgasdf'
+                        // sequential === '1' &&
+                        // answers &&
+                        // answers.findIndex((item) => item === id) >= 0 && (
+                        //   <Box
+                        //     sx={{
+                        //       position: 'absolute',
+                        //       width: 30,
+                        //       height: 30,
+                        //       bottom: 10,
+                        //       right: 10,
+                        //       backgroundColor: '#a9a9a9',
+                        //       borderRadius: '50%',
+                        //       display: 'flex',
+                        //       justifyContent: 'center',
+                        //       alignItems: 'center',
+                        //     }}
+                        //   >
+                        //     {answers
+                        //       ? answers.findIndex((item) => item === id) >= 0
+                        //         ? answers.findIndex((item) => item === id) + 1
+                        //         : null
+                        //       : null}
+                        //   </Box>
+                        // )
+                      }
+                    </Box>
                     <Box
                       sx={{
                         position: 'absolute',
-                        left: 16,
-                        bottom: 16,
+                        left: 4,
+                        bottom: 4,
                         padding: 1,
                         backgroundColor: 'rgba(255, 255, 255, 0.5)',
                       }}
@@ -151,8 +226,7 @@ const ProblemItemSelectBox: React.FC<PropsType> = ({ row, col }) => {
                         label="정답:"
                         labelPlacement="start"
                         onClick={(e) => {
-                          e.stopPropagation();
-                          console.log('clicked', id, index);
+                          handleAnswerItemClicked(e, index, id);
                         }}
                       />
                     </Box>
