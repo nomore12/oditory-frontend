@@ -48,11 +48,13 @@ const OrderProblemForm: React.FC = () => {
   const [typeSelect, setTypeSelect] = useState('1');
   const [answerCount, setAnswerCount] = useState('1');
   const [sizeEnable, setSizeEnable] = useState(false);
+  const [itemList, setItemList] = useState<number[]>([]);
   const [answerSequential, setAnswerSequential] = useState(false);
   const [colCount, setColCount] = useState(4);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [file, setFile] = useState<File | null>(null); // [1]
-  const [filePreviewUrl, setFilePreviewUrl] = useState<string>(''); // [2
+  const [file, setFile] = useState<File | null>(null);
+  const [filePreviewUrl, setFilePreviewUrl] = useState<string>('');
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleLevelChange = (event: SelectChangeEvent) => {
@@ -111,10 +113,16 @@ const OrderProblemForm: React.FC = () => {
   useEffect(() => {
     if (String(answerCount) === '1') {
       setColCount(4);
+      const arr = Array.from({ length: 3 * 4 }, (_) => -1);
+      setItemList([...arr]);
     } else if (String(answerCount) === '2') {
       setColCount(5);
+      const arr = Array.from({ length: 3 * 5 }, (_) => -1);
+      setItemList([...arr]);
     } else if (String(answerCount) === '3') {
       setColCount(6);
+      const arr = Array.from({ length: 3 * 6 }, (_) => -1);
+      setItemList([...arr]);
     }
   }, [answerCount]);
 
@@ -130,6 +138,10 @@ const OrderProblemForm: React.FC = () => {
       );
     }
   }, [searchParams]);
+
+  useEffect(() => {
+    setItemList(Array.from({ length: 3 * colCount }, (_) => -1));
+  }, []);
 
   return (
     <Box
@@ -213,18 +225,26 @@ const OrderProblemForm: React.FC = () => {
           label="순차 답변:"
           labelPlacement="start"
         />
-        <Box>
-          <div>
-            <input
-              type="file"
-              ref={fileInputRef}
-              style={{ display: 'none' }}
-              onChange={handleFileChange}
-            />
-            <Button variant="outlined" onClick={handleButtonClick}>
-              {file ? file?.name : 'Upload File'}
+        <Box sx={{ marginLeft: 'auto', display: 'flex', gap: 2 }}>
+          <Box>
+            <div>
+              <input
+                type="file"
+                accept="audio/mp3"
+                ref={fileInputRef}
+                style={{ display: 'none' }}
+                onChange={handleFileChange}
+              />
+              <Button variant="outlined" onClick={handleButtonClick}>
+                {file ? file?.name : 'Upload File'}
+              </Button>
+            </div>
+          </Box>
+          <Box>
+            <Button variant="outlined" disabled={file ? false : true}>
+              {!file ? '재생' : isPlaying ? '정지' : '재생'}
             </Button>
-          </div>
+          </Box>
         </Box>
       </Box>
       <ProblemItemSelectBox row={3} col={colCount} />

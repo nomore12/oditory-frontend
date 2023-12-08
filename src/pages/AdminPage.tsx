@@ -19,6 +19,8 @@ import { useNavigate } from 'react-router-dom';
 import BigButton from '../components/admin/BigButton';
 import useAuthStore from '../store/AuthStore';
 import ItemManagePage from '../components/admin/pages/ItemManager/ItemManagePage';
+import NewOverlay from '../components/commons/NewOverlay';
+import useOverlayStore from '../store/overayStore';
 
 const AdminPage: React.FC = () => {
   const [popoverOpen, setPopoverOpen] = useState(false);
@@ -26,6 +28,7 @@ const AdminPage: React.FC = () => {
   const location = useLocation();
   const { user, clearAuth } = useAuthStore();
   const navigate = useNavigate();
+  const { showOverlay } = useOverlayStore();
 
   const onUserProfileClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -101,6 +104,7 @@ const AdminPage: React.FC = () => {
                   >
                     로그아웃
                   </Button>
+                  <Button onClick={showOverlay}>overlay</Button>
                 </Box>
               </Popover>
             </Box>
@@ -128,6 +132,11 @@ const AdminPage: React.FC = () => {
                 <BigButton to="/admin/members" text="회원 관리" />
               </Box>
             )}
+            <NewOverlay>
+              <Box sx={{ width: 300, height: 300, backgroundColor: 'white' }}>
+                dsfadf
+              </Box>
+            </NewOverlay>
             <PageContainer>
               <Routes>
                 <Route path="problem/*" element={<ProblemManagePage />} />
