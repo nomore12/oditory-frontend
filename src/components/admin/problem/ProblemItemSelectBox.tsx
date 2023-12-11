@@ -91,7 +91,7 @@ const ProblemItemSelectBox: React.FC<PropsType> = ({
       const newArr = answers ? [...answers] : [];
       newArr.push(id);
       setAnswers([...newArr]);
-      console.log(newArr);
+      console.log(newArr, sequential);
     } else {
       const newArr = answers ? [...answers] : [];
       const index = newArr.findIndex((item) => item === id);
@@ -183,33 +183,30 @@ const ProblemItemSelectBox: React.FC<PropsType> = ({
                       {data.find((item: any) => item.id === id)?.title}
                     </Typography>
                     <Box>
-                      {
-                        sequential === '1' && 'asdfgasdf'
-                        // sequential === '1' &&
-                        // answers &&
-                        // answers.findIndex((item) => item === id) >= 0 && (
-                        //   <Box
-                        //     sx={{
-                        //       position: 'absolute',
-                        //       width: 30,
-                        //       height: 30,
-                        //       bottom: 10,
-                        //       right: 10,
-                        //       backgroundColor: '#a9a9a9',
-                        //       borderRadius: '50%',
-                        //       display: 'flex',
-                        //       justifyContent: 'center',
-                        //       alignItems: 'center',
-                        //     }}
-                        //   >
-                        //     {answers
-                        //       ? answers.findIndex((item) => item === id) >= 0
-                        //         ? answers.findIndex((item) => item === id) + 1
-                        //         : null
-                        //       : null}
-                        //   </Box>
-                        // )
-                      }
+                      {String(sequential) === '1' &&
+                        answers &&
+                        answers.findIndex((item) => item === id) >= 0 && (
+                          <Box
+                            sx={{
+                              position: 'absolute',
+                              width: 30,
+                              height: 30,
+                              bottom: 10,
+                              right: 10,
+                              backgroundColor: '#a9a9a9',
+                              borderRadius: '50%',
+                              display: 'flex',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                            }}
+                          >
+                            {answers
+                              ? answers.findIndex((item) => item === id) >= 0
+                                ? answers.findIndex((item) => item === id) + 1
+                                : null
+                              : null}
+                          </Box>
+                        )}
                     </Box>
                     <Box
                       sx={{

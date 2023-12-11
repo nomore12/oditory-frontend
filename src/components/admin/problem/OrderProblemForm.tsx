@@ -15,6 +15,7 @@ import { SelectChangeEvent } from '@mui/material/Select';
 import ProblemItemSelectBox from './ProblemItemSelectBox';
 import { useSearchParams } from 'react-router-dom';
 import usePostHook from '../../../hooks/usePostHook';
+import { useNavigate } from 'react-router-dom';
 
 function getOrderQueryParams(type: string) {
   if (type === 'basic') {
@@ -46,17 +47,38 @@ function getOrderType(value: number) {
 
 function getAnswerType(value: string) {
   if (value === '1') {
-    return 'sequence';
+    return 'sequential';
   } else if (value === '2') {
     return 'and';
   } else if (value === '3') {
     return 'or';
   } else {
-    return 'sequence';
+    return 'sequential';
   }
 }
 
+function objectToFormData(obj: any) {
+  const formData = new FormData();
+  formData.append('category', getOrderType(Number(obj.category)));
+  formData.append('visual_hint', 'false');
+  formData.append('problem_type', 'order');
+  formData.append('problem_level', obj.problem_level);
+  formData.append('problem_question_number', '1');
+  formData.append('choices', JSON.stringify(obj.choices));
+  formData.append('answers', JSON.stringify(obj.answers));
+  formData.append('order_type', obj.answer_type);
+
+  if (obj.sound_file) {
+    formData.append('sound_file', obj.sound_file);
+  }
+
+  console.log(formData.getAll('answers'), formData.getAll('problem_level'));
+
+  return formData;
+}
+
 const OrderProblemForm: React.FC = () => {
+  const [title, setTitle] = useState('');
   const [level, setLevel] = useState('1');
   const [typeSelect, setTypeSelect] = useState('1');
   const [answerCount, setAnswerCount] = useState('1');
@@ -70,6 +92,7 @@ const OrderProblemForm: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const navigate = useNavigate();
 
   const {
     data: responseData,
@@ -78,18 +101,23 @@ const OrderProblemForm: React.FC = () => {
     executePost,
   } = usePostHook(
     'problem/order/',
-    {
-      choices: itemList,
-      answers: answers,
+    objectToFormData({
       category: getOrderType(Number(typeSelect)),
       visual_hint: false,
       sound_file: file,
       problem_type: 'order',
-      problem_level: Number(level),
+      problem_level: level,
       problem_question_number: 1,
-    },
+      choices: itemList,
+      answers: answers,
+      answer_type: getAnswerType(answerType),
+    }),
     { 'Content-Type': 'multipart/form-data' }
   );
+
+  const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(event.target.value);
+  };
 
   const handleLevelChange = (event: SelectChangeEvent) => {
     setLevel(event.target.value as string);
@@ -146,12 +174,33 @@ const OrderProblemForm: React.FC = () => {
   };
 
   const handleSubmit = async () => {
+    console.log(itemList, answers);
     if (!file) {
       alert('음성 파일을 업로드해주세요.');
       return;
     }
-
+    if (itemList.find((item) => item === -10)) {
+      alert('보기를 모두 선택해주세요.');
+      return;
+    }
+    if (answers.length === 0) {
+      alert('정답을 선택해주세요.');
+      return;
+    }
+    if (title.trim() === '') {
+      alert('문제를 입력해주세요.');
+      return;
+    }
+    if (Number(level) === 0) {
+      alert('레벨을 선택해주세요.');
+      return;
+    }
     await executePost();
+    if (!error) navigate('/admin/problem/order');
+  };
+
+  const handleCancel = () => {
+    navigate('/admin/problem/order');
   };
 
   useEffect(() => {
@@ -232,7 +281,14 @@ const OrderProblemForm: React.FC = () => {
       }}
     >
       <Typography variant="h6">문제 만들기</Typography>
-      <TextField size="small" label="문제" fullWidth sx={{ marginTop: 2 }} />
+      <TextField
+        size="small"
+        label="문제"
+        fullWidth
+        sx={{ marginTop: 2 }}
+        value={title}
+        onChange={handleTitleChange}
+      />
       <Box sx={{ marginTop: 2, display: 'flex', gap: 2, alignItems: 'center' }}>
         <FormControl>
           <InputLabel id="demo-simple-select-label">레벨</InputLabel>
@@ -288,7 +344,7 @@ const OrderProblemForm: React.FC = () => {
           </Select>
         </FormControl>
         <FormControl>
-          <InputLabel id="demo-condition-select-label">보기 개수</InputLabel>
+          <InputLabel id="demo-condition-select-label">답변 방식</InputLabel>
           <Select
             labelId="demo-condition-select-label"
             id="demo-condition-select"
@@ -347,7 +403,9 @@ const OrderProblemForm: React.FC = () => {
           marginTop: 'auto',
         }}
       >
-        <Button variant="outlined">취소</Button>
+        <Button variant="outlined" onClick={handleCancel}>
+          취소
+        </Button>
         <Button variant="contained" onClick={handleSubmit}>
           저장
         </Button>
