@@ -16,6 +16,7 @@ import ProblemItemSelectBox from './ProblemItemSelectBox';
 import { useSearchParams } from 'react-router-dom';
 import usePostHook from '../../../hooks/usePostHook';
 import { useNavigate } from 'react-router-dom';
+import SelectBox from '../../commons/SelectBox';
 
 function getOrderQueryParams(type: string) {
   if (type === 'basic') {
@@ -77,6 +78,49 @@ function objectToFormData(obj: any) {
   return formData;
 }
 
+const levelSelectOptions: { value: number; label: string }[] = [
+  {
+    value: 1,
+    label: '1',
+  },
+  {
+    value: 2,
+    label: '2',
+  },
+  {
+    value: 3,
+    label: '3',
+  },
+  {
+    value: 4,
+    label: '4',
+  },
+  {
+    value: 5,
+    label: '5',
+  },
+  {
+    value: 6,
+    label: '6',
+  },
+  {
+    value: 7,
+    label: '7',
+  },
+  {
+    value: 8,
+    label: '8',
+  },
+  {
+    value: 9,
+    label: '9',
+  },
+  {
+    value: 10,
+    label: '10',
+  },
+];
+
 const OrderProblemForm: React.FC = () => {
   const [title, setTitle] = useState('');
   const [level, setLevel] = useState('1');
@@ -93,6 +137,8 @@ const OrderProblemForm: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const navigate = useNavigate();
+
+  const buttonLabel = !file ? '재생' : !isPlaying ? '재생' : '정지';
 
   const {
     data: responseData,
@@ -228,7 +274,7 @@ const OrderProblemForm: React.FC = () => {
   }, [answerType]);
 
   useEffect(() => {
-    if (searchParams.get('level')) {
+    if (searchParams.get('level') as string) {
       setLevel(searchParams.get('level') as string);
     }
 
@@ -290,74 +336,56 @@ const OrderProblemForm: React.FC = () => {
         onChange={handleTitleChange}
       />
       <Box sx={{ marginTop: 2, display: 'flex', gap: 2, alignItems: 'center' }}>
-        <FormControl>
-          <InputLabel id="demo-simple-select-label">레벨</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={level}
-            label="레벨"
-            size="small"
-            onChange={handleLevelChange}
-          >
-            <MenuItem value={1}>1</MenuItem>
-            <MenuItem value={2}>2</MenuItem>
-            <MenuItem value={3}>3</MenuItem>
-            <MenuItem value={4}>4</MenuItem>
-            <MenuItem value={5}>5</MenuItem>
-            <MenuItem value={6}>6</MenuItem>
-            <MenuItem value={7}>7</MenuItem>
-            <MenuItem value={8}>8</MenuItem>
-            <MenuItem value={9}>9</MenuItem>
-            <MenuItem value={10}>10</MenuItem>
-          </Select>
-        </FormControl>
-        <FormControl>
-          <InputLabel id="demo-type-select-label">타입</InputLabel>
-          <Select
-            labelId="demo-type-select-label"
-            id="demo-type-select"
-            value={typeSelect}
-            label="타입"
-            size="small"
-            onChange={handleTypeChange}
-          >
-            <MenuItem value={1}>기본 지시</MenuItem>
-            <MenuItem value={2}>시간적 지시</MenuItem>
-            <MenuItem value={3}>양적 지시</MenuItem>
-            <MenuItem value={4}>공간적 지시</MenuItem>
-          </Select>
-        </FormControl>
-        <FormControl>
-          <InputLabel id="demo-answer-select-label">보기 개수</InputLabel>
-          <Select
-            labelId="demo-answer-select-label"
-            id="demo-answer-select"
-            value={answerCount}
-            label="보기 개수"
-            size="small"
-            onChange={handleAnswerCountChange}
-          >
-            <MenuItem value={1}>3 x 4</MenuItem>
-            <MenuItem value={2}>3 x 5</MenuItem>
-            <MenuItem value={3}>3 x 6</MenuItem>
-          </Select>
-        </FormControl>
-        <FormControl>
-          <InputLabel id="demo-condition-select-label">답변 방식</InputLabel>
-          <Select
-            labelId="demo-condition-select-label"
-            id="demo-condition-select"
-            value={answerType}
-            label="답변 방식"
-            size="small"
-            onChange={handleAnswerTypeChange}
-          >
-            <MenuItem value={1}>순차 답변</MenuItem>
-            <MenuItem value={2}>AND 조건</MenuItem>
-            <MenuItem value={3}>OR 조건</MenuItem>
-          </Select>
-        </FormControl>
+        <SelectBox
+          id="level-select"
+          label="레벨"
+          value={level}
+          handleChange={handleLevelChange}
+          selectOptions={levelSelectOptions}
+        />
+        <SelectBox
+          id="type-select"
+          label="타입"
+          value={typeSelect}
+          handleChange={handleTypeChange}
+          selectOptions={[
+            { value: 1, label: '기본 지시' },
+            { value: 2, label: '시간적 지시' },
+            {
+              value: 3,
+              label: '양적 지시',
+            },
+            { value: 4, label: '공간적 지시' },
+          ]}
+        />
+        <SelectBox
+          id="answer-select"
+          label="보기 개수"
+          value={answerCount}
+          handleChange={handleAnswerCountChange}
+          selectOptions={[
+            { value: 1, label: '3 x 4' },
+            { value: 2, label: '3 x 5' },
+            {
+              value: 3,
+              label: '3 x 6',
+            },
+          ]}
+        />
+        <SelectBox
+          id="condition-select"
+          label="답변 방식"
+          value={answerType}
+          handleChange={handleAnswerTypeChange}
+          selectOptions={[
+            { value: 1, label: '순차 답변' },
+            { value: 2, label: 'AND 조건' },
+            {
+              value: 3,
+              label: 'OR 조건',
+            },
+          ]}
+        />
         <Box sx={{ marginLeft: 'auto', display: 'flex', gap: 2 }}>
           <Box>
             <div>
@@ -377,10 +405,10 @@ const OrderProblemForm: React.FC = () => {
           <Box>
             <Button
               variant="outlined"
-              disabled={file ? false : true}
+              disabled={!file}
               onClick={handlePlaySound}
             >
-              {!file ? '재생' : isPlaying ? '정지' : '재생'}
+              {buttonLabel}
             </Button>
           </Box>
         </Box>

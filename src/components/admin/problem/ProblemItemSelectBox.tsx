@@ -65,19 +65,29 @@ const ProblemItemSelectBox: React.FC<PropsType> = ({
   setAnswers,
   sequential,
 }) => {
-  // const [listItem, setListItem] = useState<number[]>([]);
-  const [clickedItem, setClickedItem] = useState<number | undefined>(undefined);
-  const [selectedImageItemId, setSelectedImageItemId] = useState<number>(-1);
-  const { overlayHandler } = useOverlay();
-
   const { data, error, isLoading, mutate } = useSWR(
     'item/general-image-items/?type=order',
     (url) => fetcher({ url })
   );
 
+  const [clickedItem, setClickedItem] = useState<number | undefined>(undefined);
+  const [selectedImageItemId, setSelectedImageItemId] = useState<number>(-1);
+  const { overlayHandler } = useOverlay();
+
   const handleItemClicked = (index: number, id: number) => {
     overlayHandler();
     setClickedItem(index);
+  };
+
+  const doesAnswerIncludeId = (id: number) =>
+    answers ? answers.findIndex((item) => item === id) >= 0 : false;
+
+  const processAnswerChange = (id: number, included: boolean) => {
+    let newArr = answers ? [...answers] : [];
+    included
+      ? newArr.push(id)
+      : (newArr = newArr.filter((item) => item !== id));
+    setAnswers(newArr);
   };
 
   const handleAnswerItemClicked = (
@@ -87,27 +97,17 @@ const ProblemItemSelectBox: React.FC<PropsType> = ({
   ) => {
     e.stopPropagation();
     const target = e.target as HTMLInputElement;
-    if (target.checked) {
-      const newArr = answers ? [...answers] : [];
-      newArr.push(id);
-      setAnswers([...newArr]);
-      console.log(newArr, sequential);
-    } else {
-      const newArr = answers ? [...answers] : [];
-      const index = newArr.findIndex((item) => item === id);
-      newArr.splice(index, 1);
-      setAnswers([...newArr]);
-    }
+    processAnswerChange(id, target.checked);
   };
 
   useEffect(() => {
     if (!isLoading) {
-      setItemList(Array.from({ length: 3 * col }, (_) => -10));
+      setItemList(Array.from({ length: 3 * col }, (unused) => -10));
     }
   }, [isLoading]);
 
   useEffect(() => {
-    setItemList(Array.from({ length: 3 * col }, (_) => -10));
+    setItemList(Array.from({ length: 3 * col }, (unused) => -10));
     setClickedItem(undefined);
     setSelectedImageItemId(-1);
   }, [col]);
@@ -120,8 +120,6 @@ const ProblemItemSelectBox: React.FC<PropsType> = ({
         alert('중복된 이미지를 선택할 수 없습니다.');
         return;
       }
-
-      setItemList(newArr);
       setItemList(newArr);
     }
   }, [selectedImageItemId]);
