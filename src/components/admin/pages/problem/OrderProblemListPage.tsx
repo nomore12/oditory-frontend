@@ -17,7 +17,7 @@ import {
   TableRow,
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material/Select';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import useSWR from 'swr';
 import { fetcher } from '../../../../utils/fetcher';
 
@@ -81,14 +81,18 @@ const OrderProblemListPage: React.FC<PropsType> = ({ type }) => {
       answerType: string;
     }[]
   >([]);
+  const [keyUrl, setKeyUrl] = React.useState('');
+  const navigate = useNavigate();
 
-  const { data, error, isLoading, mutate } = useSWR(
-    `problem/order/?level=${level}${
-      searchParams.get('type')
-        ? `&category=${searchParams.get('type')}`
-        : '&category=basic'
-    }`,
-    (url) => fetcher({ url })
+  const createSWRKey = (level: string, searchParams: URLSearchParams) => {
+    const typeParam = searchParams.get('type')
+      ? `&category=${searchParams.get('type')}`
+      : '&category=basic';
+    return `problem/order/?level=${level}${typeParam}`;
+  };
+
+  const { data, error, isLoading, mutate } = useSWR(keyUrl, (url) =>
+    fetcher({ url })
   );
 
   const handleChange = (event: SelectChangeEvent) => {
@@ -101,6 +105,10 @@ const OrderProblemListPage: React.FC<PropsType> = ({ type }) => {
     setSearchParams({ ...params });
   };
 
+  const handleRowClick = (id: number) => {
+    navigate(`/admin/problem/order/${id}`);
+  };
+
   useEffect(() => {
     if (searchParams.get('level')) {
       setLevel(searchParams.get('level') as string);
@@ -108,22 +116,33 @@ const OrderProblemListPage: React.FC<PropsType> = ({ type }) => {
   }, [searchParams]);
 
   useEffect(() => {
-    console.log('isLoading', isLoading, error);
-
     if (!isLoading) {
-      console.log('data', data);
-      const arr = data.map((item: any) => ({
-        id: item.id,
-        level: item.problem.level ? item.problem.level : -1,
-        title: item.title,
-        choiceCount: item.choices ? item.choices.length : 0,
-        answerCount: item.answers ? item.answers.length : 0,
-        answerType: item.order_type,
-      }));
-      console.log(arr);
-      setProblemList([...arr]);
+      if (data && Array.isArray(data) && data.length > 0) {
+        const arr = data.map((item: any) => ({
+          id: item.id,
+          level: item.problem.level ? item.problem.level : -1,
+          title: item.title,
+          choiceCount: item.choices ? item.choices.length : 0,
+          answerCount: item.answers ? item.answers.length : 0,
+          answerType: item.order_type,
+        }));
+        setProblemList([...arr]);
+      } else {
+        setProblemList([]);
+      }
     }
-  }, [isLoading, error]);
+  }, [isLoading, data]);
+
+  useEffect(() => {
+    const url = createSWRKey(level, searchParams);
+    setKeyUrl(url);
+    mutate(url);
+  }, [level, searchParams]);
+
+  useEffect(() => {
+    const url = createSWRKey(level, searchParams);
+    setKeyUrl(url);
+  }, []);
 
   return (
     <Box>
@@ -185,9 +204,9 @@ const OrderProblemListPage: React.FC<PropsType> = ({ type }) => {
                   <RowStyle
                     key={index}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                    // onClick={() => {
-                    //   handleProblemNumberClick(row.pk);
-                    // }}
+                    onClick={() => {
+                      handleRowClick(row.id);
+                    }}
                   >
                     <TableCell>{row.level}</TableCell>
                     <TableCell>{row.title}</TableCell>

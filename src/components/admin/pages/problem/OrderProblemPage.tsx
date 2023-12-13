@@ -70,10 +70,6 @@ const OrderProblemPage: React.FC = () => {
     }
   }, [searchParams]);
 
-  useEffect(() => {
-    console.log(value);
-  }, [value]);
-
   return (
     <Box sx={{ width: '100%' }}>
       <Typography
@@ -93,15 +89,6 @@ const OrderProblemPage: React.FC = () => {
         <Routes>
           <Route path="/create" element={<OrderProblemForm />} />
           <Route path="/:id" element={<OrderProblemForm />} />
-          {/*<Route*/}
-          {/*  path={'255'}*/}
-          {/*  element={*/}
-          {/*    <MemoryProblemForm*/}
-          {/*      currentLevel={Number(1)}*/}
-          {/*      currentProblemId={Number(255)}*/}
-          {/*    />*/}
-          {/*  }*/}
-          {/*/>*/}
         </Routes>
       </Box>
       {currentLocation === 'order' ? (
