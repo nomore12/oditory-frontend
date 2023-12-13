@@ -18,6 +18,8 @@ import {
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material/Select';
 import { Link, useSearchParams } from 'react-router-dom';
+import useSWR from 'swr';
+import { fetcher } from '../../../../utils/fetcher';
 
 interface PropsType {
   type: 'basic' | 'time' | 'quantity' | 'location';
@@ -48,68 +50,45 @@ const RowStyle = styled(TableRow)(({ theme }) => ({
 function createData(
   level: number,
   answerType: number,
-  colorCount: number,
-  size: boolean,
-  optionCount: number,
-  answerCount: number
+  answerCount: number,
+  choiceCount: number
 ) {
-  return { level, answerType, colorCount, size, optionCount, answerCount };
+  return { level, answerType, answerCount, choiceCount };
 }
 
-const dummyData = [
-  {
-    level: 1,
-    answerType: 1,
-    colorCount: 1,
-    size: false,
-    optionCount: 4,
-    answerCount: 1,
-  },
-  {
-    level: 1,
-    answerType: 1,
-    colorCount: 1,
-    size: false,
-    optionCount: 4,
-    answerCount: 1,
-  },
-  {
-    level: 1,
-    answerType: 1,
-    colorCount: 1,
-    size: false,
-    optionCount: 4,
-    answerCount: 1,
-  },
-  {
-    level: 1,
-    answerType: 1,
-    colorCount: 1,
-    size: true,
-    optionCount: 4,
-    answerCount: 1,
-  },
-  {
-    level: 1,
-    answerType: 1,
-    colorCount: 1,
-    size: true,
-    optionCount: 4,
-    answerCount: 1,
-  },
-  {
-    level: 6,
-    answerType: 1,
-    colorCount: 1,
-    size: true,
-    optionCount: 4,
-    answerCount: 1,
-  },
-];
+function orderTypeToString(orderType: string) {
+  if (orderType === 'sequential') {
+    return '순차 방식';
+  } else if (orderType === 'and') {
+    return 'AND 조건';
+  } else if (orderType === 'or') {
+    return 'OR 조건';
+  } else {
+    return '순차 방식';
+  }
+}
 
 const OrderProblemListPage: React.FC<PropsType> = ({ type }) => {
   const [level, setLevel] = React.useState('1');
   const [searchParams, setSearchParams] = useSearchParams();
+  const [problemList, setProblemList] = React.useState<
+    {
+      id: number;
+      level: number;
+      choiceCount: number;
+      answerCount: number;
+      answerType: string;
+    }[]
+  >([]);
+
+  const { data, error, isLoading, mutate } = useSWR(
+    `problem/order/?level=${level}${
+      searchParams.get('type')
+        ? `&category=${searchParams.get('type')}`
+        : '&category=basic'
+    }`,
+    (url) => fetcher({ url })
+  );
 
   const handleChange = (event: SelectChangeEvent) => {
     setLevel(event.target.value as string);
@@ -126,6 +105,23 @@ const OrderProblemListPage: React.FC<PropsType> = ({ type }) => {
       setLevel(searchParams.get('level') as string);
     }
   }, [searchParams]);
+
+  useEffect(() => {
+    console.log('isLoading', isLoading, error);
+
+    if (!isLoading) {
+      console.log('data', data);
+      const arr = data.map((item: any) => ({
+        id: item.id,
+        level: item.problem.level ? item.problem.level : -1,
+        choiceCount: item.choices ? item.choices.length : 0,
+        answerCount: item.answers ? item.answers.length : 0,
+        answerType: item.order_type,
+      }));
+      console.log(arr);
+      setProblemList([...arr]);
+    }
+  }, [isLoading, error]);
 
   return (
     <Box>
@@ -175,16 +171,14 @@ const OrderProblemListPage: React.FC<PropsType> = ({ type }) => {
             <TableHead>
               <TableRow>
                 <TableCell>레벨</TableCell>
-                <TableCell>보기종류</TableCell>
-                <TableCell>색상</TableCell>
-                <TableCell>크기</TableCell>
-                <TableCell>보기개수</TableCell>
-                <TableCell>답변수</TableCell>
+                <TableCell>보기 개수</TableCell>
+                <TableCell>답변 방식</TableCell>
+                <TableCell>답변 수</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {dummyData &&
-                dummyData.map((row: any, index: number) => (
+              {problemList &&
+                problemList.map((row: any, index: number) => (
                   <RowStyle
                     key={index}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -193,10 +187,8 @@ const OrderProblemListPage: React.FC<PropsType> = ({ type }) => {
                     // }}
                   >
                     <TableCell>{row.level}</TableCell>
-                    <TableCell>{row.answerType}</TableCell>
-                    <TableCell>{row.colorCount}</TableCell>
-                    <TableCell>{row.size ? '적용' : '없음'}</TableCell>
-                    <TableCell>{row.optionCount}</TableCell>
+                    <TableCell>{row.choiceCount}</TableCell>
+                    <TableCell>{orderTypeToString(row.answerType)}</TableCell>
                     <TableCell>{row.answerCount}</TableCell>
                   </RowStyle>
                 ))}

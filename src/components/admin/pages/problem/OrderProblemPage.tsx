@@ -2,17 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Box, Tabs, Tab, Typography, Divider, Button } from '@mui/material';
 import OrderProblemPanel from './OrderProblemPanel';
 import OrderProblemListPage from './OrderProblemListPage';
-import {
-  Link,
-  Route,
-  Routes,
-  useLocation,
-  useParams,
-  useSearchParams,
-} from 'react-router-dom';
-import MemoryProblemCreateForm from '../../problem/MemoryProblemCreateForm';
-import MemoryProblemForm from '../../problem/MemoryProblemForm';
+import { Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
 import OrderProblemForm from '../../problem/OrderProblemForm';
+import useSWR from 'swr';
+import { fetcher } from '../../../../utils/fetcher';
 
 function a11yProps(index: number) {
   return {
@@ -99,6 +92,7 @@ const OrderProblemPage: React.FC = () => {
       >
         <Routes>
           <Route path="/create" element={<OrderProblemForm />} />
+          <Route path="/:id" element={<OrderProblemForm />} />
           {/*<Route*/}
           {/*  path={'255'}*/}
           {/*  element={*/}

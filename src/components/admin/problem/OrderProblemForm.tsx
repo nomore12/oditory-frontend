@@ -15,8 +15,11 @@ import { SelectChangeEvent } from '@mui/material/Select';
 import ProblemItemSelectBox from './ProblemItemSelectBox';
 import { useSearchParams } from 'react-router-dom';
 import usePostHook from '../../../hooks/usePostHook';
-import { useNavigate } from 'react-router-dom';
+import usePatchHook from '../../../hooks/usePatchHook';
+import { useNavigate, useParams } from 'react-router-dom';
 import SelectBox from '../../commons/SelectBox';
+import useSWR from 'swr';
+import { fetcher } from '../../../utils/fetcher';
 
 function getOrderQueryParams(type: string) {
   if (type === 'basic') {
@@ -137,8 +140,16 @@ const OrderProblemForm: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const navigate = useNavigate();
+  const { id } = useParams();
 
   const buttonLabel = !file ? '재생' : !isPlaying ? '재생' : '정지';
+
+  const {
+    data: getData,
+    error: getError,
+    isLoading: getIsLoading,
+    mutate,
+  } = useSWR(`problem/order/${id}/`, (url) => fetcher({ url }));
 
   const {
     data: responseData,
@@ -147,6 +158,26 @@ const OrderProblemForm: React.FC = () => {
     executePost,
   } = usePostHook(
     'problem/order/',
+    objectToFormData({
+      category: getOrderType(Number(typeSelect)),
+      visual_hint: false,
+      sound_file: file,
+      problem_type: 'order',
+      problem_level: level,
+      problem_question_number: 1,
+      choices: itemList,
+      answers: answers,
+      answer_type: getAnswerType(answerType),
+    }),
+    { 'Content-Type': 'multipart/form-data' }
+  );
+
+  const {
+    data: patchData,
+    error: patchError,
+    executePatch,
+  } = usePatchHook(
+    `problem/order/${id}/`,
     objectToFormData({
       category: getOrderType(Number(typeSelect)),
       visual_hint: false,
@@ -241,7 +272,23 @@ const OrderProblemForm: React.FC = () => {
       alert('레벨을 선택해주세요.');
       return;
     }
-    await executePost();
+    if (id) {
+      await executePatch(
+        objectToFormData({
+          category: getOrderType(Number(typeSelect)),
+          visual_hint: false,
+          sound_file: file,
+          problem_type: 'order',
+          problem_level: level,
+          problem_question_number: 1,
+          choices: itemList,
+          answers: answers,
+          answer_type: getAnswerType(answerType),
+        })
+      );
+    } else {
+      await executePost();
+    }
     if (!error) navigate('/admin/problem/order');
   };
 
@@ -316,6 +363,15 @@ const OrderProblemForm: React.FC = () => {
   useEffect(() => {
     setItemList(Array.from({ length: 3 * colCount }, (_) => -1));
   }, []);
+
+  useEffect(() => {
+    console.log('problem id', id);
+    if (!getIsLoading) {
+      console.log('get data', getData);
+      //   데이터를 불러왔으니 itemList에 choices를 넣어주고 answers를 넣어준다.
+      //   나머지 데이터들도 그에맞게 수정해준다.
+    }
+  }, [id, getIsLoading]);
 
   return (
     <Box
@@ -435,7 +491,7 @@ const OrderProblemForm: React.FC = () => {
           취소
         </Button>
         <Button variant="contained" onClick={handleSubmit}>
-          저장
+          {id ? '수정' : '저장'}
         </Button>
       </Box>
     </Box>
