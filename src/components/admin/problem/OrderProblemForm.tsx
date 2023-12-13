@@ -18,7 +18,7 @@ import usePostHook from '../../../hooks/usePostHook';
 import usePatchHook from '../../../hooks/usePatchHook';
 import { useNavigate, useParams } from 'react-router-dom';
 import SelectBox from '../../commons/SelectBox';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import { fetcher } from '../../../utils/fetcher';
 
 function getOrderQueryParams(type: string) {
@@ -61,8 +61,21 @@ function getAnswerType(value: string) {
   }
 }
 
+function getAnswerTypeToStringNumber(value: string) {
+  if (value === 'sequential') {
+    return '1';
+  } else if (value === 'and') {
+    return '2';
+  } else if (value === 'or') {
+    return '3';
+  } else {
+    return '1';
+  }
+}
+
 function objectToFormData(obj: any) {
   const formData = new FormData();
+  formData.append('title', obj.title);
   formData.append('category', getOrderType(Number(obj.category)));
   formData.append('visual_hint', 'false');
   formData.append('problem_type', 'order');
@@ -71,6 +84,7 @@ function objectToFormData(obj: any) {
   formData.append('choices', JSON.stringify(obj.choices));
   formData.append('answers', JSON.stringify(obj.answers));
   formData.append('order_type', obj.answer_type);
+  formData.append('level', obj.level);
 
   if (obj.sound_file) {
     formData.append('sound_file', obj.sound_file);
@@ -137,12 +151,14 @@ const OrderProblemForm: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [filePreviewUrl, setFilePreviewUrl] = useState<string>('');
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [buttonLabel, setButtonLabel] = useState<string>('재생');
+  const [fileName, setFileName] = useState<string>('UPLOAD FILE');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const buttonLabel = !file ? '재생' : !isPlaying ? '재생' : '정지';
+  // const buttonLabel = !filePreviewUrl ? '재생' : !isPlaying ? '재생' : '정지';
 
   const {
     data: getData,
@@ -179,6 +195,7 @@ const OrderProblemForm: React.FC = () => {
   } = usePatchHook(
     `problem/order/${id}/`,
     objectToFormData({
+      title: title,
       category: getOrderType(Number(typeSelect)),
       visual_hint: false,
       sound_file: file,
@@ -188,6 +205,7 @@ const OrderProblemForm: React.FC = () => {
       choices: itemList,
       answers: answers,
       answer_type: getAnswerType(answerType),
+      level: level,
     }),
     { 'Content-Type': 'multipart/form-data' }
   );
@@ -251,8 +269,7 @@ const OrderProblemForm: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    console.log(itemList, answers);
-    if (!file) {
+    if (!filePreviewUrl) {
       alert('음성 파일을 업로드해주세요.');
       return;
     }
@@ -275,6 +292,7 @@ const OrderProblemForm: React.FC = () => {
     if (id) {
       await executePatch(
         objectToFormData({
+          title: title,
           category: getOrderType(Number(typeSelect)),
           visual_hint: false,
           sound_file: file,
@@ -284,10 +302,11 @@ const OrderProblemForm: React.FC = () => {
           choices: itemList,
           answers: answers,
           answer_type: getAnswerType(answerType),
+          level: level,
         })
-      );
+      ).then(() => mutate());
     } else {
-      await executePost();
+      await executePost().then(() => mutate());
     }
     if (!error) navigate('/admin/problem/order');
   };
@@ -330,15 +349,11 @@ const OrderProblemForm: React.FC = () => {
         String(getOrderQueryParams(searchParams.get('type') as string) + 1)
       );
     }
-  }, [searchParams]);
+  }, [searchParams, level]);
 
   useEffect(() => {
-    console.log('isPlaying', isPlaying);
     if (audioRef.current) {
       if (isPlaying) {
-        // audioRef.current.play();
-        console.log('audio', audioRef.current?.onplaying);
-
         setTimeout(
           () => setIsPlaying(false),
           audioRef.current?.duration * 1000 + 500
@@ -361,15 +376,41 @@ const OrderProblemForm: React.FC = () => {
   }, [isPlaying]);
 
   useEffect(() => {
+    const label = !filePreviewUrl ? '재생' : !isPlaying ? '재생' : '정지';
+    setButtonLabel(label);
+    const name = file ? file.name : 'UPLOAD FILE';
+    if (getData && !file) {
+      const urlParts = getData.sound_file.split('/');
+
+      // Get the last part of the URL, which is the file name
+      const fileName = urlParts[urlParts.length - 1];
+
+      // Decode the file name
+      const decodedFileName = decodeURIComponent(fileName);
+      setFileName(decodedFileName);
+      setFilePreviewUrl(getData.sound_file);
+    } else {
+      setFileName(name);
+    }
+  }, [filePreviewUrl, file, isPlaying]);
+
+  useEffect(() => {
     setItemList(Array.from({ length: 3 * colCount }, (_) => -1));
   }, []);
 
   useEffect(() => {
-    console.log('problem id', id);
-    if (!getIsLoading) {
-      console.log('get data', getData);
-      //   데이터를 불러왔으니 itemList에 choices를 넣어주고 answers를 넣어준다.
-      //   나머지 데이터들도 그에맞게 수정해준다.
+    if (!getIsLoading && getData) {
+      const answerDataCount = getData.choices.length / 3;
+      setAnswerType(getAnswerTypeToStringNumber(getData.order_type));
+      setTypeSelect(String(getOrderQueryParams(getData.category) + 1));
+      setColCount(answerDataCount);
+      setLevel(String(getData.problem.level));
+      setFilePreviewUrl(getData.sound_file.url);
+      setTitle(getData.title);
+      setTimeout(() => {
+        setItemList(getData.choices);
+        setAnswers(getData.answers);
+      }, 100);
     }
   }, [id, getIsLoading]);
 
@@ -453,7 +494,7 @@ const OrderProblemForm: React.FC = () => {
                 onChange={handleFileChange}
               />
               <Button variant="outlined" onClick={handleButtonClick}>
-                {file ? file?.name : 'Upload File'}
+                {fileName}
               </Button>
             </div>
           </Box>
@@ -461,7 +502,7 @@ const OrderProblemForm: React.FC = () => {
           <Box>
             <Button
               variant="outlined"
-              disabled={!file}
+              disabled={!fileName}
               onClick={handlePlaySound}
             >
               {buttonLabel}

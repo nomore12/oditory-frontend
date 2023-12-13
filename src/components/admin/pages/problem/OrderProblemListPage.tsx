@@ -75,6 +75,7 @@ const OrderProblemListPage: React.FC<PropsType> = ({ type }) => {
     {
       id: number;
       level: number;
+      title: string;
       choiceCount: number;
       answerCount: number;
       answerType: string;
@@ -114,6 +115,7 @@ const OrderProblemListPage: React.FC<PropsType> = ({ type }) => {
       const arr = data.map((item: any) => ({
         id: item.id,
         level: item.problem.level ? item.problem.level : -1,
+        title: item.title,
         choiceCount: item.choices ? item.choices.length : 0,
         answerCount: item.answers ? item.answers.length : 0,
         answerType: item.order_type,
@@ -171,6 +173,7 @@ const OrderProblemListPage: React.FC<PropsType> = ({ type }) => {
             <TableHead>
               <TableRow>
                 <TableCell>레벨</TableCell>
+                <TableCell>제목</TableCell>
                 <TableCell>보기 개수</TableCell>
                 <TableCell>답변 방식</TableCell>
                 <TableCell>답변 수</TableCell>
@@ -187,6 +190,7 @@ const OrderProblemListPage: React.FC<PropsType> = ({ type }) => {
                     // }}
                   >
                     <TableCell>{row.level}</TableCell>
+                    <TableCell>{row.title}</TableCell>
                     <TableCell>{row.choiceCount}</TableCell>
                     <TableCell>{orderTypeToString(row.answerType)}</TableCell>
                     <TableCell>{row.answerCount}</TableCell>

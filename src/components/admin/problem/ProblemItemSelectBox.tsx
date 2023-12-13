@@ -217,7 +217,13 @@ const ProblemItemSelectBox: React.FC<PropsType> = ({
                       onClick={(e) => e.stopPropagation()}
                     >
                       <FormControlLabel
-                        control={<Checkbox />}
+                        control={
+                          <Checkbox
+                            checked={
+                              answers.find((item) => item === id) ? true : false
+                            }
+                          />
+                        }
                         label="정답:"
                         labelPlacement="start"
                         onClick={(e) => {
