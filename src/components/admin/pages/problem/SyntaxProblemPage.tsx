@@ -45,6 +45,7 @@ const SyntaxProblemPage: React.FC = () => {
       >
         <Routes>
           <Route path="/create" element={<SyntaxProblemForm />} />
+          <Route path="/:id" element={<SyntaxProblemForm />} />
           {/*<Route*/}
           {/*  path={'255'}*/}
           {/*  element={*/}

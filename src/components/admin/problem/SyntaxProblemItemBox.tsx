@@ -16,6 +16,13 @@ import { useOverlay } from '../../../hooks/useOverlay';
 import SelectGeneralItem from '../problem/SelectGeneralItem';
 import Overlay from '../../commons/Overlay';
 
+interface PropsType {
+  itemList: number[];
+  setItemList: (itemList: number[]) => void;
+  answer: number;
+  setAnswer: (answer: number) => void;
+}
+
 const StyledGridItem = styled(Grid)`
   position: relative;
   width: 50%;
@@ -46,8 +53,12 @@ const StyledGridItem = styled(Grid)`
   }
 `;
 
-const SyntaxProblemItemBox: React.FC = () => {
-  const [listItem, setListItem] = useState<number[]>([]);
+const SyntaxProblemItemBox: React.FC<PropsType> = ({
+  itemList,
+  setItemList,
+  answer,
+  setAnswer,
+}) => {
   const [clickedItem, setClickedItem] = useState<number | undefined>(undefined);
   const [selectedImageItemId, setSelectedImageItemId] = useState<number>(-1);
 
@@ -65,15 +76,15 @@ const SyntaxProblemItemBox: React.FC = () => {
 
   useEffect(() => {
     if (!isLoading) {
-      setListItem(Array.from({ length: 4 }, (_) => -10));
+      setItemList(Array.from({ length: 4 }, (_) => -10));
     }
   }, [isLoading]);
 
   useEffect(() => {
     if (clickedItem !== undefined && clickedItem > -1) {
-      const newArr = [...listItem];
+      const newArr = [...itemList];
       newArr[clickedItem] = selectedImageItemId;
-      setListItem(newArr);
+      setItemList(newArr);
     }
   }, [selectedImageItemId]);
 
@@ -98,8 +109,8 @@ const SyntaxProblemItemBox: React.FC = () => {
       }}
     >
       <Grid container sx={{ width: '100%', height: '100%' }}>
-        {listItem &&
-          listItem.map((id, index) =>
+        {itemList &&
+          itemList.map((id, index) =>
             id > -1 ? (
               <StyledGridItem key={index} item>
                 <div>
@@ -140,7 +151,7 @@ const SyntaxProblemItemBox: React.FC = () => {
                         labelPlacement="start"
                         onClick={(e) => {
                           e.stopPropagation();
-                          console.log('clicked', id, index);
+                          setAnswer(id);
                         }}
                       />
                     </Box>
