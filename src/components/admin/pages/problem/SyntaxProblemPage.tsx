@@ -5,6 +5,8 @@ import SyntaxProblemForm from '../../problem/SyntaxProblemForm';
 import SyntaxProblemListPage from '../../problem/SyntaxProblemListPage';
 import OrderProblemPanel from './OrderProblemPanel';
 import OrderProblemListPage from './OrderProblemListPage';
+import useSWR from 'swr';
+import { fetcher } from '../../../../utils/fetcher';
 
 function a11yProps(index: number) {
   return {
@@ -46,15 +48,6 @@ const SyntaxProblemPage: React.FC = () => {
         <Routes>
           <Route path="/create" element={<SyntaxProblemForm />} />
           <Route path="/:id" element={<SyntaxProblemForm />} />
-          {/*<Route*/}
-          {/*  path={'255'}*/}
-          {/*  element={*/}
-          {/*    <MemoryProblemForm*/}
-          {/*      currentLevel={Number(1)}*/}
-          {/*      currentProblemId={Number(255)}*/}
-          {/*    />*/}
-          {/*  }*/}
-          {/*/>*/}
         </Routes>
       </Box>
       {currentLocation === 'syntax' ? (
@@ -74,19 +67,19 @@ const SyntaxProblemPage: React.FC = () => {
             </Tabs>
           </Box>
           <OrderProblemPanel value={value} index={0}>
-            <SyntaxProblemListPage type="chair" />
+            <SyntaxProblemListPage type="의자에앉기" />
           </OrderProblemPanel>
           <OrderProblemPanel value={value} index={1}>
-            <SyntaxProblemListPage type="hide" />
+            <SyntaxProblemListPage type="술래잡기" />
           </OrderProblemPanel>
           <OrderProblemPanel value={value} index={2}>
-            <SyntaxProblemListPage type="bike" />
+            <SyntaxProblemListPage type="자전거타기" />
           </OrderProblemPanel>
           <OrderProblemPanel value={value} index={3}>
-            <SyntaxProblemListPage type="compare" />
+            <SyntaxProblemListPage type="비교" />
           </OrderProblemPanel>
           <OrderProblemPanel value={value} index={4}>
-            <SyntaxProblemListPage type="send" />
+            <SyntaxProblemListPage type="물건주기" />
           </OrderProblemPanel>
         </>
       ) : null}

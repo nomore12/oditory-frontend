@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Divider,
@@ -17,16 +17,18 @@ import {
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { SelectChangeEvent } from '@mui/material/Select';
+import useSWR from 'swr';
+import { fetcher } from '../../../utils/fetcher';
 
 interface PropsType {
   type: string;
 }
 
 const dummyData = [
-  { level: 1, no: 1, title: '문제1' },
-  { level: 1, no: 2, title: '문제2' },
-  { level: 1, no: 3, title: '문제3' },
-  { level: 1, no: 4, title: '문제4' },
+  { level: 1, title: '문제1' },
+  { level: 1, title: '문제2' },
+  { level: 1, title: '문제3' },
+  { level: 1, title: '문제4' },
 ];
 
 const StyledBox = styled(Box)(({ theme }) => ({
@@ -51,12 +53,40 @@ const RowStyle = styled(TableRow)(({ theme }) => ({
   },
 }));
 
+function categoryNumberToString(num: string) {
+  if (num === '1') {
+    return '의자에앉기';
+  } else if (num === '2') {
+    return '술래잡기';
+  } else if (num === '3') {
+    return '자전거타기';
+  } else if (num === '4') {
+    return '비교';
+  } else if (num === '5') {
+    return '물건주기';
+  } else {
+    return '의자에앉기';
+  }
+}
+
 const SyntaxProblemListPage: React.FC<PropsType> = ({ type }) => {
   const [level, setLevel] = useState('1');
+  const [itemList, setItemList] = useState<number[]>([]);
+
+  const { data, error, isLoading, mutate } = useSWR(
+    `problem/syntax/?category=${type}&level=${level}`,
+    (url) => fetcher({ url })
+  );
 
   const handleChange = (event: SelectChangeEvent) => {
     setLevel(event.target.value as string);
   };
+
+  useEffect(() => {
+    if (!isLoading) {
+      console.log(data);
+    }
+  }, [isLoading]);
 
   return (
     <Box>
@@ -100,8 +130,8 @@ const SyntaxProblemListPage: React.FC<PropsType> = ({ type }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {dummyData &&
-                dummyData.map((row: any, index: number) => (
+              {data &&
+                data.map((row: any, index: number) => (
                   <RowStyle
                     key={index}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -109,7 +139,7 @@ const SyntaxProblemListPage: React.FC<PropsType> = ({ type }) => {
                     //   handleProblemNumberClick(row.pk);
                     // }}
                   >
-                    <TableCell>{row.no}</TableCell>
+                    <TableCell>{row.problem.level}</TableCell>
                     <TableCell>{row.title}</TableCell>
                   </RowStyle>
                 ))}
