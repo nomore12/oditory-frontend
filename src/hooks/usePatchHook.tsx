@@ -25,7 +25,7 @@ const usePatchHook = (url: string, data: any, contentType: any) => {
         headers: contentType,
       });
 
-      mutate(key, response, false);
+      mutate(key, response, true);
 
       return !!response;
     } catch (error) {

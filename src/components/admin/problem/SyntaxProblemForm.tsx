@@ -156,7 +156,7 @@ const OrderProblemForm: React.FC = () => {
     isLoading: getIsLoading,
     mutate,
   } = useSWR(`problem/syntax/${id}/`, (url) => fetcher({ url }));
-  mutateSWR(`problem/syntax/${id}/`);
+  // mutateSWR(`problem/syntax/${id}/`);
 
   const {
     data: responseData,
@@ -273,7 +273,7 @@ const OrderProblemForm: React.FC = () => {
       });
     }
 
-    mutateSWR(`problem/syntax/&category=${typeSelect}&level=${level}`);
+    // mutateSWR(`problem/syntax/&category=${typeSelect}&level=${level}`);
     if (!error) navigate('/admin/problem/syntax');
   };
 
