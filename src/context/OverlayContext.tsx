@@ -1,6 +1,6 @@
 // OverlayContext.tsx
 import React, { createContext, useState, useCallback, ReactNode } from 'react';
-import { useAddItemStore } from '@/store/MemoryStore';
+import { useAddItemStore } from '../store/MemoryStore';
 
 interface OverlayContextProps {
   isAdd: boolean;

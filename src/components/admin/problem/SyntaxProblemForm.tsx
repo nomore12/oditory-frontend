@@ -15,9 +15,10 @@ import { SelectChangeEvent } from '@mui/material/Select';
 import SyntaxProblemItemBox from '../problem/SyntaxProblemItemBox';
 import SelectBox from '../../commons/SelectBox';
 import usePostHook from '../../../hooks/usePostHook';
-import useSWR from 'swr';
+import useSWR, { mutate as mutateSWR } from 'swr';
 import { fetcher } from '../../../utils/fetcher';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import usePatchHook from '../../../hooks/usePatchHook';
 
 const levelSelectOptions: { value: number; label: string }[] = [
   {
@@ -87,11 +88,11 @@ const typtSelectOptions: { value: number; label: string }[] = [
 
 function stringToTypeSelect(value: string) {
   if (value === '1') {
-    return '의자에 앉기';
+    return '의자에앉기';
   } else if (value === '2') {
     return '술래잡기';
   } else if (value === '3') {
-    return '자전거 타기';
+    return '자전거타기';
   } else if (value === '4') {
     return '비교';
   } else if (value === '5') {
@@ -99,25 +100,26 @@ function stringToTypeSelect(value: string) {
   }
 }
 
-function textToTypeSelectKey(value: string) {
-  if (value === '의자에 앉기') {
+function textToTypeSelectKey(value: string | undefined): string {
+  if (value === '의자에앉기') {
     return '1';
   } else if (value === '술래잡기') {
     return '2';
-  } else if (value === '자전거 타기') {
+  } else if (value === '자전거타기') {
     return '3';
   } else if (value === '비교') {
     return '4';
   } else if (value === '물건주기') {
     return '5';
+  } else {
+    return '1';
   }
 }
 
 function objectToFormData(obj: any) {
   const formData = new FormData();
   formData.append('title', obj.title);
-  // formData.append('category', obj.category);
-  formData.append('category', '테스트');
+  formData.append('category', obj.category);
   formData.append('choices', JSON.stringify(obj.choices));
   formData.append('answer', String(obj.answer));
   formData.append('visual_hint', 'false');
@@ -128,8 +130,6 @@ function objectToFormData(obj: any) {
   if (obj.sound_file) {
     formData.append('sound_file', obj.sound_file);
   }
-
-  console.log('formData', formData.get('answers'), obj.answer);
 
   return formData;
 }
@@ -148,6 +148,7 @@ const OrderProblemForm: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const {
     data: getData,
@@ -155,6 +156,7 @@ const OrderProblemForm: React.FC = () => {
     isLoading: getIsLoading,
     mutate,
   } = useSWR(`problem/syntax/${id}/`, (url) => fetcher({ url }));
+  mutateSWR(`problem/syntax/${id}/`);
 
   const {
     data: responseData,
@@ -165,7 +167,25 @@ const OrderProblemForm: React.FC = () => {
     'problem/syntax/',
     objectToFormData({
       title: title,
-      category: stringToTypeSelect(typeSelect),
+      category: stringToTypeSelect(String(typeSelect)),
+      choices: itemList,
+      answer: Number(answer),
+      visual_hint: false,
+      problem_level: level,
+      sound_file: file,
+    }),
+    { 'Content-Type': 'multipart/form-data' }
+  );
+
+  const {
+    data: patchData,
+    error: patchError,
+    executePatch,
+  } = usePatchHook(
+    `problem/syntax/${id}/`,
+    objectToFormData({
+      title: title,
+      category: stringToTypeSelect(String(typeSelect)),
       choices: itemList,
       answer: Number(answer),
       visual_hint: false,
@@ -212,29 +232,6 @@ const OrderProblemForm: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    const label = !filePreviewUrl ? '재생' : !isPlaying ? '재생' : '정지';
-    setButtonLabel(label);
-    const name = file ? file.name : 'UPLOAD FILE';
-    // if (getData && !file) {
-    //   const urlParts = getData.sound_file.split('/');
-    //
-    //   // Get the last part of the URL, which is the file name
-    //   const fileName = urlParts[urlParts.length - 1];
-    //
-    //   // Decode the file name
-    //   const decodedFileName = decodeURIComponent(fileName);
-    //   setFileName(decodedFileName);
-    //   setFilePreviewUrl(getData.sound_file);
-    // } else {
-    setFileName(name);
-    // }
-  }, [filePreviewUrl, file, isPlaying]);
-
-  useEffect(() => {
-    console.log('answer', answer);
-  }, [answer]);
-
   const handleSubmit = () => {
     if (!filePreviewUrl) {
       alert('음성 파일을 업로드해주세요.');
@@ -256,12 +253,64 @@ const OrderProblemForm: React.FC = () => {
       alert('레벨을 선택해주세요.');
       return;
     }
-    executePost().then(() => mutate());
+    if (!id) {
+      executePost().then(() => {
+        mutate();
+      });
+    } else {
+      executePatch(
+        objectToFormData({
+          title: title,
+          category: stringToTypeSelect(String(typeSelect)),
+          choices: itemList,
+          answer: Number(answer),
+          visual_hint: false,
+          problem_level: level,
+          sound_file: file,
+        })
+      ).then(() => {
+        mutate();
+      });
+    }
+
+    mutateSWR(`problem/syntax/`);
+    if (!error) navigate('/admin/problem/syntax');
   };
 
   useEffect(() => {
-    console.log('items', itemList);
-  }, [itemList]);
+    const label = !filePreviewUrl ? '재생' : !isPlaying ? '재생' : '정지';
+    setButtonLabel(label);
+    const name = file ? file.name : 'UPLOAD FILE';
+    console.log('file', file);
+    if (getData && !file) {
+      console.log('get data', getData);
+      const urlParts = getData.sound_file.split('/');
+
+      // Get the last part of the URL, which is the file name
+      const fileName = urlParts[urlParts.length - 1];
+
+      // Decode the file name
+      const decodedFileName = decodeURIComponent(fileName);
+      console.log(decodedFileName);
+      setFileName(decodedFileName);
+      setFilePreviewUrl(getData.sound_file);
+    } else {
+      setFileName(name);
+    }
+  }, [filePreviewUrl, file, isPlaying, getIsLoading]);
+
+  useEffect(() => {
+    if (!getIsLoading) {
+      console.log(getData, getData.category);
+      setTitle(getData.title);
+      setLevel(String(getData.problem.level));
+      setTypeSelect(
+        textToTypeSelectKey(getData.category as string | undefined)
+      );
+      setItemList(getData.choices.map((choice: any) => choice.id));
+      setAnswer(getData.answer.id);
+    }
+  }, [getIsLoading]);
 
   return (
     <Box
@@ -338,9 +387,14 @@ const OrderProblemForm: React.FC = () => {
           marginTop: 'auto',
         }}
       >
-        <Button variant="outlined">취소</Button>
+        <Button
+          variant="outlined"
+          onClick={() => navigate('/admin/problem/syntax')}
+        >
+          취소
+        </Button>
         <Button variant="contained" onClick={handleSubmit}>
-          저장
+          {id ? '수정' : '저장'}
         </Button>
       </Box>
     </Box>

@@ -15,7 +15,7 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { SelectChangeEvent } from '@mui/material/Select';
 import useSWR from 'swr';
 import { fetcher } from '../../../utils/fetcher';
@@ -72,6 +72,7 @@ function categoryNumberToString(num: string) {
 const SyntaxProblemListPage: React.FC<PropsType> = ({ type }) => {
   const [level, setLevel] = useState('1');
   const [itemList, setItemList] = useState<number[]>([]);
+  const navigate = useNavigate();
 
   const { data, error, isLoading, mutate } = useSWR(
     `problem/syntax/?category=${type}&level=${level}`,
@@ -87,6 +88,10 @@ const SyntaxProblemListPage: React.FC<PropsType> = ({ type }) => {
       console.log(data);
     }
   }, [isLoading]);
+
+  useEffect(() => {
+    mutate();
+  }, [level]);
 
   return (
     <Box>
@@ -135,9 +140,9 @@ const SyntaxProblemListPage: React.FC<PropsType> = ({ type }) => {
                   <RowStyle
                     key={index}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                    // onClick={() => {
-                    //   handleProblemNumberClick(row.pk);
-                    // }}
+                    onClick={() => {
+                      navigate(`/admin/problem/syntax/${row.id}`);
+                    }}
                   >
                     <TableCell>{row.problem.level}</TableCell>
                     <TableCell>{row.title}</TableCell>

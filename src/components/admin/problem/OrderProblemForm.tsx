@@ -18,7 +18,7 @@ import usePostHook from '../../../hooks/usePostHook';
 import usePatchHook from '../../../hooks/usePatchHook';
 import { useNavigate, useParams } from 'react-router-dom';
 import SelectBox from '../../commons/SelectBox';
-import useSWR, { mutate } from 'swr';
+import useSWR from 'swr';
 import { fetcher } from '../../../utils/fetcher';
 
 function getOrderQueryParams(type: string) {

@@ -146,7 +146,9 @@ const SyntaxProblemItemBox: React.FC<PropsType> = ({
                       onClick={(e) => e.stopPropagation()}
                     >
                       <FormControlLabel
-                        control={<Checkbox />}
+                        control={
+                          <Checkbox checked={answer === id ? true : false} />
+                        }
                         label="정답:"
                         labelPlacement="start"
                         onClick={(e) => {
