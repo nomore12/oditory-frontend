@@ -136,12 +136,13 @@ const OrderProblemListPage: React.FC<PropsType> = ({ type }) => {
   useEffect(() => {
     const url = createSWRKey(level, searchParams);
     setKeyUrl(url);
-    mutate(url);
+    // mutate(url);
   }, [level, searchParams]);
 
   useEffect(() => {
     const url = createSWRKey(level, searchParams);
     setKeyUrl(url);
+    // mutate(url);
   }, []);
 
   return (

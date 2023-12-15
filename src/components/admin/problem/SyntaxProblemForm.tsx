@@ -273,7 +273,7 @@ const OrderProblemForm: React.FC = () => {
       });
     }
 
-    mutateSWR(`problem/syntax/`);
+    mutateSWR(`problem/syntax/&category=${typeSelect}&level=${level}`);
     if (!error) navigate('/admin/problem/syntax');
   };
 
@@ -311,6 +311,10 @@ const OrderProblemForm: React.FC = () => {
       setAnswer(getData.answer.id);
     }
   }, [getIsLoading]);
+
+  useEffect(() => {
+    mutate(`problem/syntax/${id}/`);
+  }, [id, mutate]);
 
   return (
     <Box
