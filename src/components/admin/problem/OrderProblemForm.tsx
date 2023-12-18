@@ -400,8 +400,12 @@ const OrderProblemForm: React.FC = () => {
 
   useEffect(() => {
     if (!getIsLoading && getData) {
+      console.log(getData.choices.length);
       const answerDataCount = getData.choices.length / 3;
       setAnswerType(getAnswerTypeToStringNumber(getData.order_type));
+      setAnswerCount(
+        answerDataCount === 4 ? '1' : answerDataCount === 5 ? '2' : '3'
+      );
       setTypeSelect(String(getOrderQueryParams(getData.category) + 1));
       setColCount(answerDataCount);
       setLevel(String(getData.problem.level));

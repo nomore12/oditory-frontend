@@ -50,7 +50,7 @@ const routes: RouteItem[] = [
   },
   {
     path: '/play-order',
-    element: <PlayOrderPage />,
+    element: <OrderProblemPage />,
     exact: true,
   },
   {
@@ -79,7 +79,7 @@ const routes: RouteItem[] = [
   },
   {
     path: '/play-order/:type/:level',
-    element: <OrderProblemPage />,
+    element: <PlayOrderPage />,
     exact: true,
     needLogin: true,
   },
