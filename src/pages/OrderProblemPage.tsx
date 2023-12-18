@@ -1,11 +1,5 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
-import StarBorderIcon from '@mui/icons-material/StarBorder';
 import styled from 'styled-components';
-
-interface LinePropsType {
-  name: number;
-}
 
 const ContainerStyle = styled.div`
   width: 100%;
@@ -13,20 +7,13 @@ const ContainerStyle = styled.div`
   padding: 60px 0 0 0;
   display: flex;
   flex-direction: column;
-  background-image: url('/images/bg-02-01@2x.png');
+  background-image: url('/images/bg-02-02@2x.png');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
-
-  .problem-block-wrapper {
-    width: 100%;
-    height: 100%;
-    padding: 80px 120px;
-    display: flex;
-  }
 `;
 
-const PlayOrderPage: React.FC = () => {
+const OrderProblemPage: React.FC = () => {
   return (
     <ContainerStyle>
       <div className="problem-block-wrapper">
@@ -36,4 +23,4 @@ const PlayOrderPage: React.FC = () => {
   );
 };
 
-export default PlayOrderPage;
+export default OrderProblemPage;

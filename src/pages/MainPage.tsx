@@ -118,7 +118,7 @@ const MainPage: React.FC = () => {
             </div>
           </Paper>
         </Link>
-        <Link to={'/play-understand'}>
+        <Link to={'/play-syntax'}>
           <Paper
             styleProps={{
               width: '260px',

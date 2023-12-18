@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import useAuthStore from '../../store/AuthStore';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ReactComponent as BackIcon } from '../../assets/images/icons/icn-back.svg';
 import { ReactComponent as FailIcon } from '../../assets/images/icons/icn-fail.svg';
 import { ReactComponent as SuccessIcon } from '../../assets/images/icons/icn-sucess.svg';
@@ -84,25 +84,45 @@ const ProblemNavigation: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { memoryProblemStateData } = useMemoryProblemStore();
+  const { level, type } = useParams<{ level: string; type: string }>();
+
+  const handleBackButton = () => {
+    if (isProblemPage) {
+      if (location.pathname.includes('play-remember')) {
+        navigate('/play-remember');
+      } else if (location.pathname.includes('play-order')) {
+        navigate('/play-order');
+      } else if (location.pathname.includes('play-syntax')) {
+        navigate('/play-syntax');
+      }
+    } else {
+      navigate('/main');
+    }
+  };
 
   useEffect(() => {
+    console.log(location.pathname);
+
     if (location.pathname.includes('play-remember')) {
       setTitle('단어 기억하기');
-      const splits = location.pathname.split('/');
-      const level = splits[splits.length - 1];
-      if (Number(level)) {
-        setIsProblemPage(true);
-      } else {
-        setIsProblemPage(false);
-      }
+    } else if (location.pathname.includes('play-order')) {
+      setTitle('지시따르기');
+    } else if (location.pathname.includes('play-syntax')) {
+      setTitle('구문이해');
+    }
+
+    if (Number(level)) {
+      setIsProblemPage(true);
+    } else {
+      setIsProblemPage(false);
     }
   }, [location.pathname]);
 
   return (
     <ContainerStyle>
       <div className="back-wrapper">
-        <BackIcon width="36px" height="36px" onClick={() => navigate(-1)} />
-        <h2>{title}</h2>
+        <BackIcon width="36px" height="36px" onClick={handleBackButton} />
+        <h2>{isProblemPage ? `${title} ${type} ${level}` : title}</h2>
       </div>
 
       <div className="current-status-wrapper">

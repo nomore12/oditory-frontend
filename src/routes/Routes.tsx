@@ -2,7 +2,7 @@ import React from 'react';
 import MainPage from '../pages/MainPage';
 import LoginPage from '../pages/LoginPage';
 import PlayOrderPage from '../pages/PlayOrderPage';
-import PlayUnderstandPage from '../pages/PlayUnderstandPage';
+import SyntaxProblemPage from '../pages/SyntaxProblemPage';
 import PlayRememberPage from '../pages/PlayRememberPage';
 import AdminLoginPage from '../pages/AdminLoginPage';
 import AdminPage from '../pages/AdminPage';
@@ -10,6 +10,8 @@ import RegisterPage from '../pages/RegisterPage';
 import RegisterConfirmPage from '../pages/RegisterConfirmPage';
 import EmailVerify from '../pages/EmailVerify';
 import RememberProblemPage from '../pages/RememberProblemPage';
+import OrderProblemPage from '../pages/OrderProblemPage';
+import PlaySyntaxPage from '../pages/PlaySyntaxPage';
 
 export interface RouteItem {
   path: string;
@@ -52,8 +54,14 @@ const routes: RouteItem[] = [
     exact: true,
   },
   {
-    path: '/play-understand',
-    element: <PlayUnderstandPage />,
+    path: '/play-syntax',
+    element: <SyntaxProblemPage />,
+    exact: true,
+    needLogin: true,
+  },
+  {
+    path: '/play-syntax/:type/:level',
+    element: <PlaySyntaxPage />,
     exact: true,
     needLogin: true,
   },
@@ -66,6 +74,12 @@ const routes: RouteItem[] = [
   {
     path: '/play-remember/:level',
     element: <RememberProblemPage />,
+    exact: true,
+    needLogin: true,
+  },
+  {
+    path: '/play-order/:type/:level',
+    element: <OrderProblemPage />,
     exact: true,
     needLogin: true,
   },
