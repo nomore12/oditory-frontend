@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import ProblemNavigation from '../components/commons/ProblemNavigation';
 import StarNumberIcon from '../components/commons/StarNumberIcon';
+import useSWR from 'swr';
+import { fetcher } from '../utils/fetcher';
 
 const ContainerStyle = styled.div`
   width: 100%;
@@ -47,6 +49,26 @@ const ContainerStyle = styled.div`
 `;
 
 const OrderProblemPage: React.FC = () => {
+  const { data, error, isLoading, mutate } = useSWR(`problem/order/`, (url) =>
+    fetcher({ url })
+  );
+
+  useEffect(() => {
+    if (!isLoading && data) {
+      console.log(data);
+
+      const uniqueLevels = new Set(
+        data
+          .filter((item: any) => item.category === 'basic')
+          .map((item: any) => item.problem.level)
+      );
+
+      const numberOfUniqueLevels = uniqueLevels.size;
+
+      console.log(numberOfUniqueLevels);
+    }
+  }, [isLoading]);
+
   return (
     <ContainerStyle>
       <ProblemNavigation />
@@ -54,7 +76,7 @@ const OrderProblemPage: React.FC = () => {
         <div className="menu-item-wrapper">
           <h2>기본 지시 따르기</h2>
           <div className="star-wrapper">
-            {Array.from({ length: 20 }, (_, i) => (
+            {Array.from({ length: 4 }, (_, i) => (
               <StarNumberIcon
                 key={i}
                 starNumber={i + 1}
@@ -67,11 +89,11 @@ const OrderProblemPage: React.FC = () => {
         <div className="menu-item-wrapper">
           <h2>시간적 지시 따르기</h2>
           <div className="star-wrapper">
-            {Array.from({ length: 20 }, (_, i) => (
+            {Array.from({ length: 5 }, (_, i) => (
               <StarNumberIcon
                 key={i}
                 starNumber={i + 1}
-                url={`/play-order/basic/${i + 1}`}
+                url={`/play-order/time/${i + 1}`}
                 color="#02A3B9"
               />
             ))}
@@ -80,11 +102,11 @@ const OrderProblemPage: React.FC = () => {
         <div className="menu-item-wrapper">
           <h2>양적 지시 따르기</h2>
           <div className="star-wrapper">
-            {Array.from({ length: 20 }, (_, i) => (
+            {Array.from({ length: 6 }, (_, i) => (
               <StarNumberIcon
                 key={i}
                 starNumber={i + 1}
-                url={`/play-order/basic/${i + 1}`}
+                url={`/play-order/amount/${i + 1}`}
                 color="#02A3B9"
               />
             ))}
@@ -93,11 +115,11 @@ const OrderProblemPage: React.FC = () => {
         <div className="menu-item-wrapper">
           <h2>위치적 지시 따르기</h2>
           <div className="star-wrapper">
-            {Array.from({ length: 20 }, (_, i) => (
+            {Array.from({ length: 7 }, (_, i) => (
               <StarNumberIcon
                 key={i}
                 starNumber={i + 1}
-                url={`/play-order/basic/${i + 1}`}
+                url={`/play-order/location/${i + 1}`}
                 color="#02A3B9"
               />
             ))}

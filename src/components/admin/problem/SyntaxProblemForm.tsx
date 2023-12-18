@@ -17,7 +17,7 @@ import SelectBox from '../../commons/SelectBox';
 import usePostHook from '../../../hooks/usePostHook';
 import useSWR, { mutate as mutateSWR } from 'swr';
 import { fetcher } from '../../../utils/fetcher';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import usePatchHook from '../../../hooks/usePatchHook';
 
 const levelSelectOptions: { value: number; label: string }[] = [
@@ -149,6 +149,7 @@ const OrderProblemForm: React.FC = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const {
     data: getData,
@@ -282,7 +283,7 @@ const OrderProblemForm: React.FC = () => {
     setButtonLabel(label);
     const name = file ? file.name : 'UPLOAD FILE';
     console.log('file', file);
-    if (getData && !file) {
+    if (getData && !file && getData.sound_file) {
       console.log('get data', getData);
       const urlParts = getData.sound_file.split('/');
 
@@ -300,7 +301,13 @@ const OrderProblemForm: React.FC = () => {
   }, [filePreviewUrl, file, isPlaying, getIsLoading]);
 
   useEffect(() => {
-    if (!getIsLoading) {
+    const paths = location.pathname.split('/');
+    if (
+      !getIsLoading &&
+      getData &&
+      paths[paths.length - 1] === 'create' &&
+      typeof getData !== 'string'
+    ) {
       console.log(getData, getData.category);
       setTitle(getData.title);
       setLevel(String(getData.problem.level));
@@ -312,9 +319,9 @@ const OrderProblemForm: React.FC = () => {
     }
   }, [getIsLoading]);
 
-  useEffect(() => {
-    mutate(`problem/syntax/${id}/`);
-  }, [id, mutate]);
+  // useEffect(() => {
+  //   mutate(`problem/syntax/${id}/`);
+  // }, [id, mutate]);
 
   return (
     <Box
