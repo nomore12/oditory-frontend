@@ -295,6 +295,7 @@ const OrderProblemForm: React.FC = () => {
       console.log(decodedFileName);
       setFileName(decodedFileName);
       setFilePreviewUrl(getData.sound_file);
+      setTitle(getData.title);
     } else {
       setFileName(name);
     }
@@ -319,9 +320,9 @@ const OrderProblemForm: React.FC = () => {
     }
   }, [getIsLoading]);
 
-  // useEffect(() => {
-  //   mutate(`problem/syntax/${id}/`);
-  // }, [id, mutate]);
+  useEffect(() => {
+    console.log(title);
+  }, [title]);
 
   return (
     <Box
