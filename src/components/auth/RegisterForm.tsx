@@ -156,8 +156,9 @@ const RegisterForm: React.FC = () => {
     const response = await executePost();
 
     if (response) {
-      if (response.response.status === 400) {
-        alert(response.request.responseText);
+      console.log('response', response);
+      if (!response.message.includes('Successfully')) {
+        alert(response.message);
       } else if (response.response.status === 200) {
         alert('회원가입이 완료되었습니다.');
         navigate('/register-confirm');
