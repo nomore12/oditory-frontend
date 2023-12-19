@@ -76,7 +76,7 @@ function getAnswerTypeToStringNumber(value: string) {
 function objectToFormData(obj: any) {
   const formData = new FormData();
   formData.append('title', obj.title);
-  formData.append('category', getOrderType(Number(obj.category)));
+  formData.append('category', obj.category);
   formData.append('visual_hint', 'false');
   formData.append('problem_type', 'order');
   formData.append('problem_level', obj.problem_level);
@@ -175,7 +175,8 @@ const OrderProblemForm: React.FC = () => {
   } = usePostHook(
     'problem/order/',
     objectToFormData({
-      category: getOrderType(Number(typeSelect)),
+      title: title,
+      category: getOrderType(Number(typeSelect) - 1),
       visual_hint: false,
       sound_file: file,
       problem_type: 'order',
@@ -231,7 +232,7 @@ const OrderProblemForm: React.FC = () => {
     });
     setSearchParams({
       ...params,
-      type: getOrderType(Number(event.target.value as string) - 1),
+      type: getOrderType(Number(event.target.value as string)),
     });
   };
 
@@ -352,6 +353,18 @@ const OrderProblemForm: React.FC = () => {
   }, [searchParams, level]);
 
   useEffect(() => {
+    if (searchParams.get('level')) {
+      setLevel(searchParams.get('level') as string);
+    }
+    if (searchParams.get('type')) {
+      console.log(searchParams.get('type'));
+      setTypeSelect(
+        String(getOrderQueryParams(searchParams.get('type') as string) + 1)
+      );
+    }
+  }, []);
+
+  useEffect(() => {
     if (audioRef.current) {
       if (isPlaying) {
         setTimeout(
@@ -407,6 +420,7 @@ const OrderProblemForm: React.FC = () => {
         answerDataCount === 4 ? '1' : answerDataCount === 5 ? '2' : '3'
       );
       setTypeSelect(String(getOrderQueryParams(getData.category) + 1));
+
       setColCount(answerDataCount);
       setLevel(String(getData.problem.level));
       setFilePreviewUrl(getData.sound_file.url);
