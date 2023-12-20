@@ -282,7 +282,6 @@ const OrderProblemForm: React.FC = () => {
     const label = !filePreviewUrl ? '재생' : !isPlaying ? '재생' : '정지';
     setButtonLabel(label);
     const name = file ? file.name : 'UPLOAD FILE';
-    console.log('file', file);
     if (getData && !file && getData.sound_file) {
       console.log('get data', getData);
       const urlParts = getData.sound_file.split('/');
@@ -292,10 +291,12 @@ const OrderProblemForm: React.FC = () => {
 
       // Decode the file name
       const decodedFileName = decodeURIComponent(fileName);
-      console.log(decodedFileName);
       setFileName(decodedFileName);
       setFilePreviewUrl(getData.sound_file);
       setTitle(getData.title);
+      const choicesData = getData.choices.map((choice: any) => choice.id);
+      setItemList([...choicesData]);
+      setAnswer(getData.answer.id);
     } else {
       setFileName(name);
     }
@@ -309,13 +310,13 @@ const OrderProblemForm: React.FC = () => {
       paths[paths.length - 1] === 'create' &&
       typeof getData !== 'string'
     ) {
-      console.log(getData, getData.category);
       setTitle(getData.title);
       setLevel(String(getData.problem.level));
       setTypeSelect(
         textToTypeSelectKey(getData.category as string | undefined)
       );
-      setItemList(getData.choices.map((choice: any) => choice.id));
+      const choicesData = getData.choices.map((choice: any) => choice.id);
+      setItemList([...choicesData]);
       setAnswer(getData.answer.id);
     }
   }, [getIsLoading]);
