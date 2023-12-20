@@ -90,8 +90,6 @@ function objectToFormData(obj: any) {
     formData.append('sound_file', obj.sound_file);
   }
 
-  console.log(formData.getAll('answers'), formData.getAll('problem_level'));
-
   return formData;
 }
 
@@ -294,7 +292,7 @@ const OrderProblemForm: React.FC = () => {
       await executePatch(
         objectToFormData({
           title: title,
-          category: getOrderType(Number(typeSelect)),
+          category: getOrderType(Number(typeSelect) - 1),
           visual_hint: false,
           sound_file: file,
           problem_type: 'order',
@@ -357,7 +355,6 @@ const OrderProblemForm: React.FC = () => {
       setLevel(searchParams.get('level') as string);
     }
     if (searchParams.get('type')) {
-      console.log(searchParams.get('type'));
       setTypeSelect(
         String(getOrderQueryParams(searchParams.get('type') as string) + 1)
       );
@@ -371,7 +368,6 @@ const OrderProblemForm: React.FC = () => {
           () => setIsPlaying(false),
           audioRef.current?.duration * 1000 + 500
         );
-        console.log('audio', audioRef.current?.onplaying);
         setTimeout(
           () =>
             console.log(
@@ -413,7 +409,7 @@ const OrderProblemForm: React.FC = () => {
 
   useEffect(() => {
     if (!getIsLoading && getData) {
-      console.log(getData.choices.length);
+      console.log('item list', getData.choices);
       const answerDataCount = getData.choices.length / 3;
       setAnswerType(getAnswerTypeToStringNumber(getData.order_type));
       setAnswerCount(

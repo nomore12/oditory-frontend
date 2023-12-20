@@ -114,8 +114,10 @@ const ProblemItemSelectBox: React.FC<PropsType> = ({
 
   useEffect(() => {
     if (clickedItem !== undefined && clickedItem > -1) {
+      console.log('clickedItem', clickedItem, selectedImageItemId);
       const newArr = [...itemList];
       newArr[clickedItem] = selectedImageItemId;
+      console.log(newArr);
       if (itemList.find((item) => item === selectedImageItemId) !== undefined) {
         alert('중복된 이미지를 선택할 수 없습니다.');
         return;
@@ -228,6 +230,7 @@ const ProblemItemSelectBox: React.FC<PropsType> = ({
                         labelPlacement="start"
                         onClick={(e) => {
                           handleAnswerItemClicked(e, index, id);
+                          console.log('clicked', index, id);
                         }}
                       />
                     </Box>
