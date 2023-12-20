@@ -1,5 +1,5 @@
 # 1단계: 의존성 설치 및 애플리케이션 빌드
-FROM node:18.17.1 AS build
+FROM node:18.17.1-alpine AS build
 
 # 작업 디렉터리 설정
 WORKDIR /app
