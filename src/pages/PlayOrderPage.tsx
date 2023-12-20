@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import styled from 'styled-components';
@@ -67,17 +67,30 @@ const ContainerStyle = styled.div<{ colCount: number }>`
 
 const PlayOrderPage: React.FC = () => {
   const [colCount, setColCount] = React.useState<number>(6);
-  const [searchParams, setSearchParams] = useSearchParams();
   const [level, setLevel] = React.useState<number>(1);
   const [type, setType] = React.useState<string>('order');
   const [problemData, setProblemData] = React.useState<any[]>([]);
   const [currentProblemImages, setCurrentProblemImages] = React.useState<
     string[]
   >([]);
+  const [currentProblemImageIds, setCurrentProblemImageIds] = useState<
+    number[]
+  >([]);
+  const [currentProblemAnswers, setCurrentProblemAnswers] = React.useState<
+    number[][]
+  >([]);
+
   const params = useParams();
 
-  const { currentProblemIndex, currState, toNextProblem, playProblemSound } =
-    useProblemManagerStore();
+  const {
+    currentProblemIndex,
+    currState,
+    answers,
+    setAnswers,
+    clearAnswers,
+    toNextProblem,
+    playProblemSound,
+  } = useProblemManagerStore();
 
   const { data, error, isLoading, mutate } = useSWR(
     `problem/order/${level && type ? `?level=${level}&category=${type}` : ''}`,
@@ -93,18 +106,25 @@ const PlayOrderPage: React.FC = () => {
 
   useEffect(() => {
     if (!isLoading && data) {
+      console.log(data);
       const shuffledData: any[] = shuffleArray(data).slice(0, 10);
       setProblemData([...shuffledData]);
-      const currImages = shuffledData[currentProblemIndex].choices_images.map(
-        (item: string) => item
-      );
+      const currImages = shuffledData[currentProblemIndex].choices_images
+        ? shuffledData[currentProblemIndex].choices_images.map(
+            (item: string) => item
+          )
+        : [];
+      setCurrentProblemImageIds([...shuffledData[currentProblemIndex].choices]);
       setColCount(currImages.length / 3);
       setCurrentProblemImages([...currImages]);
-      console.log(currImages.length / 3);
-      console.log(currImages);
-      console.log(shuffledData);
+      const answersData = shuffledData.map((item: any) => item.answers);
+      setCurrentProblemAnswers([...answersData]);
     }
   }, [isLoading]);
+
+  useEffect(() => {
+    console.log(answers);
+  }, [answers]);
 
   return (
     <ContainerStyle colCount={colCount}>
@@ -117,6 +137,7 @@ const PlayOrderPage: React.FC = () => {
           ).map((item, i) => (
             <div className="card-item-box" key={i}>
               <OrderItemCard
+                imageId={currentProblemImageIds[i]}
                 url={`https://oditory.s3.ap-northeast-2.amazonaws.com/media/public/${currentProblemImages[i]}`}
                 size={
                   colCount === 4 ? 'large' : colCount === 5 ? 'medium' : 'small'
@@ -137,7 +158,7 @@ const PlayOrderPage: React.FC = () => {
           <ControlButton
             isRetry={true}
             name="다시고르기"
-            onClick={() => console.log('시작하기')}
+            onClick={clearAnswers}
           />
         </div>
       </div>
