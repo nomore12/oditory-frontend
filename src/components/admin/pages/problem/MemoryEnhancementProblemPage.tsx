@@ -38,6 +38,12 @@ const MemoryEnhancementProblemPage: React.FC = () => {
     setCurrentProblemNumber(problemNumber);
   }, [location.pathname]);
 
+  useEffect(() => {
+    if (!isLoading) {
+      console.log(data);
+    }
+  }, [isLoading]);
+
   return (
     <Box sx={{ height: '100%', padding: 2 }}>
       <Typography variant="h6" sx={{ marginTop: 2 }}>

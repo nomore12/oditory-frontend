@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 interface PropsType {
   size: 'small' | 'medium' | 'large';
+  url: string;
 }
 
 const ContainerStyle = styled.div<{ size: string }>`
@@ -37,11 +38,11 @@ const ContainerStyle = styled.div<{ size: string }>`
   }
 `;
 
-const OrderItemCard: React.FC<PropsType> = ({ size }) => {
+const OrderItemCard: React.FC<PropsType> = ({ size, url }) => {
   return (
     <ContainerStyle size={size}>
       <div className="image-wrapper">
-        <img src="/images/img.png" alt="food" />
+        <img src={url} alt="food" />
       </div>
     </ContainerStyle>
   );

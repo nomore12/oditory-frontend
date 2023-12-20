@@ -49,40 +49,74 @@ const ContainerStyle = styled.div`
   }
 `;
 
+const initialLevelData = [
+  { type: 'basic', levelCount: 1 },
+
+  {
+    type: 'time',
+    levelCount: 1,
+  },
+  { type: 'quantity', levelCount: 1 },
+  { type: 'location', levelCount: 1 },
+];
+
 const OrderProblemPage: React.FC = () => {
   const [level, setLevel] = useState<number>(0);
   const [type, setType] = useState<string>('');
+  const [levelData, setLevelData] =
+    useState<{ type: string; levelCount: number }[]>(initialLevelData);
 
   const params = useParams();
 
-  const { data, error, isLoading, mutate } = useSWR(
-    `problem/order/${level && type ? `?level=${level}&type=${type}` : ''}`,
-    (url) => fetcher({ url })
+  const { data, error, isLoading, mutate } = useSWR(`problem/order/`, (url) =>
+    fetcher({ url })
   );
-
-  // useEffect(() => {
-  //   )
-  // }, [params]);
-
-  useEffect(() => {
-    if (!isLoading && data) {
-      console.log('data', data);
-    }
-  }, [isLoading]);
 
   useEffect(() => {
     if (!isLoading && data) {
       console.log(data);
 
-      const uniqueLevels = new Set(
+      const basicLevels = new Set(
         data
           .filter((item: any) => item.category === 'basic')
           .map((item: any) => item.problem.level)
       );
+      const timeLevels = new Set(
+        data
+          .filter((item: any) => item.category === 'time')
+          .map((item: any) => item.problem.level)
+      );
 
-      const numberOfUniqueLevels = uniqueLevels.size;
+      const quantityLevels = new Set(
+        data
+          .filter((item: any) => item.category === 'quantity')
+          .map((item: any) => item.problem.level)
+      );
 
-      console.log(numberOfUniqueLevels);
+      const locationLevels = new Set(
+        data
+          .filter((item: any) => item.category === 'location')
+          .map((item: any) => item.problem.level)
+      );
+
+      const levels = [
+        { type: 'basic', levelCount: basicLevels.size },
+        {
+          type: 'time',
+          levelCount: timeLevels.size,
+        },
+        { type: 'quantity', levelCount: quantityLevels.size },
+        { type: 'location', levelCount: locationLevels.size },
+      ];
+
+      setLevelData([...levels]);
+
+      console.log(
+        basicLevels.size,
+        timeLevels.size,
+        quantityLevels.size,
+        locationLevels.size
+      );
     }
   }, [isLoading]);
 
@@ -93,7 +127,7 @@ const OrderProblemPage: React.FC = () => {
         <div className="menu-item-wrapper">
           <h2>기본 지시 따르기</h2>
           <div className="star-wrapper">
-            {Array.from({ length: 4 }, (_, i) => (
+            {Array.from({ length: levelData[0].levelCount }, (_, i) => (
               <StarNumberIcon
                 key={i}
                 starNumber={i + 1}
@@ -106,7 +140,7 @@ const OrderProblemPage: React.FC = () => {
         <div className="menu-item-wrapper">
           <h2>시간적 지시 따르기</h2>
           <div className="star-wrapper">
-            {Array.from({ length: 5 }, (_, i) => (
+            {Array.from({ length: levelData[1].levelCount }, (_, i) => (
               <StarNumberIcon
                 key={i}
                 starNumber={i + 1}
@@ -119,7 +153,7 @@ const OrderProblemPage: React.FC = () => {
         <div className="menu-item-wrapper">
           <h2>양적 지시 따르기</h2>
           <div className="star-wrapper">
-            {Array.from({ length: 6 }, (_, i) => (
+            {Array.from({ length: levelData[2].levelCount }, (_, i) => (
               <StarNumberIcon
                 key={i}
                 starNumber={i + 1}
@@ -132,7 +166,7 @@ const OrderProblemPage: React.FC = () => {
         <div className="menu-item-wrapper">
           <h2>위치적 지시 따르기</h2>
           <div className="star-wrapper">
-            {Array.from({ length: 7 }, (_, i) => (
+            {Array.from({ length: levelData[3].levelCount }, (_, i) => (
               <StarNumberIcon
                 key={i}
                 starNumber={i + 1}
