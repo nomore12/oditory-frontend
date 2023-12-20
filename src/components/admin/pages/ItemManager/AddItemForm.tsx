@@ -97,6 +97,7 @@ const AddItemForm: React.FC<PropsType> = ({
     }
 
     const isSuccess = await executePost();
+    console.log(isSuccess);
     if (isSuccess) {
       alert('아이템 추가가 완료되었습니다.');
       openHandler();
@@ -127,7 +128,7 @@ const AddItemForm: React.FC<PropsType> = ({
   };
 
   useEffect(() => {
-    setCategory('전체');
+    setCategory('과일야채');
   }, []);
 
   useEffect(() => {
@@ -182,10 +183,11 @@ const AddItemForm: React.FC<PropsType> = ({
                 label="category"
                 onChange={handleChange}
               >
-                <MenuItem value="전체">전체</MenuItem>
-                <MenuItem value="과일">과일</MenuItem>
-                <MenuItem value="채소">채소</MenuItem>
-                <MenuItem value="사물">사물</MenuItem>
+                <MenuItem value="과일야채">과일야채</MenuItem>
+                <MenuItem value="가전가구">가전가구</MenuItem>
+                <MenuItem value="교동수단">교동수단</MenuItem>
+                <MenuItem value="문구">문구</MenuItem>
+                <MenuItem value="숫자">숫자</MenuItem>
               </Select>
             </FormControl>
           </Box>

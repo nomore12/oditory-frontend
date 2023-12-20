@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import styled from 'styled-components';
 import ProblemNavigation from '../components/commons/ProblemNavigation';
 import ControlButton from '../components/commons/ControlButton';
 import OrderItemCard from '../components/play/order/OrderItemCard';
+import { useParams, useSearchParams } from 'react-router-dom';
+import useSWR from 'swr';
+import { fetcher } from '../utils/fetcher';
 
 interface LinePropsType {
   name: number;
@@ -62,6 +65,19 @@ const ContainerStyle = styled.div<{ colCount: number }>`
 
 const PlayOrderPage: React.FC = () => {
   const [colCount, setColCount] = React.useState<number>(6);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [level, setLevel] = React.useState<number>(1);
+  const [type, setType] = React.useState<string>('order');
+  const params = useParams();
+
+  useEffect(() => {
+    console.log(params.level, params.type);
+    if (params.level && params.type) {
+      setLevel(parseInt(params.level));
+      setType(params.type);
+    }
+  }, [params]);
+
   return (
     <ContainerStyle colCount={colCount}>
       <ProblemNavigation />

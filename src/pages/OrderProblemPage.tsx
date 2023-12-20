@@ -4,6 +4,7 @@ import ProblemNavigation from '../components/commons/ProblemNavigation';
 import StarNumberIcon from '../components/commons/StarNumberIcon';
 import useSWR from 'swr';
 import { fetcher } from '../utils/fetcher';
+import { useParams } from 'react-router-dom';
 
 const ContainerStyle = styled.div`
   width: 100%;
@@ -49,9 +50,25 @@ const ContainerStyle = styled.div`
 `;
 
 const OrderProblemPage: React.FC = () => {
-  const { data, error, isLoading, mutate } = useSWR(`problem/order/`, (url) =>
-    fetcher({ url })
+  const [level, setLevel] = useState<number>(0);
+  const [type, setType] = useState<string>('');
+
+  const params = useParams();
+
+  const { data, error, isLoading, mutate } = useSWR(
+    `problem/order/${level && type ? `?level=${level}&type=${type}` : ''}`,
+    (url) => fetcher({ url })
   );
+
+  // useEffect(() => {
+  //   )
+  // }, [params]);
+
+  useEffect(() => {
+    if (!isLoading && data) {
+      console.log('data', data);
+    }
+  }, [isLoading]);
 
   useEffect(() => {
     if (!isLoading && data) {
