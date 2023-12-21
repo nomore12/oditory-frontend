@@ -23,3 +23,20 @@ export function arraysMatch(arr1: number[], arr2: number[]): boolean {
   // 모든 요소가 일치하면, 배열이 일치합니다.
   return true;
 }
+
+export function compareArrays(arr1: number[], arr2: number[]): boolean {
+  if (arr1.length !== arr2.length) {
+    return false;
+  }
+
+  return (
+    arr1
+      .slice()
+      .sort((a, b) => a - b)
+      .join(',') ===
+    arr2
+      .slice()
+      .sort((a, b) => a - b)
+      .join(',')
+  );
+}

@@ -6,12 +6,14 @@ interface PropsType {
   size: 'small' | 'medium' | 'large';
   url: string;
   imageId: number;
+  isCorrect: boolean;
 }
 
 const ContainerStyle = styled.div<{
   size: string;
   checked: boolean;
   visible: boolean;
+  correct: boolean;
 }>`
   width: ${(props) =>
     props.size === 'small'
@@ -32,6 +34,7 @@ const ContainerStyle = styled.div<{
   justify-content: center;
   align-items: center;
   visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
+  position: relative;
 
   .image-wrapper {
     width: 50%;
@@ -52,14 +55,40 @@ const ContainerStyle = styled.div<{
       font-weight: 700;
       color: #000000;
     }
+
+    & > h6 {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 0.8rem;
+      background-color: ${(props) => (props.correct ? '#015bff' : '#FF0000')};
+      border-radius: 50%;
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+    }
   }
 `;
 
-const OrderItemCard: React.FC<PropsType> = ({ size, url, imageId }) => {
+const OrderItemCard: React.FC<PropsType> = ({
+  size,
+  url,
+  imageId,
+  isCorrect,
+}) => {
   const [checked, setChecked] = useState<boolean>(false);
 
-  const { currState, currentProblemIndex, answers, setAnswers, removeAnswer } =
-    useProblemManagerStore();
+  const {
+    currState,
+    scores,
+    currentProblemIndex,
+    answers,
+    setAnswers,
+    removeAnswer,
+  } = useProblemManagerStore();
 
   const onClick = () => {
     if (!checked && currState === 'solving') {
@@ -81,7 +110,11 @@ const OrderItemCard: React.FC<PropsType> = ({ size, url, imageId }) => {
   };
 
   useEffect(() => {
-    if (answers.length === 0) setChecked(false);
+    console.log('isCorrect', isCorrect);
+  }, [isCorrect]);
+
+  useEffect(() => {
+    if (!answers) setChecked(false);
   }, [answers]);
 
   useEffect(() => {
@@ -93,23 +126,30 @@ const OrderItemCard: React.FC<PropsType> = ({ size, url, imageId }) => {
   return (
     <ContainerStyle
       size={size}
-      checked={answers.length === 0 ? false : checked}
+      checked={!answers ? false : checked}
       onClick={onClick}
       visible={
         currentProblemIndex === 0 && currState === 'waiting' ? false : true
       }
+      correct={isCorrect}
     >
-      <div className="image-wrapper">
-        {currState === 'solving' ? (
-          <>
-            <img src={url} alt="food" />
-          </>
-        ) : (
-          <>
-            <h1>?</h1>
-          </>
-        )}
-      </div>
+      {currState !== 'end' && (
+        <div className="image-wrapper">
+          {currState === 'solving' || currState === 'checkAnswer' ? (
+            <>
+              <img src={url} alt="food" />
+              {currState === 'checkAnswer' && isCorrect && <h6>정답</h6>}
+              {currState === 'checkAnswer' && checked && !isCorrect && (
+                <h6>오답</h6>
+              )}
+            </>
+          ) : (
+            <>
+              <h1>?</h1>
+            </>
+          )}
+        </div>
+      )}
     </ContainerStyle>
   );
 };
