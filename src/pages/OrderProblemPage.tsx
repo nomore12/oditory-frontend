@@ -5,6 +5,7 @@ import StarNumberIcon from '../components/commons/StarNumberIcon';
 import useSWR from 'swr';
 import { fetcher } from '../utils/fetcher';
 import { useParams } from 'react-router-dom';
+import { useProblemManagerStore } from '../store/ProblemManager';
 
 const ContainerStyle = styled.div`
   width: 100%;
@@ -66,7 +67,7 @@ const OrderProblemPage: React.FC = () => {
   const [levelData, setLevelData] =
     useState<{ type: string; levelCount: number }[]>(initialLevelData);
 
-  const params = useParams();
+  const { setCurrState, clearAll } = useProblemManagerStore();
 
   const { data, error, isLoading, mutate } = useSWR(`problem/order/`, (url) =>
     fetcher({ url })
@@ -120,6 +121,13 @@ const OrderProblemPage: React.FC = () => {
     }
   }, [isLoading]);
 
+  useEffect(() => {
+    clearAll();
+    if (data) {
+      mutate();
+    }
+  }, []);
+
   return (
     <ContainerStyle>
       <ProblemNavigation />
@@ -157,7 +165,7 @@ const OrderProblemPage: React.FC = () => {
               <StarNumberIcon
                 key={i}
                 starNumber={i + 1}
-                url={`/play-order/amount/${i + 1}`}
+                url={`/play-order/quantity/${i + 1}`}
                 color="#02A3B9"
               />
             ))}

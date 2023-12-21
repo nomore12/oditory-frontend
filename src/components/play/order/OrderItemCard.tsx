@@ -8,7 +8,11 @@ interface PropsType {
   imageId: number;
 }
 
-const ContainerStyle = styled.div<{ size: string; checked: boolean }>`
+const ContainerStyle = styled.div<{
+  size: string;
+  checked: boolean;
+  visible: boolean;
+}>`
   width: ${(props) =>
     props.size === 'small'
       ? '100px'
@@ -27,10 +31,14 @@ const ContainerStyle = styled.div<{ size: string; checked: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
+  visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
 
   .image-wrapper {
     width: 50%;
     height: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     & > img {
       width: 100%;
@@ -38,34 +46,69 @@ const ContainerStyle = styled.div<{ size: string; checked: boolean }>`
       object-fit: contain;
       border-radius: 40px;
     }
+
+    & > h1 {
+      font-size: 4rem;
+      font-weight: 700;
+      color: #000000;
+    }
   }
 `;
 
 const OrderItemCard: React.FC<PropsType> = ({ size, url, imageId }) => {
   const [checked, setChecked] = useState<boolean>(false);
 
-  const { answers, setAnswers } = useProblemManagerStore();
+  const { currState, currentProblemIndex, answers, setAnswers, removeAnswer } =
+    useProblemManagerStore();
 
   const onClick = () => {
-    if (!checked) {
-      if (answers.find((answer) => answer === imageId)) return;
+    if (!checked && currState === 'solving') {
+      // if (answers.find((answer) => answer === imageId)) {
+      //   console.log('remove', imageId);
+      //   removeAnswer(imageId);
+      // }
       setAnswers(imageId);
+      setChecked(!checked);
+      return;
     }
-    setChecked(!checked);
+    if (currState === 'solving' && checked) {
+      setChecked(!checked);
+      if (answers.find((answer) => answer === imageId)) {
+        console.log('remove', imageId);
+        removeAnswer(imageId);
+      }
+    }
   };
 
   useEffect(() => {
     if (answers.length === 0) setChecked(false);
   }, [answers]);
 
+  useEffect(() => {
+    if (currState === 'solving') {
+      setChecked(false);
+    }
+  }, [currState]);
+
   return (
     <ContainerStyle
       size={size}
       checked={answers.length === 0 ? false : checked}
       onClick={onClick}
+      visible={
+        currentProblemIndex === 0 && currState === 'waiting' ? false : true
+      }
     >
       <div className="image-wrapper">
-        <img src={url} alt="food" />
+        {currState === 'solving' ? (
+          <>
+            <img src={url} alt="food" />
+          </>
+        ) : (
+          <>
+            <h1>?</h1>
+          </>
+        )}
       </div>
     </ContainerStyle>
   );
