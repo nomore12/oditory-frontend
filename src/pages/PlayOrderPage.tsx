@@ -31,7 +31,7 @@ const ContainerStyle = styled.div<{ colCount: number }>`
   .problem-container {
     width: 100%;
     height: 100%;
-    padding: 60px 120px;
+    padding: 20px 120px;
     display: flex;
     flex-direction: column;
 

@@ -23,13 +23,13 @@ const ContainerStyle = styled.div`
   .problem-container {
     width: 100%;
     height: 100%;
-    padding: 80px 120px;
+    padding: 20px 120px;
     display: flex;
     flex-direction: column;
 
     .card-wrapper {
       width: 100%;
-      padding: 30px;
+      padding: 20px;
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
