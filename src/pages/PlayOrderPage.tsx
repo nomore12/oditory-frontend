@@ -31,13 +31,13 @@ const ContainerStyle = styled.div<{ colCount: number }>`
   .problem-container {
     width: 100%;
     height: 100%;
-    padding: 80px 120px;
+    padding: 60px 120px;
     display: flex;
     flex-direction: column;
 
     .card-wrapper {
       width: 100%;
-      padding: 30px;
+      padding: 20px;
       display: grid;
       grid-template-columns: repeat(
         ${(props) => props.colCount},
